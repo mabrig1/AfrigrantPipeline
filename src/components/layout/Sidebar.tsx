@@ -11,38 +11,43 @@ import {
   BookOpen,
   GraduationCap,
   Settings,
+  Sparkles,
 } from 'lucide-react'
 
 const navItems = [
-  { href: '/dashboard', label: 'Overview', icon: LayoutDashboard },
-  { href: '/dashboard/grants', label: 'Grants', icon: Search },
+  { href: '/dashboard',              label: 'Overview',     icon: LayoutDashboard },
+  { href: '/dashboard/grants',       label: 'Grants',       icon: Search },
   { href: '/dashboard/applications', label: 'Applications', icon: FileText },
-  { href: '/dashboard/research', label: 'Research', icon: BookOpen },
-  { href: '/dashboard/collaborate', label: 'Collaborate', icon: Users },
-  { href: '/dashboard/mentorship', label: 'Mentorship', icon: GraduationCap },
-  { href: '/dashboard/settings', label: 'Settings', icon: Settings },
+  { href: '/dashboard/my-articles',  label: 'My Articles',  icon: BookOpen },
+  { href: '/dashboard/ai-tools',     label: 'AI Tools',     icon: Sparkles },
+  { href: '/dashboard/collaborate',  label: 'Collaborate',  icon: Users },
+  { href: '/dashboard/mentorship',   label: 'Mentorship',   icon: GraduationCap },
+  { href: '/dashboard/settings',     label: 'Settings',     icon: Settings },
 ]
 
 export default function Sidebar() {
   const pathname = usePathname()
 
   return (
-    <aside className="w-60 shrink-0 hidden lg:flex flex-col gap-1 py-4">
-      {navItems.map(({ href, label, icon: Icon }) => (
-        <Link
-          key={href}
-          href={href}
-          className={cn(
-            'flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors',
-            pathname === href
-              ? 'bg-primary text-primary-foreground'
-              : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
-          )}
-        >
-          <Icon className="h-4 w-4 shrink-0" />
-          {label}
-        </Link>
-      ))}
+    <aside className="hidden w-56 shrink-0 flex-col gap-0.5 py-6 pr-4 lg:flex">
+      {navItems.map(({ href, label, icon: Icon }) => {
+        const active = pathname === href || (href !== '/dashboard' && pathname.startsWith(href))
+        return (
+          <Link
+            key={href}
+            href={href}
+            className={cn(
+              'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
+              active
+                ? 'bg-gold/10 text-gold border border-gold/20'
+                : 'text-muted-foreground hover:bg-accent hover:text-foreground border border-transparent',
+            )}
+          >
+            <Icon className="size-4 shrink-0" />
+            {label}
+          </Link>
+        )
+      })}
     </aside>
   )
 }

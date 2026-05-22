@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { auth } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 import Sidebar from '@/components/layout/Sidebar'
@@ -6,17 +7,38 @@ export default async function DashboardLayout({ children }: { children: React.Re
   const session = await auth()
   if (!session?.user) redirect('/login')
 
+  const initials = session.user.name
+    ? session.user.name.split(' ').map((p) => p[0]).slice(0, 2).join('').toUpperCase()
+    : '?'
+
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          <span className="text-xl font-bold text-primary">AfrigrantPipeline</span>
-          <span className="text-sm text-muted-foreground">{session.user.email}</span>
+    <div className="min-h-screen bg-background">
+      {/* Top bar */}
+      <header className="sticky top-0 z-50 flex h-14 items-center justify-between border-b border-border bg-card/80 px-4 backdrop-blur-md">
+        <Link
+          href="/"
+          className="text-lg font-extrabold tracking-tight transition-opacity hover:opacity-80"
+        >
+          Afri<span className="text-gold">grant</span>Pipeline
+        </Link>
+        <div className="flex items-center gap-3">
+          <span className="hidden text-xs text-muted-foreground sm:block">
+            {session.user.email}
+          </span>
+          <Link
+            href="/dashboard/settings"
+            className="flex size-8 items-center justify-center rounded-full border border-gold/30 bg-gold/10 text-xs font-bold text-gold transition-colors hover:bg-gold/20"
+            title="Profile settings"
+          >
+            {initials}
+          </Link>
         </div>
       </header>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex gap-6">
+
+      {/* Page body */}
+      <div className="mx-auto flex max-w-7xl">
         <Sidebar />
-        <main className="flex-1 min-w-0">{children}</main>
+        <main className="min-w-0 flex-1 px-4 py-8 lg:px-8">{children}</main>
       </div>
     </div>
   )
