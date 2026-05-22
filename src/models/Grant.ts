@@ -77,6 +77,11 @@ const GrantSchema = new Schema<IGrant>(
       trim: true,
       match: [/^https?:\/\/.+/, 'Application link must be a valid URL'],
     },
+    bookmarkedBy: {
+      type: [Schema.Types.ObjectId],
+      ref: 'User',
+      default: [],
+    },
     createdBy: {
       type: Schema.Types.ObjectId,
       ref: 'User',

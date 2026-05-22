@@ -10,6 +10,7 @@ import {
   FileText,
   Star,
 } from 'lucide-react'
+import Header from '@/components/layout/Header'
 
 // ── Static data ───────────────────────────────────────────────────────────────
 
@@ -88,6 +89,8 @@ const trustLogos = [
 
 export default function HomePage() {
   return (
+    <>
+    <Header />
     <main className="flex flex-col">
       {/* ── Hero ── */}
       <section className="hero-bg relative isolate flex min-h-[92vh] flex-col items-center justify-center px-4 py-24 text-center">
@@ -352,5 +355,6 @@ export default function HomePage() {
         </div>
       </footer>
     </main>
+    </>
   )
 }

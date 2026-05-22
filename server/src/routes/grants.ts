@@ -15,7 +15,7 @@ const createGrantSchema = z.object({
   amount: z.number().positive(),
   currency: z.string().length(3).default('USD'),
   deadline: z.string().datetime({ message: 'deadline must be an ISO 8601 datetime' }),
-  grantType: z.enum(['government', 'ngo', 'private', 'academic', 'international']).optional(),
+  grantType: z.enum(['research', 'project', 'scholarship', 'fellowship', 'seed', 'other'] as const).optional(),
   eligibility: z.array(z.string()).default([]),
   categories: z.array(z.string()).default([]),
   countries: z.array(z.string()).default([]),
@@ -27,7 +27,7 @@ const updateGrantSchema = createGrantSchema.partial()
 
 const listSchema = z.object({
   status: z.enum(['open', 'closed', 'draft']).optional(),
-  grantType: z.enum(['government', 'ngo', 'private', 'academic', 'international']).optional(),
+  grantType: z.enum(['research', 'project', 'scholarship', 'fellowship', 'seed', 'other'] as const).optional(),
   region: z.string().optional(),
   categories: z.string().optional(),
   search: z.string().optional(),

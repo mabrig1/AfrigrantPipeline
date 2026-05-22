@@ -349,7 +349,7 @@ export const grantsApi = {
     apiFetch<GrantResponse>(`/api/v1/grants/${id}`, { next: { revalidate: 300 } }, token),
 
   create: (body: CreateGrantBody, token: string) =>
-    apiFetch<GrantResponse>('/api/grants', { method: 'POST', body: JSON.stringify(body) }, token),
+    apiFetch<GrantResponse>('/api/v1/grants', { method: 'POST', body: JSON.stringify(body) }, token),
 
   update: (id: string, body: Partial<CreateGrantBody>, token: string) =>
     apiFetch<GrantResponse>(`/api/v1/grants/${id}`, { method: 'PATCH', body: JSON.stringify(body) }, token),
@@ -358,20 +358,20 @@ export const grantsApi = {
     apiFetch<{ bookmarked: boolean }>(`/api/v1/grants/${grantId}/bookmark`, { method: 'POST' }, token),
 
   bookmarks: (token: string) =>
-    apiFetch<GrantResponse[]>('/api/grants/bookmarks', {}, token),
+    apiFetch<GrantResponse[]>('/api/v1/grants/bookmarks', {}, token),
 }
 
 // ── Applications ──────────────────────────────────────────────────────────────
 
 export const applicationsApi = {
   list: (token: string) =>
-    apiFetch<ApplicationResponse[]>('/api/applications', {}, token),
+    apiFetch<ApplicationResponse[]>('/api/v1/applications', {}, token),
 
   get: (id: string, token: string) =>
     apiFetch<ApplicationResponse>(`/api/v1/applications/${id}`, {}, token),
 
   create: (body: CreateApplicationBody, token: string) =>
-    apiFetch<ApplicationResponse>('/api/applications', { method: 'POST', body: JSON.stringify(body) }, token),
+    apiFetch<ApplicationResponse>('/api/v1/applications', { method: 'POST', body: JSON.stringify(body) }, token),
 
   updateStatus: (id: string, status: ApplicationStatus, token: string) =>
     apiFetch<ApplicationResponse>(
@@ -398,7 +398,7 @@ export const articlesApi = {
     apiFetch<ArticleResponse>(`/api/v1/articles/${id}`, { next: { revalidate: 600 } }, token),
 
   create: (body: CreateArticleBody, token: string) =>
-    apiFetch<ArticleResponse>('/api/articles', { method: 'POST', body: JSON.stringify(body) }, token),
+    apiFetch<ArticleResponse>('/api/v1/articles', { method: 'POST', body: JSON.stringify(body) }, token),
 
   update: (id: string, body: Partial<CreateArticleBody>, token: string) =>
     apiFetch<ArticleResponse>(`/api/v1/articles/${id}`, { method: 'PATCH', body: JSON.stringify(body) }, token),
@@ -408,7 +408,7 @@ export const articlesApi = {
 
 export const journalsApi = {
   list: (token?: string) =>
-    apiFetch<JournalResponse[]>('/api/journals', { next: { revalidate: 3600, tags: ['journals'] } }, token),
+    apiFetch<JournalResponse[]>('/api/v1/journals', { next: { revalidate: 3600, tags: ['journals'] } }, token),
 
   get: (id: string, token?: string) =>
     apiFetch<JournalResponse>(`/api/v1/journals/${id}`, { next: { revalidate: 3600 } }, token),
@@ -416,7 +416,7 @@ export const journalsApi = {
   create: (
     body: { name: string; description: string; categories?: string[]; isOpenAccess?: boolean; website?: string },
     token: string,
-  ) => apiFetch<JournalResponse>('/api/journals', { method: 'POST', body: JSON.stringify(body) }, token),
+  ) => apiFetch<JournalResponse>('/api/v1/journals', { method: 'POST', body: JSON.stringify(body) }, token),
 }
 
 // ── Peer Reviews ──────────────────────────────────────────────────────────────
@@ -454,7 +454,7 @@ export const collaborationsApi = {
     apiFetch<CollaborationResponse>(`/api/v1/collaborations/${id}`, {}, token),
 
   create: (body: CreateCollaborationBody, token: string) =>
-    apiFetch<CollaborationResponse>('/api/collaborations', { method: 'POST', body: JSON.stringify(body) }, token),
+    apiFetch<CollaborationResponse>('/api/v1/collaborations', { method: 'POST', body: JSON.stringify(body) }, token),
 
   join: (id: string, token: string) =>
     apiFetch<CollaborationResponse>(`/api/v1/collaborations/${id}/join`, { method: 'POST' }, token),
@@ -467,10 +467,10 @@ export const collaborationsApi = {
 
 export const mentorshipsApi = {
   list: (token: string) =>
-    apiFetch<MentorshipResponse[]>('/api/mentorships', {}, token),
+    apiFetch<MentorshipResponse[]>('/api/v1/mentorships', {}, token),
 
   request: (body: RequestMentorshipBody, token: string) =>
-    apiFetch<MentorshipResponse>('/api/mentorships', { method: 'POST', body: JSON.stringify(body) }, token),
+    apiFetch<MentorshipResponse>('/api/v1/mentorships', { method: 'POST', body: JSON.stringify(body) }, token),
 
   updateStatus: (id: string, status: MentorshipStatus, token: string) =>
     apiFetch<MentorshipResponse>(
@@ -487,21 +487,21 @@ export const profilesApi = {
     apiFetch<UserResponse>(`/api/v1/profiles/${userId}`, { next: { revalidate: 300 } }, token),
 
   getMe: (token: string) =>
-    apiFetch<UserResponse>('/api/profiles/me', {}, token),
+    apiFetch<UserResponse>('/api/v1/profiles/me', {}, token),
 
   update: (body: UpdateProfileBody, token: string) =>
-    apiFetch<UserResponse>('/api/profiles/me', { method: 'PATCH', body: JSON.stringify(body) }, token),
+    apiFetch<UserResponse>('/api/v1/profiles/me', { method: 'PATCH', body: JSON.stringify(body) }, token),
 }
 
 // ── AI ────────────────────────────────────────────────────────────────────────
 
 export const aiApi = {
   assist: (body: { prompt: string; context?: string }, token: string) =>
-    apiFetch<{ result: string }>('/api/ai/assist', { method: 'POST', body: JSON.stringify(body) }, token),
+    apiFetch<{ result: string }>('/api/v1/ai/assist', { method: 'POST', body: JSON.stringify(body) }, token),
 
   improveAbstract: (abstract: string, token: string) =>
     apiFetch<{ result: string }>(
-      '/api/ai/improve-abstract',
+      '/api/v1/ai/improve-abstract',
       { method: 'POST', body: JSON.stringify({ abstract }) },
       token,
     ),

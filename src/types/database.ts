@@ -41,6 +41,7 @@ export interface IGrant {
   countries: string[]
   region?: string
   applicationLink?: string
+  bookmarkedBy?: Types.ObjectId[]
   createdBy: Types.ObjectId
   createdAt: Date
   updatedAt: Date
