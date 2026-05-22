@@ -1,54 +1,112 @@
-import NextAuth from 'next-auth'
+import NextAuth, { type DefaultSession } from 'next-auth'
 import { MongoDBAdapter } from '@auth/mongodb-adapter'
 import Credentials from 'next-auth/providers/credentials'
 import Google from 'next-auth/providers/google'
-import { MongoClient } from 'mongodb'
 import bcrypt from 'bcryptjs'
-import { connectDB } from './mongodb'
+import { clientPromise, connectDB } from './mongodb'
 import User from '@/models/User'
+import type { UserRole } from '@/types/database'
 
-const client = new MongoClient(process.env.MONGODB_URI!)
+// ── Module augmentation ───────────────────────────────────────────────────────
+//
+// Extends next-auth's built-in types so session.user.id and session.user.role
+// are fully typed everywhere — no more `as` casts.
+
+declare module 'next-auth' {
+  interface Session {
+    user: {
+      id: string
+      role: UserRole
+    } & DefaultSession['user']
+  }
+  interface User {
+    role?: UserRole
+  }
+}
+
+declare module 'next-auth/jwt' {
+  interface JWT {
+    id: string
+    role: UserRole
+  }
+}
+
+// ── NextAuth config ───────────────────────────────────────────────────────────
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
-  adapter: MongoDBAdapter(client),
+  adapter: MongoDBAdapter(clientPromise),
   session: { strategy: 'jwt' },
+
+  // Required when running behind Cloudflare / Railway reverse proxies
+  trustHost: true,
+
   pages: {
     signIn: '/login',
+    error: '/login',   // redirect auth errors back to login with ?error=
   },
+
   providers: [
     Google({
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+      profile(profile) {
+        return {
+          id: profile.sub,
+          name: profile.name,
+          email: profile.email,
+          image: profile.picture,
+          role: 'applicant' as UserRole,
+        }
+      },
     }),
+
     Credentials({
       credentials: {
         email: { label: 'Email', type: 'email' },
         password: { label: 'Password', type: 'password' },
       },
       async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) return null
+        const email = credentials?.email
+        const password = credentials?.password
+
+        if (typeof email !== 'string' || typeof password !== 'string') return null
+        if (!email || !password) return null
+
         await connectDB()
-        const user = await User.findOne({ email: credentials.email })
+        const user = await User.findOne({ email: email.toLowerCase().trim() }).lean()
         if (!user || !user.password) return null
-        const valid = await bcrypt.compare(credentials.password as string, user.password)
+
+        const valid = await bcrypt.compare(password, user.password)
         if (!valid) return null
-        return { id: user._id.toString(), email: user.email, name: user.name, role: user.role }
+
+        return {
+          id: user._id.toString(),
+          email: user.email,
+          name: user.name,
+          image: user.avatar ?? null,
+          role: user.role,
+        }
       },
     }),
   ],
+
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger, session }) {
+      // Persist role and id on first sign-in
       if (user) {
-        token.role = (user as { role?: string }).role
-        token.id = user.id
+        token.id = user.id as string
+        token.role = (user.role ?? 'applicant') as UserRole
+      }
+      // Allow the client to force a session refresh via update()
+      if (trigger === 'update' && session?.role) {
+        token.role = session.role as UserRole
       }
       return token
     },
+
     async session({ session, token }) {
-      if (session.user) {
-        (session.user as { role?: string; id?: string }).role = token.role as string
-        ;(session.user as { id?: string }).id = token.id as string
-      }
+      session.user.id = token.id
+      session.user.role = token.role
       return session
     },
   },
