@@ -2,7 +2,7 @@ import type { Types } from 'mongoose'
 
 // ── User ─────────────────────────────────────────────────────────────────────
 
-export type UserRole = 'admin' | 'applicant' | 'reviewer' | 'researcher'
+export type UserRole = 'admin' | 'student' | 'researcher' | 'lecturer' | 'institution'
 
 export interface IUser {
   _id: Types.ObjectId

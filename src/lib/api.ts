@@ -185,6 +185,7 @@ export interface RegisterBody {
   email: string
   password: string
   organization?: string
+  role?: 'student' | 'researcher' | 'lecturer' | 'institution'
 }
 
 export interface CreateGrantBody {

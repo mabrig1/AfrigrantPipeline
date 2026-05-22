@@ -7,10 +7,13 @@ import User from '../models/User'
 const router = Router()
 
 const registerSchema = z.object({
-  name: z.string().min(2),
-  email: z.string().email(),
-  password: z.string().min(8),
-  organization: z.string().optional(),
+  name: z.string().min(2).max(100).trim(),
+  email: z.string().email().toLowerCase(),
+  password: z.string().min(8).max(128),
+  organization: z.string().max(200).optional(),
+  role: z
+    .enum(['student', 'researcher', 'lecturer', 'institution'])
+    .default('student'),
 })
 
 router.post('/register', async (req, res) => {
