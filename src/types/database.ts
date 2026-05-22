@@ -77,7 +77,7 @@ export interface IApplication {
 // ── Article ──────────────────────────────────────────────────────────────────
 
 export type ArticleStatus = 'draft' | 'submitted' | 'under_review' | 'published' | 'rejected'
-export type ArticleLicense = 'CC-BY' | 'CC-BY-SA' | 'CC-BY-NC' | 'CC0' | 'all-rights-reserved'
+export type ArticleLicense = 'CC BY' | 'CC BY-SA' | 'CC BY-NC' | 'CC BY-ND' | 'CC0' | 'All Rights Reserved'
 
 export interface IArticle {
   _id: Types.ObjectId

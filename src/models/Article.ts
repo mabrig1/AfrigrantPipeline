@@ -71,10 +71,10 @@ const ArticleSchema = new Schema<IArticle>(
     license: {
       type: String,
       enum: {
-        values: ['CC-BY', 'CC-BY-SA', 'CC-BY-NC', 'CC0', 'all-rights-reserved'],
+        values: ['CC BY', 'CC BY-SA', 'CC BY-NC', 'CC BY-ND', 'CC0', 'All Rights Reserved'],
         message: '{VALUE} is not a valid license',
       },
-      default: 'all-rights-reserved',
+      default: 'All Rights Reserved',
     },
     publishedAt: {
       type: Date,
