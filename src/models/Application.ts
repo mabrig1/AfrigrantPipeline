@@ -1,21 +1,5 @@
-import mongoose, { Schema, Document, Model } from 'mongoose'
-
-export type ApplicationStatus = 'draft' | 'submitted' | 'under_review' | 'approved' | 'rejected'
-
-export interface IApplication extends Document {
-  grant: mongoose.Types.ObjectId
-  applicant: mongoose.Types.ObjectId
-  status: ApplicationStatus
-  projectTitle: string
-  projectDescription: string
-  requestedAmount: number
-  attachments: string[]
-  aiScore?: number
-  reviewerNotes?: string
-  submittedAt?: Date
-  createdAt: Date
-  updatedAt: Date
-}
+import mongoose, { Schema, Model } from 'mongoose'
+import type { IApplication } from '@/types/database'
 
 const ApplicationSchema = new Schema<IApplication>(
   {

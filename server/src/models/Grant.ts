@@ -1,5 +1,21 @@
 import mongoose, { Schema, Model } from 'mongoose'
-import type { IGrant } from '@/types/database'
+
+export interface IGrant {
+  _id: mongoose.Types.ObjectId
+  title: string
+  description: string
+  funder: string
+  amount: number
+  currency: string
+  deadline: Date
+  status: 'open' | 'closed' | 'draft'
+  eligibility: string[]
+  categories: string[]
+  applicationLink?: string
+  createdBy: mongoose.Types.ObjectId
+  createdAt: Date
+  updatedAt: Date
+}
 
 const GrantSchema = new Schema<IGrant>(
   {
@@ -10,9 +26,9 @@ const GrantSchema = new Schema<IGrant>(
     currency: { type: String, default: 'USD' },
     deadline: { type: Date, required: true },
     status: { type: String, enum: ['open', 'closed', 'draft'], default: 'open' },
-    eligibility: [{ type: String }],
-    categories: [{ type: String }],
-    applicationLink: { type: String },
+    eligibility: [String],
+    categories: [String],
+    applicationLink: String,
     createdBy: { type: Schema.Types.ObjectId, ref: 'User', required: true },
   },
   { timestamps: true }

@@ -1,22 +1,17 @@
-import mongoose, { Schema, Document, Model } from 'mongoose'
-
-export interface IUser extends Document {
-  name: string
-  email: string
-  password: string
-  role: 'admin' | 'applicant' | 'reviewer'
-  organization?: string
-  createdAt: Date
-  updatedAt: Date
-}
+import mongoose, { Schema, Model } from 'mongoose'
+import type { IUser } from '@/types/database'
 
 const UserSchema = new Schema<IUser>(
   {
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true, lowercase: true },
-    password: { type: String, required: true },
-    role: { type: String, enum: ['admin', 'applicant', 'reviewer'], default: 'applicant' },
+    password: { type: String },
+    role: { type: String, enum: ['admin', 'applicant', 'reviewer', 'researcher'], default: 'applicant' },
     organization: { type: String },
+    bio: { type: String },
+    avatar: { type: String },
+    researchInterests: [{ type: String }],
+    country: { type: String },
   },
   { timestamps: true }
 )

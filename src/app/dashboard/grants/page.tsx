@@ -1,6 +1,6 @@
 import { auth } from '@/lib/auth'
 import { redirect } from 'next/navigation'
-import { connectDB } from '@/lib/db'
+import { connectDB } from '@/lib/mongodb'
 import Grant from '@/models/Grant'
 import { format } from 'date-fns'
 

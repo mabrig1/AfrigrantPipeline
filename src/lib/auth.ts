@@ -1,9 +1,10 @@
 import NextAuth from 'next-auth'
 import { MongoDBAdapter } from '@auth/mongodb-adapter'
 import Credentials from 'next-auth/providers/credentials'
+import Google from 'next-auth/providers/google'
 import { MongoClient } from 'mongodb'
 import bcrypt from 'bcryptjs'
-import { connectDB } from './db'
+import { connectDB } from './mongodb'
 import User from '@/models/User'
 
 const client = new MongoClient(process.env.MONGODB_URI!)
@@ -15,6 +16,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     signIn: '/login',
   },
   providers: [
+    Google({
+      clientId: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+    }),
     Credentials({
       credentials: {
         email: { label: 'Email', type: 'email' },
@@ -24,7 +29,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         if (!credentials?.email || !credentials?.password) return null
         await connectDB()
         const user = await User.findOne({ email: credentials.email })
-        if (!user) return null
+        if (!user || !user.password) return null
         const valid = await bcrypt.compare(credentials.password as string, user.password)
         if (!valid) return null
         return { id: user._id.toString(), email: user.email, name: user.name, role: user.role }

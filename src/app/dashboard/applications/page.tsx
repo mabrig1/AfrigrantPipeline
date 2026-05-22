@@ -1,6 +1,6 @@
 import { auth } from '@/lib/auth'
 import { redirect } from 'next/navigation'
-import { connectDB } from '@/lib/db'
+import { connectDB } from '@/lib/mongodb'
 import Application from '@/models/Application'
 
 const statusColors: Record<string, string> = {
