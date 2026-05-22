@@ -17,41 +17,81 @@ import aiRoutes from './routes/ai'
 const app = express()
 const PORT = process.env.PORT ?? 8080
 
-app.set('trust proxy', 1)
+// ── Proxy & security ──────────────────────────────────────────────────────────
 
+app.set('trust proxy', 1)
 app.use(helmet())
+
+// ── CORS ──────────────────────────────────────────────────────────────────────
+
+const allowedOrigins = [
+  'https://afrigrantpipeline.com',
+  'https://www.afrigrantpipeline.com',
+  'http://localhost:3000',
+  ...(process.env.EXTRA_ORIGINS ? process.env.EXTRA_ORIGINS.split(',') : []),
+]
+
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL ?? 'http://localhost:3000',
+    origin: (origin, callback) => {
+      // Allow server-to-server (no origin) and whitelisted origins
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true)
+      } else {
+        callback(new Error(`CORS: origin '${origin}' not allowed`))
+      }
+    },
     credentials: true,
-  })
+    methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  }),
 )
+
 app.use(express.json({ limit: '10mb' }))
 
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 100,
-  standardHeaders: true,
-  legacyHeaders: false,
-  keyGenerator: (req) =>
-    (req.headers['cf-connecting-ip'] as string) ?? req.ip ?? 'unknown',
-})
-app.use(limiter)
+// ── Global rate limit ─────────────────────────────────────────────────────────
 
-app.get('/health', (_req, res) => res.json({ status: 'ok' }))
+app.use(
+  rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 min
+    max: 200,
+    standardHeaders: true,
+    legacyHeaders: false,
+    // Respect Cloudflare real IP
+    keyGenerator: (req) =>
+      (req.headers['cf-connecting-ip'] as string) ?? req.ip ?? 'unknown',
+  }),
+)
 
-app.use('/api/auth', authRoutes)
-app.use('/api/grants', grantsRoutes)
-app.use('/api/applications', applicationsRoutes)
-app.use('/api/articles', articlesRoutes)
-app.use('/api/collaborations', collaborationsRoutes)
-app.use('/api/mentorships', mentorshipsRoutes)
-app.use('/api/profiles', profilesRoutes)
-app.use('/api/ai', aiRoutes)
+// ── Health check ──────────────────────────────────────────────────────────────
+
+app.get('/health', (_req, res) => res.json({ status: 'ok', timestamp: new Date().toISOString() }))
+
+// ── API v1 routes ─────────────────────────────────────────────────────────────
+
+app.use('/api/v1/auth', authRoutes)
+app.use('/api/v1/grants', grantsRoutes)
+app.use('/api/v1/applications', applicationsRoutes)
+app.use('/api/v1/articles', articlesRoutes)
+app.use('/api/v1/collaborations', collaborationsRoutes)
+app.use('/api/v1/mentorships', mentorshipsRoutes)
+app.use('/api/v1/profiles', profilesRoutes)
+app.use('/api/v1/ai', aiRoutes)
+
+// ── 404 fallthrough ───────────────────────────────────────────────────────────
+
+app.use((_req, res) => res.status(404).json({ error: 'Route not found' }))
+
+// ── Database & server start ───────────────────────────────────────────────────
 
 mongoose
-  .connect(process.env.MONGODB_URI!)
+  .connect(process.env.MONGODB_URI!, {
+    maxPoolSize: 10,
+    serverSelectionTimeoutMS: 5000,
+    socketTimeoutMS: 45000,
+  })
   .then(() => {
+    console.log('MongoDB connected')
     app.listen(PORT, () => console.log(`Server running on port ${PORT}`))
   })
   .catch((err) => {

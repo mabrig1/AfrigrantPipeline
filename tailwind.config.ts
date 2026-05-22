@@ -9,6 +9,7 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      // ── Semantic colour tokens (driven by CSS custom properties) ────────────
       colors: {
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
@@ -43,11 +44,56 @@ const config: Config = {
           DEFAULT: 'hsl(var(--card))',
           foreground: 'hsl(var(--card-foreground))',
         },
+        // ── Brand gold ───────────────────────────────────────────────────────
+        gold: {
+          DEFAULT: 'hsl(var(--gold))',
+          foreground: 'hsl(var(--gold-foreground))',
+          muted: 'hsl(var(--gold-muted))',
+        },
+        // ── Raised surface layers ────────────────────────────────────────────
+        surface: {
+          1: 'hsl(var(--surface-1))',
+          2: 'hsl(var(--surface-2))',
+          3: 'hsl(var(--surface-3))',
+        },
       },
+
+      // ── Typography ──────────────────────────────────────────────────────────
+      fontFamily: {
+        sans: ['var(--font-sans)', 'system-ui', 'sans-serif'],
+      },
+
+      // ── Border radius ───────────────────────────────────────────────────────
       borderRadius: {
         lg: 'var(--radius)',
         md: 'calc(var(--radius) - 2px)',
         sm: 'calc(var(--radius) - 4px)',
+      },
+
+      // ── Animations ──────────────────────────────────────────────────────────
+      keyframes: {
+        'fade-up': {
+          from: { opacity: '0', transform: 'translateY(20px)' },
+          to: { opacity: '1', transform: 'translateY(0)' },
+        },
+        'fade-in': {
+          from: { opacity: '0' },
+          to: { opacity: '1' },
+        },
+        shimmer: {
+          from: { backgroundPosition: '-200% center' },
+          to: { backgroundPosition: '200% center' },
+        },
+        'slide-down': {
+          from: { opacity: '0', transform: 'translateY(-8px)' },
+          to: { opacity: '1', transform: 'translateY(0)' },
+        },
+      },
+      animation: {
+        'fade-up': 'fade-up 0.6s ease-out both',
+        'fade-in': 'fade-in 0.4s ease-out both',
+        shimmer: 'shimmer 3s linear infinite',
+        'slide-down': 'slide-down 0.2s ease-out both',
       },
     },
   },

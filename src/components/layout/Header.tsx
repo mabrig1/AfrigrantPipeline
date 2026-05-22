@@ -1,43 +1,78 @@
 import Link from 'next/link'
 import { auth } from '@/lib/auth'
-import { Button } from '@/components/ui/button'
+import MobileMenu from './MobileMenu'
+
+const navLinks = [
+  { label: 'Grants', href: '/grants' },
+  { label: 'AfriPublish', href: '/articles' },
+  { label: 'Collaborate', href: '/collaborations' },
+  { label: 'Mentorship', href: '/mentorships' },
+]
 
 export default async function Header() {
   const session = await auth()
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-2">
-          <span className="text-xl font-bold text-primary">AfrigrantPipeline</span>
+    <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur-md supports-[backdrop-filter]:bg-background/80">
+      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
+        {/* Logo */}
+        <Link
+          href="/"
+          className="flex items-center gap-1.5 text-lg font-extrabold tracking-tight transition-opacity hover:opacity-80"
+        >
+          Afri<span className="text-gold">grant</span>Pipeline
         </Link>
-        <nav className="hidden md:flex items-center gap-6 text-sm">
-          <Link href="/grants" className="text-muted-foreground hover:text-foreground transition-colors">Grants</Link>
-          <Link href="/research" className="text-muted-foreground hover:text-foreground transition-colors">Research</Link>
-          <Link href="/collaborate" className="text-muted-foreground hover:text-foreground transition-colors">Collaborate</Link>
-          <Link href="/mentorship" className="text-muted-foreground hover:text-foreground transition-colors">Mentorship</Link>
+
+        {/* Desktop nav */}
+        <nav className="hidden items-center gap-1 md:flex">
+          {navLinks.map(({ label, href }) => (
+            <Link
+              key={href}
+              href={href}
+              className="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+            >
+              {label}
+            </Link>
+          ))}
         </nav>
-        <div className="flex items-center gap-3">
+
+        {/* Desktop auth */}
+        <div className="hidden items-center gap-2 md:flex">
           {session?.user ? (
             <>
-              <Link href="/dashboard">
-                <Button variant="ghost" size="sm">Dashboard</Button>
+              <Link
+                href="/dashboard"
+                className="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+              >
+                Dashboard
               </Link>
-              <Link href="/profile">
-                <Button variant="outline" size="sm">{session.user.name ?? 'Profile'}</Button>
+              <Link
+                href="/profile"
+                className="inline-flex items-center gap-2 rounded-lg border border-border bg-surface-2 px-4 py-2 text-sm font-medium transition-colors hover:border-gold/40 hover:bg-surface-3"
+              >
+                {session.user.name?.split(' ')[0] ?? 'Profile'}
               </Link>
             </>
           ) : (
             <>
-              <Link href="/login">
-                <Button variant="ghost" size="sm">Sign In</Button>
+              <Link
+                href="/login"
+                className="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+              >
+                Sign In
               </Link>
-              <Link href="/register">
-                <Button size="sm">Get Started</Button>
+              <Link
+                href="/signup"
+                className="inline-flex items-center rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition-all hover:opacity-90 active:scale-[0.98]"
+              >
+                Get Started
               </Link>
             </>
           )}
         </div>
+
+        {/* Mobile — delegate to client component */}
+        <MobileMenu navLinks={navLinks} user={session?.user ?? null} />
       </div>
     </header>
   )

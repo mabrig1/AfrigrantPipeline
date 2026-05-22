@@ -2,58 +2,218 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ── Design tokens ─────────────────────────────────────────────────────────── */
+/*
+ * Dark-first: :root carries the dark palette by default.
+ * Add class="light" to <html> for a light override.
+ *
+ * Primary colour: brand gold #F0B429 → hsl(42, 87%, 55%)
+ * Background:     deep navy  #0D111A → hsl(220, 20%, 7%)
+ */
+
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 142 76% 36%;
-    --primary-foreground: 355.7 100% 97.3%;
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 142 76% 36%;
+    /* ── Canvas ───────────────────────────────────────────────────────────── */
+    --background:       220 20% 7%;     /* #0D111A */
+    --foreground:       214 30% 92%;    /* #E2EAF5 */
+
+    /* ── Cards & popovers ────────────────────────────────────────────────── */
+    --card:             220 20% 10%;    /* #131922 */
+    --card-foreground:  214 30% 92%;
+    --popover:          220 20% 10%;
+    --popover-foreground: 214 30% 92%;
+
+    /* ── Brand gold  #F0B429 ─────────────────────────────────────────────── */
+    --primary:          42 87% 55%;
+    --primary-foreground: 220 20% 7%;  /* dark text sits on gold */
+
+    /* ── Secondary / muted ───────────────────────────────────────────────── */
+    --secondary:        220 20% 14%;   /* #1A2231 */
+    --secondary-foreground: 214 30% 92%;
+
+    --muted:            220 20% 14%;
+    --muted-foreground: 218 14% 55%;   /* #7C8EA3 */
+
+    --accent:           220 20% 17%;
+    --accent-foreground: 214 30% 92%;
+
+    /* ── Destructive ─────────────────────────────────────────────────────── */
+    --destructive:      0 72% 51%;
+    --destructive-foreground: 0 0% 98%;
+
+    /* ── Borders, inputs, focus ring ─────────────────────────────────────── */
+    --border:           220 20% 18%;   /* #222D3F */
+    --input:            220 20% 18%;
+    --ring:             42 87% 55%;    /* gold focus ring */
+
+    /* ── Corner radius ───────────────────────────────────────────────────── */
     --radius: 0.5rem;
+
+    /* ── Brand extras ────────────────────────────────────────────────────── */
+    --gold:             42 87% 55%;
+    --gold-foreground:  220 20% 7%;
+    --gold-muted:       42 40% 20%;    /* very dark gold for bg washes */
+
+    /* ── Raised surface layers (card → surface-1 → surface-2 → surface-3) ─ */
+    --surface-1:        220 20% 10%;
+    --surface-2:        220 20% 14%;
+    --surface-3:        220 20% 18%;
   }
 
-  .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 142 76% 36%;
-    --primary-foreground: 355.7 100% 97.3%;
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 142 76% 36%;
+  /* ── Optional light mode via <html class="light"> ────────────────────────── */
+  .light {
+    --background:     0 0% 100%;
+    --foreground:     222 47% 11%;
+    --card:           0 0% 100%;
+    --card-foreground: 222 47% 11%;
+    --popover:        0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+    --primary:        42 87% 44%;      /* slightly darker gold on white */
+    --primary-foreground: 0 0% 100%;
+    --secondary:      210 40% 96%;
+    --secondary-foreground: 222 47% 11%;
+    --muted:          210 40% 96%;
+    --muted-foreground: 215 16% 47%;
+    --accent:         210 40% 96%;
+    --accent-foreground: 222 47% 11%;
+    --destructive:    0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+    --border:         214 32% 91%;
+    --input:          214 32% 91%;
+    --ring:           42 87% 44%;
+    --gold:           42 87% 44%;
+    --gold-foreground: 0 0% 100%;
+    --gold-muted:     42 80% 92%;
+    --surface-1:      0 0% 100%;
+    --surface-2:      210 40% 97%;
+    --surface-3:      210 40% 94%;
   }
 }
+
+/* ── Base styles ────────────────────────────────────────────────────────────── */
 
 @layer base {
   * {
     @apply border-border;
   }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
   body {
     @apply bg-background text-foreground;
+    font-feature-settings: 'cv11', 'ss01';
   }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-semibold tracking-tight;
+  }
+
+  /* ── Custom scrollbar ─────────────────────────────────────────────────────── */
+  ::-webkit-scrollbar            { width: 5px; height: 5px; }
+  ::-webkit-scrollbar-track      { background: transparent; }
+  ::-webkit-scrollbar-thumb      {
+    background: hsl(var(--border));
+    border-radius: 99px;
+  }
+  ::-webkit-scrollbar-thumb:hover { background: hsl(var(--gold) / 0.7); }
+
+  /* ── Text selection colour ────────────────────────────────────────────────── */
+  ::selection {
+    background: hsl(var(--gold) / 0.22);
+    color: hsl(var(--foreground));
+  }
+
+  /* ── Focus ring ───────────────────────────────────────────────────────────── */
+  :focus-visible {
+    outline: 2px solid hsl(var(--ring));
+    outline-offset: 2px;
+    border-radius: calc(var(--radius) - 2px);
+  }
+}
+
+/* ── Component classes ──────────────────────────────────────────────────────── */
+
+@layer components {
+
+  /* Hero section — dark grid + radial gold glow ─────────────────────────────── */
+  .hero-bg {
+    background:
+      /* gold radial glow at top-centre */
+      radial-gradient(
+        ellipse 90% 55% at 50% -5%,
+        hsl(var(--gold) / 0.13) 0%,
+        transparent 65%
+      ),
+      /* subtle dot grid */
+      radial-gradient(
+        circle,
+        hsl(var(--border) / 0.55) 1px,
+        transparent 1px
+      ),
+      hsl(var(--background));
+    background-size: 100%, 36px 36px, 100%;
+    background-position: center top, 0 0, 0 0;
+  }
+
+  /* Animated gold-shimmer gradient text ─────────────────────────────────────── */
+  .text-gradient {
+    background: linear-gradient(
+      100deg,
+      hsl(42 87% 50%)  0%,
+      hsl(42 100% 72%) 45%,
+      hsl(42 87% 50%)  100%
+    );
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: shimmer 3.5s linear infinite;
+  }
+
+  /* Card with gold border glow on hover ─────────────────────────────────────── */
+  .card-hover {
+    @apply transition-all duration-200 ease-out;
+  }
+  .card-hover:hover {
+    border-color: hsl(var(--gold) / 0.4);
+    box-shadow:
+      0 0 0 1px hsl(var(--gold) / 0.12),
+      0 8px 32px hsl(220 20% 4% / 0.6);
+    transform: translateY(-2px);
+  }
+
+  /* Gold pill badge ──────────────────────────────────────────────────────────── */
+  .badge-gold {
+    @apply inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium;
+    background: hsl(var(--gold) / 0.1);
+    color: hsl(var(--gold));
+    border: 1px solid hsl(var(--gold) / 0.25);
+  }
+
+  /* Step connector line (shown between How-It-Works steps on md+) ────────────── */
+  .step-connector {
+    @apply hidden md:block absolute top-6 left-[calc(50%+2rem)] right-[calc(-50%+2rem)] h-px;
+    background: linear-gradient(
+      90deg,
+      hsl(var(--gold) / 0.4),
+      hsl(var(--border))
+    );
+  }
+}
+
+/* ── Utility classes ────────────────────────────────────────────────────────── */
+
+@layer utilities {
+  .text-balance  { text-wrap: balance; }
+  .text-pretty   { text-wrap: pretty; }
+
+  /* Explicit surface utilities (supplement Tailwind generated ones) */
+  .bg-surface-1  { background-color: hsl(var(--surface-1)); }
+  .bg-surface-2  { background-color: hsl(var(--surface-2)); }
+  .bg-surface-3  { background-color: hsl(var(--surface-3)); }
 }
