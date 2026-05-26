@@ -14,27 +14,27 @@
 @layer base {
   :root {
     /* ── Canvas ───────────────────────────────────────────────────────────── */
-    --background:       220 20% 7%;     /* #0D111A */
+    --background:       213 31% 6%;     /* #0A0E13 */
     --foreground:       214 30% 92%;    /* #E2EAF5 */
 
     /* ── Cards & popovers ────────────────────────────────────────────────── */
-    --card:             220 20% 10%;    /* #131922 */
+    --card:             219 31% 13%;    /* #161D2A */
     --card-foreground:  214 30% 92%;
-    --popover:          220 20% 10%;
+    --popover:          219 31% 13%;
     --popover-foreground: 214 30% 92%;
 
     /* ── Brand gold  #F0B429 ─────────────────────────────────────────────── */
     --primary:          42 87% 55%;
-    --primary-foreground: 220 20% 7%;  /* dark text sits on gold */
+    --primary-foreground: 213 31% 6%;  /* dark text sits on gold */
 
     /* ── Secondary / muted ───────────────────────────────────────────────── */
-    --secondary:        220 20% 14%;   /* #1A2231 */
+    --secondary:        219 26% 17%;   /* #1F2835 */
     --secondary-foreground: 214 30% 92%;
 
-    --muted:            220 20% 14%;
+    --muted:            219 26% 17%;
     --muted-foreground: 218 14% 55%;   /* #7C8EA3 */
 
-    --accent:           220 20% 17%;
+    --accent:           219 22% 21%;   /* #283040 */
     --accent-foreground: 214 30% 92%;
 
     /* ── Destructive ─────────────────────────────────────────────────────── */
@@ -42,22 +42,22 @@
     --destructive-foreground: 0 0% 98%;
 
     /* ── Borders, inputs, focus ring ─────────────────────────────────────── */
-    --border:           220 20% 18%;   /* #222D3F */
-    --input:            220 20% 18%;
+    --border:           219 20% 23%;   /* #2C3649 */
+    --input:            219 20% 23%;
     --ring:             42 87% 55%;    /* gold focus ring */
 
     /* ── Corner radius ───────────────────────────────────────────────────── */
     --radius: 0.5rem;
 
     /* ── Brand extras ────────────────────────────────────────────────────── */
-    --gold:             42 87% 55%;
-    --gold-foreground:  220 20% 7%;
-    --gold-muted:       42 40% 20%;    /* very dark gold for bg washes */
+    --gold:             42 87% 55%;    /* #F0B429 */
+    --gold-foreground:  213 31% 6%;
+    --gold-muted:       42 40% 18%;    /* very dark gold for bg washes */
 
     /* ── Raised surface layers (card → surface-1 → surface-2 → surface-3) ─ */
-    --surface-1:        220 20% 10%;
-    --surface-2:        220 20% 14%;
-    --surface-3:        220 20% 18%;
+    --surface-1:        219 31% 13%;   /* #161D2A — same as card */
+    --surface-2:        219 26% 17%;   /* #1F2835 — same as secondary */
+    --surface-3:        219 22% 21%;   /* #283040 — same as accent */
   }
 
   /* ── Optional light mode via <html class="light"> ────────────────────────── */

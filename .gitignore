@@ -1,35 +1,49 @@
-# deps
+# ── Node / package managers ─────────────────────────────────────────────────
 /node_modules
+server/node_modules
 /.pnp
 .pnp.js
 .yarn/install-state.gz
 
-# testing
-/coverage
-
-# next.js
+# ── Build outputs ───────────────────────────────────────────────────────────
 /.next/
 /out/
-
-# production
 /build
+server/dist
+server/build
 
-# misc
-.DS_Store
-*.pem
+# ── Environment files (NEVER commit real secrets) ──────────────────────────
+.env
+.env.local
+.env.*.local
+server/.env
+server/.env.local
+server/.env.production
 
-# debug
+# ── Logs ────────────────────────────────────────────────────────────────────
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+pnpm-debug.log*
+*.log
 
-# local env files
-.env*.local
-.env
+# ── Testing ─────────────────────────────────────────────────────────────────
+/coverage
+server/coverage
 
-# vercel
-.vercel
-
-# typescript
+# ── TypeScript ──────────────────────────────────────────────────────────────
 *.tsbuildinfo
 next-env.d.ts
+server/tsconfig.tsbuildinfo
+
+# ── Vercel ──────────────────────────────────────────────────────────────────
+.vercel
+
+# ── OS / editor ─────────────────────────────────────────────────────────────
+.DS_Store
+*.pem
+.idea/
+.vscode/settings.json
+*.swp
+*.swo
+Thumbs.db

@@ -95,7 +95,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       // Persist role and id on first sign-in
       if (user) {
         token.id = user.id as string
-        token.role = (user.role ?? 'applicant') as UserRole
+        token.role = (user.role ?? 'student') as UserRole
       }
       // Allow the client to force a session refresh via update()
       if (trigger === 'update' && session?.role) {

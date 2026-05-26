@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Check, ChevronRight, ChevronLeft, Loader2, X, AlertCircle, CheckCircle2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { articlesApi } from '@/lib/api'
 import type { JournalResponse, ArticleLicense } from '@/lib/api'
 
 // ── Constants ─────────────────────────────────────────────────────────────────

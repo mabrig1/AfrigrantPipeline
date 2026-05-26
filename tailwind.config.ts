@@ -10,6 +10,11 @@ const config: Config = {
   theme: {
     extend: {
       // ── Semantic colour tokens (driven by CSS custom properties) ────────────
+      //
+      // Brand palette reference (exact hex → HSL):
+      //   #F0B429  brand gold   → hsl(42, 87%, 55%)   → var(--gold)
+      //   #0A0E13  dark bg      → hsl(213, 31%, 6%)    → var(--background)
+      //   #161D2A  card surface → hsl(219, 31%, 13%)   → var(--card)
       colors: {
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
