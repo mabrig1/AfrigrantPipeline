@@ -1,29 +1,33 @@
-import { auth } from '@/lib/auth'
+import { NextRequest, NextResponse } from 'next/server'
+import { getToken } from 'next-auth/jwt'
 
-export default auth((req) => {
+export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl
-  const isLoggedIn = !!req.auth
+  const token = await getToken({
+    req,
+    secret: process.env.AUTH_SECRET,
+  })
 
+  const isLoggedIn = !!token
   const isDashboard = pathname.startsWith('/dashboard')
   const isAuthPage =
     pathname.startsWith('/login') ||
     pathname.startsWith('/signup')
 
-  // Redirect unauthenticated users trying to access dashboard
   if (isDashboard && !isLoggedIn) {
     const loginUrl = new URL('/login', req.nextUrl)
     loginUrl.searchParams.set('callbackUrl', pathname)
-    return Response.redirect(loginUrl)
+    return NextResponse.redirect(loginUrl)
   }
 
-  // Redirect already-authenticated users away from auth pages
   if (isAuthPage && isLoggedIn) {
     const callbackUrl = req.nextUrl.searchParams.get('callbackUrl') ?? '/dashboard'
-    // Ensure callbackUrl is a relative path to prevent open-redirect
     const safeCallback = callbackUrl.startsWith('/') ? callbackUrl : '/dashboard'
-    return Response.redirect(new URL(safeCallback, req.nextUrl))
+    return NextResponse.redirect(new URL(safeCallback, req.nextUrl))
   }
-})
+
+  return NextResponse.next()
+}
 
 export const config = {
   matcher: [
