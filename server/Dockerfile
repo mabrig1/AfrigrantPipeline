@@ -2,11 +2,12 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-COPY package*.json ./
+# Copy server package files (build context is repo root)
+COPY server/package*.json ./
 RUN npm ci
 
-COPY tsconfig.json ./
-COPY src/ ./src/
+COPY server/tsconfig.json ./
+COPY server/src/ ./src/
 
 RUN npm run build
 
@@ -17,7 +18,7 @@ WORKDIR /app
 
 ENV NODE_ENV=production
 
-COPY package*.json ./
+COPY server/package*.json ./
 RUN npm ci --omit=dev
 
 COPY --from=builder /app/dist ./dist
