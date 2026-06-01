@@ -2,7 +2,11 @@ import { type NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import OpenAI from 'openai'
 
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
+let _openai: OpenAI | null = null
+function getOpenAI(): OpenAI {
+  if (!_openai) _openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
+  return _openai
+}
 
 type TemplateKey = 'proposal' | 'abstract' | 'description' | 'cover_letter' | 'aim'
 
@@ -75,7 +79,7 @@ export async function POST(req: NextRequest) {
   const wordCount = Math.min(Math.max(body.wordCount ?? 300, 50), 1200)
 
   try {
-    const stream = await openai.chat.completions.create({
+    const stream = await getOpenAI().chat.completions.create({
       model: 'gpt-4o-mini',
       messages: [
         { role: 'system', content: SYSTEM_PROMPT },
