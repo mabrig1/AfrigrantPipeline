@@ -84,19 +84,20 @@ app.use((_req, res) => res.status(404).json({ error: 'Route not found' }))
 
 // ── Database & server start ───────────────────────────────────────────────────
 
+// Start HTTP server immediately so Railway healthcheck passes,
+// then connect to MongoDB. If DB connection fails, log and exit.
+const server = app.listen(PORT, () => console.log(`Server running on port ${PORT}`))
+
 mongoose
   .connect(process.env.MONGODB_URI!, {
     maxPoolSize: 10,
     serverSelectionTimeoutMS: 5000,
     socketTimeoutMS: 45000,
   })
-  .then(() => {
-    console.log('MongoDB connected')
-    app.listen(PORT, () => console.log(`Server running on port ${PORT}`))
-  })
+  .then(() => console.log('MongoDB connected'))
   .catch((err) => {
     console.error('MongoDB connection failed:', err)
-    process.exit(1)
+    server.close(() => process.exit(1))
   })
 
 export default app
