@@ -2,8 +2,9 @@ import { Suspense } from 'react'
 import { differenceInDays } from 'date-fns'
 import { Search } from 'lucide-react'
 import { auth } from '@/lib/auth'
-import { grantsApi } from '@/lib/api'
-import type { GrantListParams } from '@/lib/api'
+import { connectDB } from '@/lib/mongodb'
+import Grant from '@/models/Grant'
+import type { GrantResponse } from '@/lib/api'
 import type { GrantType } from '@/types/database'
 import GrantCard from '@/components/grants/GrantCard'
 import GrantFilters from '@/components/grants/GrantFilters'
@@ -44,21 +45,52 @@ export default async function GrantsPage({ searchParams }: PageProps) {
   const session = await auth()
   const isLoggedIn = !!session?.user
 
-  // Build API query
-  const apiParams: GrantListParams = {
-    status: 'open',
-    search: params.search || undefined,
-    grantType: (params.grantType || undefined) as GrantType | undefined,
-    // Fetch more when deadline filter is active (we post-filter locally)
-    limit: params.deadline ? 100 : 24,
-    page: params.page ? Math.max(1, parseInt(params.page)) : 1,
+  // Build MongoDB filter
+  const filter: Record<string, unknown> = { status: 'open' }
+  if (params.grantType) filter.grantType = params.grantType
+  if (params.search) filter.$text = { $search: params.search }
+
+  let grants: GrantResponse[] = []
+  let error: string | null = null
+
+  try {
+    await connectDB()
+    const limit = params.deadline ? 100 : 24
+    const page = params.page ? Math.max(1, parseInt(params.page)) : 1
+    const skip = (page - 1) * limit
+
+    const raw = await Grant.find(filter)
+      .sort(params.search ? { score: { $meta: 'textScore' } } : { deadline: 1 })
+      .skip(skip)
+      .limit(limit)
+      .lean()
+
+    // Serialize: ObjectId → string, Date → ISO string
+    grants = raw.map((g) => ({
+      _id: g._id.toString(),
+      title: g.title,
+      description: g.description,
+      funder: g.funder,
+      amount: g.amount,
+      currency: g.currency,
+      deadline: new Date(g.deadline).toISOString(),
+      status: g.status,
+      grantType: (g.grantType ?? 'other') as GrantType,
+      eligibility: g.eligibility ?? [],
+      categories: g.categories ?? [],
+      countries: g.countries ?? [],
+      region: g.region,
+      applicationLink: g.applicationLink,
+      createdBy: g.createdBy.toString(),
+      createdAt: new Date(g.createdAt).toISOString(),
+      updatedAt: new Date(g.updatedAt).toISOString(),
+    }))
+  } catch (err) {
+    error = err instanceof Error ? err.message : 'Failed to load grants'
   }
 
-  const { data: rawGrants, error } = await grantsApi.list(apiParams)
-
   // Post-filter by deadline window if requested
-  let grants = rawGrants ?? []
-  if (params.deadline) {
+  if (params.deadline && !error) {
     const days = parseInt(params.deadline)
     if (!isNaN(days)) {
       grants = grants.filter((g) => {
@@ -89,7 +121,6 @@ export default async function GrantsPage({ searchParams }: PageProps) {
       <div className="grid gap-8 lg:grid-cols-[260px_1fr]">
         {/* Filters sidebar */}
         <aside className="lg:sticky lg:top-20 lg:self-start">
-          {/* Suspense boundary needed because GrantFilters reads useSearchParams */}
           <Suspense fallback={null}>
             <GrantFilters />
           </Suspense>
