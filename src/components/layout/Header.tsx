@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { auth } from '@/lib/auth'
+import { auth, signOut } from '@/lib/auth'
 import MobileMenu from './MobileMenu'
 
 const navLinks = [
@@ -47,11 +47,24 @@ export default async function Header() {
                 Dashboard
               </Link>
               <Link
-                href="/profile"
+                href="/dashboard/settings"
                 className="inline-flex items-center gap-2 rounded-lg border border-border bg-surface-2 px-4 py-2 text-sm font-medium transition-colors hover:border-gold/40 hover:bg-surface-3"
               >
                 {session.user.name?.split(' ')[0] ?? 'Profile'}
               </Link>
+              <form
+                action={async () => {
+                  'use server'
+                  await signOut({ redirectTo: '/' })
+                }}
+              >
+                <button
+                  type="submit"
+                  className="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+                >
+                  Sign out
+                </button>
+              </form>
             </>
           ) : (
             <>

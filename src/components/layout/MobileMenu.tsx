@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { signOut } from 'next-auth/react'
 import { Menu, X, ArrowRight } from 'lucide-react'
 
 interface NavLink {
@@ -92,11 +93,17 @@ export default function MobileMenu({ navLinks, user }: MobileMenuProps) {
                 Dashboard
               </Link>
               <Link
-                href="/profile"
+                href="/dashboard/settings"
                 className="flex items-center justify-center rounded-lg border border-border bg-surface-2 py-2.5 text-sm font-medium transition-colors hover:border-gold/40"
               >
                 {user.name?.split(' ')[0] ?? 'Profile'}
               </Link>
+              <button
+                onClick={() => signOut({ callbackUrl: '/' })}
+                className="flex items-center justify-center rounded-lg border border-border bg-surface-2 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:border-red-500/30 hover:text-red-400"
+              >
+                Sign out
+              </button>
             </>
           ) : (
             <>

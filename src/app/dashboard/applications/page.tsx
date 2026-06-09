@@ -2,13 +2,16 @@ import { auth } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 import { connectDB } from '@/lib/mongodb'
 import Application from '@/models/Application'
+import { cn } from '@/lib/utils'
+import { FileText } from 'lucide-react'
+import type { ApplicationStatus } from '@/types/database'
 
-const statusColors: Record<string, string> = {
-  draft: 'bg-gray-100 text-gray-700',
-  submitted: 'bg-blue-100 text-blue-700',
-  under_review: 'bg-yellow-100 text-yellow-700',
-  approved: 'bg-green-100 text-green-700',
-  rejected: 'bg-red-100 text-red-700',
+const STATUS_CONFIG: Record<string, { label: string; cls: string }> = {
+  draft:        { label: 'Draft',        cls: 'bg-muted/40 text-muted-foreground border-border' },
+  submitted:    { label: 'Submitted',    cls: 'bg-blue-500/10 text-blue-400 border-blue-500/20' },
+  under_review: { label: 'Under Review', cls: 'bg-amber-500/10 text-amber-400 border-amber-500/20' },
+  approved:     { label: 'Approved',     cls: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' },
+  rejected:     { label: 'Rejected',     cls: 'bg-red-500/10 text-red-400 border-red-500/20' },
 }
 
 export default async function ApplicationsPage() {
@@ -16,43 +19,53 @@ export default async function ApplicationsPage() {
   if (!session?.user) redirect('/login')
 
   await connectDB()
-  const userId = (session.user as { id?: string }).id
-  const applications = await Application.find({ applicant: userId })
+  const applications = await Application.find({ applicant: session.user.id })
     .populate('grant', 'title funder deadline')
     .sort({ createdAt: -1 })
     .lean()
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-white border-b border-gray-200 px-6 py-4">
-        <div className="max-w-7xl mx-auto">
-          <h1 className="text-xl font-bold text-green-800">My Applications</h1>
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-2xl font-extrabold tracking-tight">My Applications</h1>
+        <p className="mt-1 text-sm text-muted-foreground">
+          {applications.length} application{applications.length !== 1 ? 's' : ''} submitted
+        </p>
+      </div>
+
+      {applications.length === 0 ? (
+        <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border py-20 text-center">
+          <FileText className="mb-3 size-10 text-muted-foreground/30" />
+          <p className="font-medium">No applications yet</p>
+          <p className="mt-1 text-sm text-muted-foreground">Browse grants and submit your first application.</p>
         </div>
-      </header>
-      <main className="max-w-7xl mx-auto px-6 py-8">
-        {applications.length === 0 ? (
-          <p className="text-gray-500">You have not submitted any applications yet.</p>
-        ) : (
-          <div className="grid gap-4">
-            {applications.map((app) => {
-              const grant = app.grant as { title?: string; funder?: string }
-              return (
-                <div key={app._id.toString()} className="bg-white rounded-xl border border-gray-200 p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h3 className="text-lg font-semibold text-gray-900">{app.projectTitle}</h3>
-                      <p className="text-sm text-gray-500">{grant?.title} — {grant?.funder}</p>
-                    </div>
-                    <span className={`px-3 py-1 rounded-full text-xs font-medium ${statusColors[app.status] || ''}`}>
-                      {app.status.replace('_', ' ')}
-                    </span>
-                  </div>
+      ) : (
+        <div className="grid gap-3">
+          {applications.map((app) => {
+            const grant = app.grant as { title?: string; funder?: string } | null
+            const config = STATUS_CONFIG[app.status as ApplicationStatus] ?? STATUS_CONFIG.draft
+            return (
+              <div
+                key={app._id.toString()}
+                className="flex items-center justify-between rounded-xl border border-border bg-card p-5"
+              >
+                <div className="min-w-0">
+                  <p className="truncate font-semibold">{app.projectTitle}</p>
+                  <p className="mt-0.5 truncate text-sm text-muted-foreground">
+                    {grant?.title ?? 'Unknown grant'} — {grant?.funder ?? ''}
+                  </p>
                 </div>
-              )
-            })}
-          </div>
-        )}
-      </main>
+                <span className={cn(
+                  'ml-4 shrink-0 rounded-full border px-3 py-1 text-xs font-medium',
+                  config.cls,
+                )}>
+                  {config.label}
+                </span>
+              </div>
+            )
+          })}
+        </div>
+      )}
     </div>
   )
 }
