@@ -1,30 +1,7 @@
 import Link from 'next/link'
-import { CheckCircle, X, ArrowRight, Star, Sparkles, Shield, Zap } from 'lucide-react'
+import { CheckCircle, X, ArrowRight, Star, Sparkles, Shield } from 'lucide-react'
 
 const tiers = [
-  {
-    name: 'Free',
-    price: '₦0',
-    period: 'forever',
-    tagline: "Get started with Africa's largest grant directory",
-    color: 'border-gray-200 bg-white',
-    cta: 'Get Started Free',
-    ctaStyle: 'border border-blue-700 text-blue-700 hover:bg-blue-50',
-    href: '/signup',
-    icon: Zap,
-    features: [
-      { label: 'Grant search & browse', included: true },
-      { label: 'Save up to 5 opportunities', included: true },
-      { label: 'Community forum access', included: true },
-      { label: 'Monthly newsletter', included: true },
-      { label: 'Basic scholarship listings', included: true },
-      { label: 'AI-powered grant matching', included: false },
-      { label: 'Proposal review', included: false },
-      { label: 'Live webinars', included: false },
-      { label: 'Priority support', included: false },
-      { label: 'Grant concierge', included: false },
-    ],
-  },
   {
     name: 'Silver',
     price: '₦3,000',
@@ -36,7 +13,7 @@ const tiers = [
     href: '/signup?plan=silver',
     icon: Star,
     features: [
-      { label: 'Everything in Free', included: true },
+      { label: 'Full grant database access', included: true },
       { label: 'AI-powered grant matching', included: true },
       { label: 'Unlimited saved opportunities', included: true },
       { label: 'Weekly curated newsletter', included: true },
@@ -99,8 +76,8 @@ const tiers = [
 
 const faqs = [
   {
-    q: 'Can I use AfriGrantPipeline without paying?',
-    a: 'Yes — the Free plan gives you access to our grant directory, community forum, and monthly newsletter with no credit card required.',
+    q: 'What is the most affordable plan?',
+    a: 'All plans require a subscription. Silver is our most affordable entry point at ₦3,000/month and gives you full access to the grant database, AI matching, and weekly newsletter.',
   },
   {
     q: 'Do you offer a quarterly subscription instead of monthly?',
@@ -206,30 +183,29 @@ export default function PricingPage() {
               <thead>
                 <tr className="border-b border-gray-200 bg-gray-50">
                   <th className="px-5 py-4 text-left font-semibold text-gray-700">Feature</th>
-                  {['Free', 'Silver', 'Gold', 'Platinum'].map((t) => (
+                  {['Silver', 'Gold', 'Platinum'].map((t) => (
                     <th key={t} className={`px-5 py-4 text-center font-semibold ${t === 'Gold' ? 'bg-blue-700 text-white' : 'text-gray-700'}`}>{t}</th>
                   ))}
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
                 {[
-                  ['Grant directory access', true, true, true, true],
-                  ['Save opportunities', '5 max', 'Unlimited', 'Unlimited', 'Unlimited'],
-                  ['AI grant matching', false, true, true, true],
-                  ['Weekly newsletter', false, true, true, true],
-                  ['Deadline alerts', false, true, true, true],
-                  ['Proposal review', false, false, '1/month', 'Unlimited'],
-                  ['Premium grant database', false, false, true, true],
-                  ['Live webinars', false, false, true, true],
-                  ['AI tools (full)', false, false, true, true],
-                  ['Priority support', false, false, false, true],
-                  ['Grant concierge', false, false, false, true],
-                  ['1-on-1 consulting', false, false, false, '1/month'],
+                  ['Full grant database access', true, true, true],
+                  ['Save opportunities', 'Unlimited', 'Unlimited', 'Unlimited'],
+                  ['AI grant matching', true, true, true],
+                  ['Weekly newsletter', true, true, true],
+                  ['Deadline alerts', true, true, true],
+                  ['Business grants access', true, true, true],
+                  ['Proposal review', false, '1/month', 'Unlimited'],
+                  ['Live webinars', false, true, true],
+                  ['Priority support', false, false, true],
+                  ['Grant concierge', false, false, true],
+                  ['1-on-1 consulting', false, false, '1/month'],
                 ].map(([feature, ...values]) => (
                   <tr key={feature as string}>
                     <td className="px-5 py-3.5 text-gray-700">{feature as string}</td>
                     {values.map((v, i) => (
-                      <td key={i} className={`px-5 py-3.5 text-center ${i === 2 ? 'bg-blue-50' : ''}`}>
+                      <td key={i} className={`px-5 py-3.5 text-center ${i === 1 ? 'bg-blue-50' : ''}`}>
                         {typeof v === 'boolean'
                           ? v
                             ? <CheckCircle className="mx-auto size-4 text-blue-700" />
@@ -262,10 +238,10 @@ export default function PricingPage() {
       {/* CTA */}
       <section className="bg-blue-700 py-14">
         <div className="mx-auto max-w-2xl px-6 text-center">
-          <h2 className="text-3xl font-bold text-white">Start for free today</h2>
-          <p className="mt-3 text-blue-100">No credit card required. Upgrade when you&apos;re ready.</p>
-          <Link href="/signup" className="mt-6 inline-flex items-center gap-2 rounded-full bg-yellow-400 px-8 py-3.5 text-sm font-bold text-gray-900 transition-opacity hover:opacity-90">
-            Create Free Account <ArrowRight className="size-4" />
+          <h2 className="text-3xl font-bold text-white">Start your subscription today</h2>
+          <p className="mt-3 text-blue-100">From ₦3,000/month. Full access from day one.</p>
+          <Link href="/signup?plan=silver" className="mt-6 inline-flex items-center gap-2 rounded-full bg-yellow-400 px-8 py-3.5 text-sm font-bold text-gray-900 transition-opacity hover:opacity-90">
+            Get Started — Silver Plan <ArrowRight className="size-4" />
           </Link>
         </div>
       </section>
