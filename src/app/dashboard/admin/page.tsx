@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Shield, PlusCircle, Loader2, CheckCircle, AlertCircle } from 'lucide-react'
+import { Shield, PlusCircle, Loader2, CheckCircle, AlertCircle, Database } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 // ── Admin setup ────────────────────────────────────────────────────────────────
@@ -65,6 +65,47 @@ function AdminSetup() {
   )
 }
 
+// ── Seed Grants ───────────────────────────────────────────────────────────────
+
+function SeedGrants() {
+  const [status, setStatus] = useState<'idle' | 'loading' | 'ok' | 'error'>('idle')
+  const [msg, setMsg] = useState('')
+
+  async function seed() {
+    setStatus('loading')
+    const res = await fetch('/api/admin/seed-grants', { method: 'POST' })
+    const json = (await res.json()) as { message?: string; error?: string }
+    if (res.ok) { setStatus('ok'); setMsg(json.message ?? 'Done') }
+    else { setStatus('error'); setMsg(json.error ?? 'Failed') }
+  }
+
+  return (
+    <div className="rounded-xl border border-border bg-card p-6">
+      <div className="mb-4 flex items-center gap-2">
+        <Database className="size-5 text-gold" />
+        <h2 className="font-semibold">Step 2 — Seed 7 starter grants</h2>
+      </div>
+      <p className="mb-4 text-sm text-muted-foreground">
+        Adds 7 curated 2026 Africa grants (AFEP, Cambridge-Africa, TETFund, NEH, Fulbright, NYFF, APSA) to the database. Skips any already added.
+      </p>
+      <button
+        onClick={seed}
+        disabled={status === 'loading' || status === 'ok'}
+        className="flex items-center gap-2 rounded-lg bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition-all hover:opacity-90 disabled:opacity-40"
+      >
+        {status === 'loading' && <Loader2 className="size-4 animate-spin" />}
+        {status === 'ok' ? 'Done!' : 'Seed Grants'}
+      </button>
+      {msg && (
+        <p className={cn('mt-3 flex items-center gap-2 text-sm', status === 'ok' ? 'text-emerald-400' : 'text-red-400')}>
+          {status === 'ok' ? <CheckCircle className="size-4" /> : <AlertCircle className="size-4" />}
+          {msg}
+        </p>
+      )}
+    </div>
+  )
+}
+
 // ── Grant form ─────────────────────────────────────────────────────────────────
 
 const GRANT_TYPES = ['research', 'scholarship', 'fellowship', 'project', 'seed', 'other']
@@ -116,11 +157,14 @@ export default function AdminPage() {
 
       <AdminSetup />
 
+      {/* Seed grants */}
+      <SeedGrants />
+
       {/* Grant creation form */}
       <form onSubmit={submit} className="space-y-6 rounded-xl border border-border bg-card p-6">
         <div className="flex items-center gap-2 border-b border-border pb-4">
           <PlusCircle className="size-5 text-gold" />
-          <h2 className="font-semibold">Step 2 — Create a grant</h2>
+          <h2 className="font-semibold">Step 3 — Create a custom grant</h2>
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2">
