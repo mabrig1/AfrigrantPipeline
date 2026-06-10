@@ -13,14 +13,16 @@ export default async function Header() {
   const session = await auth()
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur-md supports-[backdrop-filter]:bg-background/80">
-      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
+    <header className="sticky top-0 z-50 w-full border-b border-gray-200 bg-white">
+      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
         {/* Logo */}
-        <Link
-          href="/"
-          className="flex items-center gap-1.5 text-lg font-extrabold tracking-tight transition-opacity hover:opacity-80"
-        >
-          Afri<span className="text-gold">grant</span>Pipeline
+        <Link href="/" className="flex items-center gap-2.5 transition-opacity hover:opacity-80">
+          <div className="flex size-9 items-center justify-center rounded-xl bg-blue-700">
+            <span className="text-sm font-bold text-white">AG</span>
+          </div>
+          <span className="text-xl font-semibold tracking-tight text-gray-900">
+            AfriGrant<span className="text-blue-700">Pipeline</span>
+          </span>
         </Link>
 
         {/* Desktop nav */}
@@ -29,7 +31,7 @@ export default async function Header() {
             <Link
               key={href}
               href={href}
-              className="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+              className="rounded-lg px-3 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-900"
             >
               {label}
             </Link>
@@ -42,13 +44,13 @@ export default async function Header() {
             <>
               <Link
                 href="/dashboard"
-                className="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+                className="rounded-lg px-3 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-900"
               >
                 Dashboard
               </Link>
               <Link
                 href="/dashboard/settings"
-                className="inline-flex items-center gap-2 rounded-lg border border-border bg-surface-2 px-4 py-2 text-sm font-medium transition-colors hover:border-gold/40 hover:bg-surface-3"
+                className="rounded-2xl border border-gray-200 bg-gray-50 px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700"
               >
                 {session.user.name?.split(' ')[0] ?? 'Profile'}
               </Link>
@@ -60,7 +62,7 @@ export default async function Header() {
               >
                 <button
                   type="submit"
-                  className="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+                  className="rounded-lg px-3 py-2 text-sm font-medium text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-900"
                 >
                   Sign out
                 </button>
@@ -70,21 +72,21 @@ export default async function Header() {
             <>
               <Link
                 href="/login"
-                className="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+                className="rounded-lg px-3 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-900"
               >
                 Sign In
               </Link>
               <Link
                 href="/signup"
-                className="inline-flex items-center rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition-all hover:opacity-90 active:scale-[0.98]"
+                className="rounded-2xl bg-blue-700 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-blue-800"
               >
-                Get Started
+                Get Started Free
               </Link>
             </>
           )}
         </div>
 
-        {/* Mobile — delegate to client component */}
+        {/* Mobile */}
         <MobileMenu navLinks={navLinks} user={session?.user ?? null} />
       </div>
     </header>

@@ -60,11 +60,11 @@ export default function MobileMenu({ navLinks, user }: MobileMenuProps) {
       {/* Slide-down panel */}
       <div
         className={[
-          'fixed inset-x-0 top-16 z-50 origin-top border-b border-border bg-background transition-all duration-200 ease-out',
+          'fixed inset-x-0 top-16 z-50 origin-top border-b border-gray-200 bg-white transition-all duration-200 ease-out',
           open ? 'animate-slide-down opacity-100' : 'pointer-events-none opacity-0',
         ].join(' ')}
       >
-        <nav className="flex flex-col divide-y divide-border px-4">
+        <nav className="flex flex-col divide-y divide-gray-100 px-4">
           {navLinks.map(({ label, href }) => (
             <Link
               key={href}
@@ -72,12 +72,12 @@ export default function MobileMenu({ navLinks, user }: MobileMenuProps) {
               className={[
                 'flex items-center justify-between py-4 text-sm font-medium transition-colors',
                 pathname === href || pathname.startsWith(`${href}/`)
-                  ? 'text-gold'
-                  : 'text-foreground hover:text-gold',
+                  ? 'text-blue-700'
+                  : 'text-gray-700 hover:text-blue-700',
               ].join(' ')}
             >
               {label}
-              <ArrowRight className="size-4 text-muted-foreground" />
+              <ArrowRight className="size-4 text-gray-400" />
             </Link>
           ))}
         </nav>
@@ -88,19 +88,19 @@ export default function MobileMenu({ navLinks, user }: MobileMenuProps) {
             <>
               <Link
                 href="/dashboard"
-                className="flex items-center justify-center rounded-lg border border-border bg-surface-2 py-2.5 text-sm font-medium transition-colors hover:border-gold/40"
+                className="flex items-center justify-center rounded-2xl border border-gray-200 bg-gray-50 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-blue-50 hover:text-blue-700"
               >
                 Dashboard
               </Link>
               <Link
                 href="/dashboard/settings"
-                className="flex items-center justify-center rounded-lg border border-border bg-surface-2 py-2.5 text-sm font-medium transition-colors hover:border-gold/40"
+                className="flex items-center justify-center rounded-2xl border border-gray-200 bg-gray-50 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-blue-50 hover:text-blue-700"
               >
                 {user.name?.split(' ')[0] ?? 'Profile'}
               </Link>
               <button
                 onClick={() => signOut({ callbackUrl: '/' })}
-                className="flex items-center justify-center rounded-lg border border-border bg-surface-2 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:border-red-500/30 hover:text-red-400"
+                className="flex items-center justify-center rounded-2xl border border-gray-200 py-2.5 text-sm font-medium text-gray-500 transition-colors hover:border-red-200 hover:text-red-500"
               >
                 Sign out
               </button>
@@ -109,13 +109,13 @@ export default function MobileMenu({ navLinks, user }: MobileMenuProps) {
             <>
               <Link
                 href="/login"
-                className="flex items-center justify-center rounded-lg border border-border bg-surface-2 py-2.5 text-sm font-medium transition-colors hover:border-gold/40"
+                className="flex items-center justify-center rounded-2xl border border-gray-200 bg-gray-50 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100"
               >
                 Sign In
               </Link>
               <Link
                 href="/signup"
-                className="flex items-center justify-center gap-2 rounded-lg bg-primary py-2.5 text-sm font-semibold text-primary-foreground transition-all hover:opacity-90"
+                className="flex items-center justify-center gap-2 rounded-2xl bg-blue-700 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-blue-800"
               >
                 Get Started Free
                 <ArrowRight className="size-4" />
