@@ -207,7 +207,7 @@ const testimonials = [
 
 // ── Page ─────────────────────────────────────────────────────────────────────
 
-export default function ServicesPage() {
+function ServicesPageInner() {
   const [activeCategory, setActiveCategory] = useState('All')
   const [selected, setSelected] = useState<Service | null>(null)
 
@@ -437,3 +437,6 @@ export default function ServicesPage() {
     </div>
   )
 }
+
+import SubscriptionGuard from '@/components/SubscriptionGuard'
+export default function ServicesPage() { return <SubscriptionGuard><ServicesPageInner /></SubscriptionGuard> }

@@ -157,7 +157,7 @@ const faqs = [
 
 // ── Page ─────────────────────────────────────────────────────────────────────
 
-export default function WritingLabPage() {
+function WritingLabPageInner() {
   const [openFaq, setOpenFaq] = useState<number | null>(null)
   const [showBefore, setShowBefore] = useState(true)
 
@@ -424,3 +424,6 @@ export default function WritingLabPage() {
     </div>
   )
 }
+
+import SubscriptionGuard from '@/components/SubscriptionGuard'
+export default function WritingLabPage() { return <SubscriptionGuard><WritingLabPageInner /></SubscriptionGuard> }

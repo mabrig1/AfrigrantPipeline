@@ -275,7 +275,7 @@ const FUNDING_LABELS: Record<string, string> = {
   partial: 'Partial Funding',
 }
 
-export default function ScholarshipsPage() {
+function ScholarshipsPageInner() {
   const [search, setSearch] = useState('')
   const [typeFilter, setTypeFilter] = useState('all')
   const [levelFilter, setLevelFilter] = useState('all')
@@ -589,3 +589,6 @@ export default function ScholarshipsPage() {
     </div>
   )
 }
+
+import SubscriptionGuard from '@/components/SubscriptionGuard'
+export default function ScholarshipsPage() { return <SubscriptionGuard><ScholarshipsPageInner /></SubscriptionGuard> }
