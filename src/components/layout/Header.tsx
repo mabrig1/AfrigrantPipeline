@@ -4,6 +4,7 @@ import MobileMenu from './MobileMenu'
 
 const navLinks = [
   { label: 'Grants', href: '/grants' },
+  { label: 'Scholarships', href: '/scholarships' },
   { label: 'AfriPublish', href: '/articles' },
   { label: 'Collaborate', href: '/collaborations' },
   { label: 'Mentorship', href: '/mentorships' },
