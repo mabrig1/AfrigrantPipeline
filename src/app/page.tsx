@@ -425,6 +425,78 @@ export default async function HomePage() {
         </div>
       </section>
 
+      {/* ── Mabrig Research Institute ── */}
+      <section className="bg-white py-20">
+        <div className="mx-auto max-w-7xl px-6">
+          <div className="overflow-hidden rounded-3xl bg-gradient-to-br from-slate-900 via-slate-800 to-blue-900">
+            <div className="grid lg:grid-cols-2">
+              {/* Left: content */}
+              <div className="px-8 py-14 sm:px-12">
+                <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-blue-400/30 bg-blue-500/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-blue-300">
+                  <span className="size-1.5 rounded-full bg-blue-400 animate-pulse inline-block" />
+                  Research Institute
+                </div>
+                <h2 className="mt-2 text-3xl font-bold tracking-tight text-white sm:text-4xl">
+                  Mabrig Research<br />
+                  <span className="text-yellow-300">Institute (MRI)</span>
+                </h2>
+                <p className="mt-4 text-base leading-relaxed text-slate-300">
+                  A dedicated African research body generating rigorous evidence, policy intelligence, and applied knowledge to drive development across the continent. From policy briefs to impact evaluations — MRI bridges research and action.
+                </p>
+                <div className="mt-8 grid grid-cols-2 gap-3">
+                  {[
+                    { label: 'Research Projects', count: '24+' },
+                    { label: 'Policy Briefs', count: '40+' },
+                    { label: 'Research Fellows', count: '18' },
+                    { label: 'Partner Institutions', count: '12' },
+                  ].map(({ label, count }) => (
+                    <div key={label} className="rounded-2xl border border-white/10 bg-white/5 p-4">
+                      <div className="text-2xl font-bold text-yellow-300">{count}</div>
+                      <div className="mt-1 text-xs text-slate-400">{label}</div>
+                    </div>
+                  ))}
+                </div>
+                <div className="mt-8 flex flex-wrap gap-3">
+                  <Link href="/mri"
+                    className="inline-flex items-center gap-2 rounded-full bg-yellow-400 px-7 py-3 text-sm font-bold text-gray-900 transition-opacity hover:opacity-90">
+                    Explore MRI <ArrowRight className="size-4" />
+                  </Link>
+                  <Link href="/mri/research-consulting"
+                    className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-7 py-3 text-sm font-semibold text-white transition-colors hover:bg-white/20">
+                    Research Consulting
+                  </Link>
+                </div>
+              </div>
+
+              {/* Right: services grid */}
+              <div className="border-l border-white/10 px-8 py-14 sm:px-12">
+                <p className="mb-5 text-xs font-semibold uppercase tracking-widest text-slate-400">Research Areas</p>
+                <div className="space-y-2">
+                  {[
+                    { label: 'Research Projects', href: '/mri/research-projects', icon: '🔬' },
+                    { label: 'Policy Briefs', href: '/mri/policy-briefs', icon: '📋' },
+                    { label: 'Working Papers', href: '/mri/working-papers', icon: '📝' },
+                    { label: 'Research Reports', href: '/mri/research-reports', icon: '📊' },
+                    { label: 'Research Fellows', href: '/mri/research-fellows', icon: '👩‍🔬' },
+                    { label: 'Academic Partnerships', href: '/mri/academic-partnerships', icon: '🤝' },
+                    { label: 'Publications', href: '/mri/publications', icon: '📚' },
+                    { label: 'Research Consulting', href: '/mri/research-consulting', icon: '💡' },
+                    { label: 'Monitoring & Evaluation', href: '/mri/monitoring-evaluation', icon: '📈' },
+                  ].map(({ label, href, icon }) => (
+                    <Link key={href} href={href}
+                      className="flex items-center gap-3 rounded-xl px-4 py-2.5 text-sm text-slate-300 transition-colors hover:bg-white/10 hover:text-white">
+                      <span className="text-base">{icon}</span>
+                      {label}
+                      <ArrowRight className="ml-auto size-3.5 opacity-40" />
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ── Success stories ── */}
       <section className="bg-gray-50 py-16">
         <div className="mx-auto max-w-7xl px-6">
