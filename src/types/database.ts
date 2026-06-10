@@ -3,11 +3,14 @@ import type { Types } from 'mongoose'
 // ── User ─────────────────────────────────────────────────────────────────────
 
 export type UserRole = 'admin' | 'student' | 'researcher' | 'lecturer' | 'institution'
+export type SubscriptionPlan = 'free' | 'silver' | 'gold' | 'platinum'
 
 export interface IUser {
   _id: Types.ObjectId
   name: string
   email: string
+  subscription?: SubscriptionPlan
+  subscriptionExpiresAt?: Date
   password?: string
   role: UserRole
   organization?: string
