@@ -5,22 +5,21 @@ import Google from 'next-auth/providers/google'
 import bcrypt from 'bcryptjs'
 import { clientPromise, connectDB } from './mongodb'
 import User from '@/models/User'
-import type { UserRole } from '@/types/database'
+import type { UserRole, SubscriptionPlan } from '@/types/database'
 
 // ── Module augmentation ───────────────────────────────────────────────────────
-//
-// Extends next-auth's built-in types so session.user.id and session.user.role
-// are fully typed everywhere — no more `as` casts.
 
 declare module 'next-auth' {
   interface Session {
     user: {
       id: string
       role: UserRole
+      subscription: SubscriptionPlan
     } & DefaultSession['user']
   }
   interface User {
     role?: UserRole
+    subscription?: SubscriptionPlan
   }
 }
 
@@ -28,6 +27,7 @@ declare module 'next-auth/jwt' {
   interface JWT {
     id: string
     role: UserRole
+    subscription: SubscriptionPlan
   }
 }
 
@@ -42,7 +42,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
   pages: {
     signIn: '/login',
-    error: '/login',   // redirect auth errors back to login with ?error=
+    error: '/login',
   },
 
   providers: [
@@ -56,6 +56,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           email: profile.email,
           image: profile.picture,
           role: 'researcher' as UserRole,
+          subscription: 'free' as SubscriptionPlan,
         }
       },
     }),
@@ -85,6 +86,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           name: user.name,
           image: user.avatar ?? null,
           role: user.role,
+          subscription: (user.subscription ?? 'free') as SubscriptionPlan,
         }
       },
     }),
@@ -92,14 +94,14 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
   callbacks: {
     async jwt({ token, user, trigger, session }) {
-      // Persist role and id on first sign-in
       if (user) {
         token.id = user.id as string
         token.role = (user.role ?? 'student') as UserRole
+        token.subscription = (user.subscription ?? 'free') as SubscriptionPlan
       }
-      // Allow the client to force a session refresh via update()
-      if (trigger === 'update' && session?.role) {
-        token.role = session.role as UserRole
+      if (trigger === 'update') {
+        if (session?.role) token.role = session.role as UserRole
+        if (session?.subscription) token.subscription = session.subscription as SubscriptionPlan
       }
       return token
     },
@@ -107,6 +109,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     async session({ session, token }) {
       session.user.id = token.id
       session.user.role = token.role
+      session.user.subscription = token.subscription ?? 'free'
       return session
     },
   },

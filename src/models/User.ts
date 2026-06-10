@@ -61,6 +61,14 @@ const UserSchema = new Schema<IUser>(
     emailVerified: {
       type: Date,
     },
+    subscription: {
+      type: String,
+      enum: ['free', 'silver', 'gold', 'platinum'],
+      default: 'free',
+    },
+    subscriptionExpiresAt: {
+      type: Date,
+    },
   },
   { timestamps: true }
 )
