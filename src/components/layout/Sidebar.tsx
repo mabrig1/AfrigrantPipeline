@@ -12,6 +12,7 @@ import {
   GraduationCap,
   Settings,
   Sparkles,
+  ShieldCheck,
 } from 'lucide-react'
 
 const navItems = [
@@ -22,6 +23,7 @@ const navItems = [
   { href: '/dashboard/ai-tools',     label: 'AI Tools',     icon: Sparkles },
   { href: '/dashboard/collaborate',  label: 'Collaborate',  icon: Users },
   { href: '/dashboard/mentorship',   label: 'Mentorship',   icon: GraduationCap },
+  { href: '/dashboard/admin',        label: 'Admin',        icon: ShieldCheck },
   { href: '/dashboard/settings',     label: 'Settings',     icon: Settings },
 ]
 
