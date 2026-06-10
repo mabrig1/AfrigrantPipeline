@@ -1,10 +1,13 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
+import { useSession } from 'next-auth/react'
+import Link from 'next/link'
 import {
   Search, Filter, X, Heart, ExternalLink, Grid3X3, List,
   ChevronDown, Star, Sparkles, Building2, Globe, Leaf,
   Users, Zap, Palette, ShoppingBag, Sprout, Share2, CheckCircle,
+  Lock, ArrowRight,
 } from 'lucide-react'
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -239,9 +242,77 @@ const FOCUS_OPTIONS = [
   { id: 'scale', label: 'Scalable Growth', match: (g: Grant) => g.tags.some((t) => t.toLowerCase().includes('high growth') || t.toLowerCase().includes('accelerator') || t.toLowerCase().includes('mentorship')) },
 ]
 
+// ── Paywall ───────────────────────────────────────────────────────────────────
+
+const FREE_PREVIEW = 2
+const PAID_PLANS = ['silver', 'gold', 'platinum']
+
+function BusinessPaywallGate({ isLoggedIn, total }: { isLoggedIn: boolean; total: number }) {
+  return (
+    <div className="relative mt-4 overflow-hidden rounded-3xl border-2 border-[#0A5C36]/30 bg-white shadow-xl">
+      <div className="pointer-events-none select-none blur-sm opacity-40 grid gap-5 p-5 sm:grid-cols-2 lg:grid-cols-3">
+        {Array.from({ length: 6 }).map((_, i) => (
+          <div key={i} className="h-52 rounded-3xl border border-gray-200 bg-gray-100 animate-pulse" />
+        ))}
+      </div>
+      <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/92 backdrop-blur-sm px-6 py-10 text-center">
+        <div className="mb-4 flex size-16 items-center justify-center rounded-2xl bg-[#0A5C36]">
+          <Lock className="size-8 text-white" />
+        </div>
+        <div className="mb-2 inline-flex items-center gap-2 rounded-full bg-[#0A5C36]/10 px-3 py-1 text-xs font-semibold text-[#0A5C36]">
+          <Star className="size-3.5 fill-[#0A5C36]" />
+          {total - FREE_PREVIEW}+ more opportunities locked
+        </div>
+        <h2 className="mt-2 text-2xl font-bold text-gray-900">Unlock Full Access</h2>
+        <p className="mt-2 max-w-md text-sm text-gray-500">
+          You&apos;re seeing {FREE_PREVIEW} of <strong>{total}</strong> business grants. Subscribe to access all opportunities — full details, application links, eligibility, and Smart Match results.
+        </p>
+        <ul className="mt-5 space-y-2 text-left text-sm text-gray-700">
+          {[
+            `All ${total} business grants with full details`,
+            'Smart Match tool results & recommendations',
+            'Application links & eligibility requirements',
+            'Weekly new grant alerts for your sector',
+          ].map((item) => (
+            <li key={item} className="flex items-center gap-2">
+              <CheckCircle className="size-4 shrink-0 text-[#0A5C36]" /> {item}
+            </li>
+          ))}
+        </ul>
+        <div className="mt-7 flex flex-wrap justify-center gap-3">
+          <Link href="/pricing"
+            className="inline-flex items-center gap-2 rounded-full bg-[#0A5C36] px-7 py-3 text-sm font-bold text-white transition-opacity hover:opacity-90">
+            <Sparkles className="size-4" /> View Plans — From ₦3,000/month
+          </Link>
+          <a href="https://store.mabrigkorie.org" target="_blank" rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 rounded-full border border-gray-300 bg-white px-7 py-3 text-sm font-semibold text-gray-700 hover:bg-gray-50">
+            Quarterly Newsletter — ₦12,000
+          </a>
+        </div>
+        {!isLoggedIn && (
+          <p className="mt-4 text-xs text-gray-400">
+            Already subscribed?{' '}
+            <Link href="/login" className="font-medium text-[#0A5C36] hover:underline">Sign in</Link>
+          </p>
+        )}
+        {isLoggedIn && (
+          <p className="mt-4 text-xs text-gray-400">
+            You&apos;re on the free plan.{' '}
+            <Link href="/pricing" className="font-medium text-[#0A5C36] hover:underline">Upgrade to unlock full access.</Link>
+          </p>
+        )}
+      </div>
+    </div>
+  )
+}
+
 // ── Main component ────────────────────────────────────────────────────────────
 
 export default function BusinessGrantsPage() {
+  const { data: session } = useSession()
+  const isLoggedIn = !!session?.user
+  const fullAccess = session?.user?.role === 'admin' || PAID_PLANS.includes(session?.user?.subscription ?? 'free')
+
   const [search, setSearch] = useState('')
   const [typeFilter, setTypeFilter] = useState<string[]>([])
   const [statusFilter, setStatusFilter] = useState<string[]>([])
@@ -408,12 +479,19 @@ export default function BusinessGrantsPage() {
           </div>
 
           <div className="mt-6 flex flex-wrap gap-3">
-            <button
-              onClick={runSmartMatch}
-              className="flex items-center gap-2 rounded-full bg-[#0A5C36] px-7 py-3 text-sm font-bold text-white transition-opacity hover:opacity-90"
-            >
-              <Sparkles className="size-4" /> Find My Top Matches
-            </button>
+            {!fullAccess ? (
+              <Link href="/pricing"
+                className="flex items-center gap-2 rounded-full bg-[#0A5C36] px-7 py-3 text-sm font-bold text-white transition-opacity hover:opacity-90">
+                <Lock className="size-4" /> Subscribe to Use Smart Match
+              </Link>
+            ) : (
+              <button
+                onClick={runSmartMatch}
+                className="flex items-center gap-2 rounded-full bg-[#0A5C36] px-7 py-3 text-sm font-bold text-white transition-opacity hover:opacity-90"
+              >
+                <Sparkles className="size-4" /> Find My Top Matches
+              </button>
+            )}
             {matchDone && (
               <button onClick={clearMatch} className="flex items-center gap-2 rounded-full border border-gray-200 px-5 py-3 text-sm text-gray-600 hover:bg-gray-50">
                 <X className="size-4" /> Clear Match
@@ -422,6 +500,27 @@ export default function BusinessGrantsPage() {
           </div>
         </div>
       </section>
+
+      {/* ── Subscriber banner ──────────────────────────────────────────── */}
+      {!fullAccess && (
+        <div className="border-b border-[#0A5C36]/20 bg-[#0A5C36]/5">
+          <div className="mx-auto max-w-7xl px-6 py-3 flex flex-wrap items-center justify-between gap-3">
+            <div className="flex items-center gap-2 text-sm text-[#0A5C36]">
+              <Lock className="size-4 shrink-0" />
+              <span className="font-semibold">Subscriber-only content</span>
+              <span className="text-[#0A5C36]/70">— showing {FREE_PREVIEW} of {GRANTS.length} grants</span>
+            </div>
+            <div className="flex gap-2">
+              {!isLoggedIn && (
+                <Link href="/login" className="rounded-full border border-[#0A5C36]/30 bg-white px-4 py-1.5 text-xs font-semibold text-[#0A5C36] hover:bg-[#0A5C36]/5">Sign In</Link>
+              )}
+              <Link href="/pricing" className="inline-flex items-center gap-1.5 rounded-full bg-[#0A5C36] px-4 py-1.5 text-xs font-bold text-white hover:opacity-90">
+                Upgrade <ArrowRight className="size-3" />
+              </Link>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ── Filters + Results ──────────────────────────────────────────── */}
       <div className="mx-auto max-w-7xl px-6 py-8" ref={resultsRef}>
@@ -470,30 +569,39 @@ export default function BusinessGrantsPage() {
         </div>
 
         {/* Grant cards */}
-        {displayed.length === 0 ? (
-          <div className="rounded-3xl border border-gray-200 bg-white py-20 text-center">
-            <Building2 className="mx-auto mb-3 size-12 text-gray-200" />
-            <p className="font-medium text-gray-500">No grants match your filters.</p>
-          </div>
-        ) : view === 'grid' ? (
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {displayed.map((g) => (
-              <GrantCard key={g.id} grant={g} saved={saved.includes(g.id)}
-                isMatch={!!matchIds?.includes(g.id)}
-                onSave={() => toggleSave(g.id)}
-                onView={() => setSelected(g)} />
-            ))}
-          </div>
-        ) : (
-          <div className="space-y-3">
-            {displayed.map((g) => (
-              <GrantRow key={g.id} grant={g} saved={saved.includes(g.id)}
-                isMatch={!!matchIds?.includes(g.id)}
-                onSave={() => toggleSave(g.id)}
-                onView={() => setSelected(g)} />
-            ))}
-          </div>
-        )}
+        {(() => {
+          const visibleGrants = fullAccess ? displayed : displayed.slice(0, FREE_PREVIEW)
+          const showPaywall = !fullAccess && displayed.length > 0
+          return displayed.length === 0 ? (
+            <div className="rounded-3xl border border-gray-200 bg-white py-20 text-center">
+              <Building2 className="mx-auto mb-3 size-12 text-gray-200" />
+              <p className="font-medium text-gray-500">No grants match your filters.</p>
+            </div>
+          ) : (
+            <>
+              {view === 'grid' ? (
+                <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+                  {visibleGrants.map((g) => (
+                    <GrantCard key={g.id} grant={g} saved={saved.includes(g.id)}
+                      isMatch={!!matchIds?.includes(g.id)}
+                      onSave={() => toggleSave(g.id)}
+                      onView={fullAccess ? () => setSelected(g) : () => null} />
+                  ))}
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {visibleGrants.map((g) => (
+                    <GrantRow key={g.id} grant={g} saved={saved.includes(g.id)}
+                      isMatch={!!matchIds?.includes(g.id)}
+                      onSave={() => toggleSave(g.id)}
+                      onView={fullAccess ? () => setSelected(g) : () => null} />
+                  ))}
+                </div>
+              )}
+              {showPaywall && <BusinessPaywallGate isLoggedIn={isLoggedIn} total={GRANTS.length} />}
+            </>
+          )
+        })()}
 
         {/* Saved strip */}
         {saved.length > 0 && (
