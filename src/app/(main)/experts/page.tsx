@@ -162,7 +162,7 @@ const AVAIL_STYLES: Record<string, string> = {
 
 // ── Page ─────────────────────────────────────────────────────────────────────
 
-export default function ExpertsPage() {
+function ExpertsPageInner() {
   const [search, setSearch] = useState('')
   const [expertiseFilter, setExpertiseFilter] = useState('All')
   const [availFilter, setAvailFilter] = useState('All')
@@ -396,3 +396,6 @@ export default function ExpertsPage() {
     </div>
   )
 }
+
+import SubscriptionGuard from '@/components/SubscriptionGuard'
+export default function ExpertsPage() { return <SubscriptionGuard><ExpertsPageInner /></SubscriptionGuard> }
