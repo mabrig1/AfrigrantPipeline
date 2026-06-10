@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { auth } from '@/lib/auth'
 import {
   ArrowRight, Globe, Search, Users, GraduationCap,
   Lightbulb, Bell, Star, Sparkles, TrendingUp, Award, Building2,
@@ -201,7 +202,14 @@ const trustLogos = ['African Union', 'UNESCO Africa', 'World Bank', 'Gates Found
 
 // ── Page ──────────────────────────────────────────────────────────────────
 
-export default function HomePage() {
+const PAID_PLANS = ['silver', 'gold', 'platinum']
+
+export default async function HomePage() {
+  const session = await auth()
+  const fullAccess =
+    session?.user?.role === 'admin' ||
+    PAID_PLANS.includes(session?.user?.subscription ?? 'free')
+
   return (
     <div className="min-h-screen bg-gray-50">
 
@@ -294,27 +302,35 @@ export default function HomePage() {
               </div>
               <h2 className="text-2xl font-bold tracking-tight text-gray-900">Top Funding Right Now</h2>
             </div>
-            <Link href="/grants" className="hidden items-center gap-1 text-sm font-medium text-blue-700 hover:underline sm:flex">
+            <Link href={fullAccess ? '/grants' : '/pricing?locked=grants'} className="hidden items-center gap-1 text-sm font-medium text-blue-700 hover:underline sm:flex">
               All opportunities <ChevronRight className="size-4" />
             </Link>
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {featuredGrants.map((g) => (
-              <Link key={g.title} href={g.href}
-                className="group flex flex-col rounded-3xl border border-gray-200 bg-gray-50 p-5 transition-all hover:-translate-y-1 hover:border-blue-200 hover:bg-white hover:shadow-lg">
-                <div className="mb-3 flex items-center justify-between">
-                  <span className={`rounded-full px-3 py-1 text-xs font-semibold ${
-                    g.status === 'Open' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'
-                  }`}>{g.status}</span>
-                  <span className="rounded-full bg-blue-100 px-2.5 py-1 text-xs font-medium text-blue-700">{g.type}</span>
-                </div>
-                <h3 className="mb-1 text-sm font-bold leading-snug text-gray-900">{g.title}</h3>
-                <p className="mb-3 flex-1 text-xs text-gray-500">{g.funder}</p>
-                <div className="text-lg font-bold text-blue-700">{g.amount}</div>
-                <div className="mt-1 text-xs text-gray-400">Deadline: {g.deadline}</div>
-              </Link>
-            ))}
+            {featuredGrants.map((g) => {
+              const dest = fullAccess ? g.href : '/pricing?locked=grant'
+              return (
+                <Link key={g.title} href={dest}
+                  className="group relative flex flex-col rounded-3xl border border-gray-200 bg-gray-50 p-5 transition-all hover:-translate-y-1 hover:border-blue-200 hover:bg-white hover:shadow-lg">
+                  {!fullAccess && (
+                    <span className="absolute right-3 top-3 flex items-center gap-1 rounded-full bg-blue-700 px-2.5 py-1 text-xs font-bold text-white">
+                      🔒 Subscribe
+                    </span>
+                  )}
+                  <div className="mb-3 flex items-center justify-between">
+                    <span className={`rounded-full px-3 py-1 text-xs font-semibold ${
+                      g.status === 'Open' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'
+                    }`}>{g.status}</span>
+                    <span className="rounded-full bg-blue-100 px-2.5 py-1 text-xs font-medium text-blue-700">{g.type}</span>
+                  </div>
+                  <h3 className="mb-1 text-sm font-bold leading-snug text-gray-900">{g.title}</h3>
+                  <p className="mb-3 flex-1 text-xs text-gray-500">{g.funder}</p>
+                  <div className="text-lg font-bold text-blue-700">{g.amount}</div>
+                  <div className="mt-1 text-xs text-gray-400">Deadline: {g.deadline}</div>
+                </Link>
+              )
+            })}
           </div>
         </div>
       </section>
