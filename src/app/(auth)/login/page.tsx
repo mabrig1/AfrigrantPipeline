@@ -81,7 +81,7 @@ function LoginForm() {
     setLoading(false)
 
     if (result?.error) {
-      setFormError('Invalid email or password.')
+      setFormError('Invalid email or password. If you just registered, please try registering again — your previous attempt may not have saved.')
     } else {
       router.push('/dashboard')
       router.refresh()
