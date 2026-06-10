@@ -12,6 +12,7 @@ import {
   GraduationCap,
   Settings,
   Sparkles,
+  Edit3,
   ShieldCheck,
 } from 'lucide-react'
 
@@ -20,6 +21,7 @@ const navItems = [
   { href: '/dashboard/grants',       label: 'Grants',       icon: Search },
   { href: '/dashboard/applications', label: 'Applications', icon: FileText },
   { href: '/dashboard/my-articles',  label: 'My Articles',  icon: BookOpen },
+  { href: '/dashboard/writing-lab',  label: 'Writing Lab',  icon: Edit3 },
   { href: '/dashboard/ai-tools',     label: 'AI Tools',     icon: Sparkles },
   { href: '/dashboard/collaborate',  label: 'Collaborate',  icon: Users },
   { href: '/dashboard/mentorship',   label: 'Mentorship',   icon: GraduationCap },

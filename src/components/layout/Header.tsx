@@ -3,11 +3,11 @@ import { auth, signOut } from '@/lib/auth'
 import MobileMenu from './MobileMenu'
 
 const navLinks = [
-  { label: 'Grants', href: '/grants' },
-  { label: 'Scholarships', href: '/scholarships' },
-  { label: 'Business Grants', href: '/business-grants' },
+  { label: 'Browse Grants', href: '/grants' },
+  { label: 'Writing Lab', href: '/writing-lab' },
+  { label: 'Services', href: '/services' },
+  { label: 'Experts', href: '/experts' },
   { label: 'AfriPublish', href: '/articles' },
-  { label: 'Collaborate', href: '/collaborations' },
   { label: 'Research Center', href: '/research-center' },
   { label: 'Pricing', href: '/pricing' },
 ]
