@@ -8,14 +8,15 @@ const navLinks = [
   { label: 'Business Grants', href: '/business-grants' },
   { label: 'AfriPublish', href: '/articles' },
   { label: 'Collaborate', href: '/collaborations' },
-  { label: 'Mentorship', href: '/mentorships' },
+  { label: 'Research Center', href: '/research-center' },
+  { label: 'Pricing', href: '/pricing' },
 ]
 
 export default async function Header() {
   const session = await auth()
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-gray-200 bg-white">
+    <header className="sticky top-0 z-50 w-full border-b border-gray-200 bg-white/95 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2.5 transition-opacity hover:opacity-80">
@@ -28,7 +29,7 @@ export default async function Header() {
         </Link>
 
         {/* Desktop nav */}
-        <nav className="hidden items-center gap-1 md:flex">
+        <nav className="hidden items-center gap-0.5 lg:flex">
           {navLinks.map(({ label, href }) => (
             <Link
               key={href}
