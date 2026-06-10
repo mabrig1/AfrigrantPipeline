@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { useSession } from 'next-auth/react'
 import { cn } from '@/lib/utils'
 import {
   LayoutDashboard,
@@ -16,21 +17,28 @@ import {
   ShieldCheck,
 } from 'lucide-react'
 
-const navItems = [
-  { href: '/dashboard',              label: 'Overview',     icon: LayoutDashboard },
-  { href: '/dashboard/grants',       label: 'Grants',       icon: Search },
-  { href: '/dashboard/applications', label: 'Applications', icon: FileText },
-  { href: '/dashboard/my-articles',  label: 'My Articles',  icon: BookOpen },
-  { href: '/dashboard/writing-lab',  label: 'Writing Lab',  icon: Edit3 },
-  { href: '/dashboard/ai-tools',     label: 'AI Tools',     icon: Sparkles },
-  { href: '/dashboard/collaborate',  label: 'Collaborate',  icon: Users },
-  { href: '/dashboard/mentorship',   label: 'Mentorship',   icon: GraduationCap },
-  { href: '/dashboard/admin',        label: 'Admin',        icon: ShieldCheck },
-  { href: '/dashboard/settings',     label: 'Settings',     icon: Settings },
+const baseNavItems = [
+  { href: '/dashboard',                  label: 'Overview',     icon: LayoutDashboard },
+  { href: '/dashboard/grants',           label: 'Grants',       icon: Search },
+  { href: '/dashboard/applications',     label: 'Applications', icon: FileText },
+  { href: '/dashboard/my-articles',      label: 'My Articles',  icon: BookOpen },
+  { href: '/dashboard/writing-lab',      label: 'Writing Lab',  icon: Edit3 },
+  { href: '/dashboard/collaborate',      label: 'Collaborate',  icon: Users },
+  { href: '/dashboard/mentorship',       label: 'Mentorship',   icon: GraduationCap },
+  { href: '/dashboard/settings',         label: 'Settings',     icon: Settings },
+]
+
+const adminNavItems = [
+  { href: '/dashboard/ai-tools',         label: 'AI Tools',     icon: Sparkles },
+  { href: '/dashboard/admin',            label: 'Admin',        icon: ShieldCheck },
 ]
 
 export default function Sidebar() {
   const pathname = usePathname()
+  const { data: session } = useSession()
+  const isAdmin = session?.user?.role === 'admin'
+
+  const navItems = isAdmin ? [...baseNavItems, ...adminNavItems] : baseNavItems
 
   return (
     <aside className="hidden w-56 shrink-0 flex-col gap-0.5 py-6 pr-4 lg:flex">
