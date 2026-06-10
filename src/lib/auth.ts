@@ -1,9 +1,8 @@
 import NextAuth, { type DefaultSession } from 'next-auth'
-import { MongoDBAdapter } from '@auth/mongodb-adapter'
 import Credentials from 'next-auth/providers/credentials'
 import Google from 'next-auth/providers/google'
 import bcrypt from 'bcryptjs'
-import { clientPromise, connectDB } from './mongodb'
+import { connectDB } from '@/lib/mongodb'
 import User from '@/models/User'
 import type { UserRole, SubscriptionPlan } from '@/types/database'
 
@@ -34,7 +33,7 @@ declare module 'next-auth/jwt' {
 // ── NextAuth config ───────────────────────────────────────────────────────────
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
-  adapter: MongoDBAdapter(clientPromise),
+  // No MongoDBAdapter — we use JWT strategy and manage users directly via Mongoose
   session: { strategy: 'jwt' },
 
   // Required when running behind Cloudflare / Railway reverse proxies
@@ -67,38 +66,88 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         password: { label: 'Password', type: 'password' },
       },
       async authorize(credentials) {
-        const email = credentials?.email
-        const password = credentials?.password
+        try {
+          const email = credentials?.email
+          const password = credentials?.password
 
-        if (typeof email !== 'string' || typeof password !== 'string') return null
-        if (!email || !password) return null
+          if (typeof email !== 'string' || typeof password !== 'string') return null
+          if (!email || !password) return null
 
-        await connectDB()
-        const user = await User.findOne({ email: email.toLowerCase().trim() }).lean()
-        if (!user || !user.password) return null
+          await connectDB()
+          const user = await User.findOne({ email: email.toLowerCase().trim() }).lean()
+          if (!user || !user.password) return null
 
-        const valid = await bcrypt.compare(password, user.password)
-        if (!valid) return null
+          const valid = await bcrypt.compare(password, user.password)
+          if (!valid) return null
 
-        return {
-          id: user._id.toString(),
-          email: user.email,
-          name: user.name,
-          image: user.avatar ?? null,
-          role: user.role,
-          subscription: (user.subscription ?? 'free') as SubscriptionPlan,
+          return {
+            id: user._id.toString(),
+            email: user.email,
+            name: user.name,
+            image: user.avatar ?? null,
+            role: user.role,
+            subscription: (user.subscription ?? 'free') as SubscriptionPlan,
+          }
+        } catch {
+          return null
         }
       },
     }),
   ],
 
   callbacks: {
-    async jwt({ token, user, trigger, session }) {
+    async signIn({ user, account, profile }) {
+      // For Google OAuth: upsert the user in our MongoDB
+      if (account?.provider === 'google' && profile?.email) {
+        try {
+          await connectDB()
+          await User.findOneAndUpdate(
+            { email: profile.email.toLowerCase() },
+            {
+              $setOnInsert: {
+                name: profile.name ?? user.name ?? 'Google User',
+                email: profile.email.toLowerCase(),
+                role: 'researcher' as UserRole,
+                subscription: 'free' as SubscriptionPlan,
+              },
+              $set: {
+                avatar: (profile as { picture?: string }).picture ?? user.image ?? undefined,
+              },
+            },
+            { upsert: true, new: true }
+          )
+        } catch {
+          // Don't block sign-in if upsert fails
+        }
+      }
+      return true
+    },
+
+    async jwt({ token, user, trigger, session, account, profile }) {
+      // On first sign-in, populate from the returned user object
       if (user) {
         token.id = user.id as string
         token.role = (user.role ?? 'student') as UserRole
         token.subscription = (user.subscription ?? 'free') as SubscriptionPlan
       }
+
+      // For Google OAuth, look up the real role/subscription from DB
+      if (account?.provider === 'google' && profile?.email) {
+        try {
+          await connectDB()
+          const dbUser = await User.findOne({ email: (profile.email as string).toLowerCase() })
+            .select('_id role subscription')
+            .lean()
+          if (dbUser) {
+            token.id = dbUser._id.toString()
+            token.role = (dbUser.role ?? 'researcher') as UserRole
+            token.subscription = (dbUser.subscription ?? 'free') as SubscriptionPlan
+          }
+        } catch {
+          // fall through — use defaults
+        }
+      }
+
       if (trigger === 'update') {
         if (session?.role) token.role = session.role as UserRole
         if (session?.subscription) token.subscription = session.subscription as SubscriptionPlan
