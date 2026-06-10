@@ -50,12 +50,12 @@ const platformModules = [
     color: 'bg-green-100 text-green-700',
   },
   {
-    icon: Brain,
-    title: 'AI Research Assistant',
-    description: 'Generate proposals, improve abstracts, plan methodologies, and get grant-matching guidance powered by Claude AI.',
-    href: '/dashboard/ai-tools',
-    badge: 'AI',
-    color: 'bg-indigo-100 text-indigo-700',
+    icon: CheckCircle,
+    title: '💯 Humanised Writing Service',
+    description: 'Expert-written proposals, abstracts, and reports — 100% human, zero AI detection flags. Guaranteed original and publishable.',
+    href: '/writing-lab',
+    badge: 'Human',
+    color: 'bg-teal-100 text-teal-700',
   },
   {
     icon: Handshake,
