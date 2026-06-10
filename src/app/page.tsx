@@ -3,7 +3,7 @@ import {
   ArrowRight, Globe, Search, Users, GraduationCap,
   Lightbulb, Bell, Star, Sparkles, TrendingUp, Award, Building2,
   FileText, Zap, Heart, CheckCircle, ChevronRight, Microscope,
-  Handshake, BarChart3, ShieldCheck, Brain, Play,
+  Handshake, BarChart3, ShieldCheck,
 } from 'lucide-react'
 
 // ── Static data ────────────────────────────────────────────────────────────
@@ -404,56 +404,6 @@ export default function HomePage() {
                   <div className="mt-1 text-xs text-white/60">{item.tag}</div>
                 </div>
               ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── AI Tools preview ── */}
-      <section className="bg-white py-16">
-        <div className="mx-auto max-w-7xl px-6">
-          <div className="grid items-center gap-12 lg:grid-cols-2">
-            <div>
-              <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-indigo-100 px-4 py-1.5 text-sm font-medium text-indigo-700">
-                <Sparkles className="size-4" /> AI-Powered Tools
-              </div>
-              <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
-                Your AI Research &amp;<br />Funding Assistant
-              </h2>
-              <p className="mt-4 text-gray-500">
-                Powered by Claude AI, our research assistant generates proposals, improves abstracts, builds literature frameworks, and matches you to the right grants — in seconds.
-              </p>
-              <div className="mt-6 grid grid-cols-2 gap-3">
-                {[
-                  'Proposal Generator', 'Abstract Improver', 'Grant Matcher',
-                  'Literature Review Helper', 'Budget Builder', 'Methodology Planner',
-                ].map((tool) => (
-                  <div key={tool} className="flex items-center gap-2 rounded-xl border border-indigo-100 bg-indigo-50 px-4 py-2.5 text-sm font-medium text-indigo-700">
-                    <Brain className="size-4" /> {tool}
-                  </div>
-                ))}
-              </div>
-              <Link href="/dashboard/ai-tools"
-                className="mt-7 inline-flex items-center gap-2 rounded-full bg-indigo-700 px-7 py-3 text-sm font-bold text-white transition-colors hover:bg-indigo-800">
-                Try AI Tools <Sparkles className="size-4" />
-              </Link>
-            </div>
-            <div className="rounded-3xl border border-gray-200 bg-gray-50 p-6">
-              <div className="mb-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-gray-500">
-                <Sparkles className="size-3.5 text-indigo-600" /> AI Proposal Generator Preview
-              </div>
-              <div className="space-y-3">
-                <div className="rounded-xl bg-indigo-50 p-3 text-sm text-indigo-800">
-                  <span className="font-semibold">You:</span> Generate a proposal introduction for a climate adaptation research grant in Northern Nigeria
-                </div>
-                <div className="rounded-xl border border-gray-200 bg-white p-3 text-sm leading-relaxed text-gray-700">
-                  <span className="font-semibold text-indigo-700">AfriGrant AI:</span> Northern Nigeria faces unprecedented climate stress — irregular rainfall, desertification, and recurrent flooding have disrupted the livelihoods of over 23 million people in the Lake Chad basin. This proposal presents a 3-year community-based adaptation research program integrating indigenous knowledge systems with satellite monitoring to build resilient agricultural communities...
-                </div>
-                <div className="flex items-center gap-2 text-xs text-gray-400">
-                  <Play className="size-3 text-indigo-500" />
-                  Full proposal, budget template, M&amp;E framework generated in 30 seconds
-                </div>
-              </div>
             </div>
           </div>
         </div>
