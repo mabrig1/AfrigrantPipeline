@@ -1,6 +1,19 @@
 import Link from 'next/link'
+import { ChevronDown } from 'lucide-react'
 import { auth, signOut } from '@/lib/auth'
 import MobileMenu from './MobileMenu'
+
+const mriItems = [
+  { label: 'Research Projects', href: '/mri/research-projects', icon: '🔬' },
+  { label: 'Policy Briefs', href: '/mri/policy-briefs', icon: '📋' },
+  { label: 'Working Papers', href: '/mri/working-papers', icon: '📄' },
+  { label: 'Research Reports', href: '/mri/research-reports', icon: '📊' },
+  { label: 'Research Fellows', href: '/mri/research-fellows', icon: '👥' },
+  { label: 'Academic Partnerships', href: '/mri/academic-partnerships', icon: '🤝' },
+  { label: 'Publications', href: '/mri/publications', icon: '📚' },
+  { label: 'Research Consulting', href: '/mri/research-consulting', icon: '💡' },
+  { label: 'Monitoring & Evaluation', href: '/mri/monitoring-evaluation', icon: '📈' },
+]
 
 const navLinks = [
   { label: 'Browse Grants', href: '/grants' },
@@ -11,6 +24,8 @@ const navLinks = [
   { label: 'Research Center', href: '/research-center' },
   { label: 'Pricing', href: '/pricing' },
 ]
+
+export const mriNavLinks = mriItems
 
 export default async function Header() {
   const session = await auth()
@@ -30,7 +45,8 @@ export default async function Header() {
 
         {/* Desktop nav */}
         <nav className="hidden items-center gap-0.5 lg:flex">
-          {navLinks.map(({ label, href }) => (
+          {/* Links before MRI */}
+          {navLinks.slice(0, 6).map(({ label, href }) => (
             <Link
               key={href}
               href={href}
@@ -39,6 +55,53 @@ export default async function Header() {
               {label}
             </Link>
           ))}
+
+          {/* MRI Dropdown */}
+          <div className="relative group">
+            <Link
+              href="/mri"
+              className="flex items-center gap-1 rounded-lg px-3 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-900"
+            >
+              MRI
+              <ChevronDown className="size-3.5 transition-transform duration-200 group-hover:rotate-180" />
+            </Link>
+
+            {/* Dropdown panel */}
+            <div className="absolute top-full left-0 hidden group-hover:block w-64 rounded-2xl bg-slate-900 shadow-2xl border border-slate-700 py-2 z-50">
+              <div className="px-4 pb-2 pt-1">
+                <p className="text-xs font-semibold uppercase tracking-widest text-slate-400">
+                  Mabrig Research Institute
+                </p>
+              </div>
+              <div className="border-t border-slate-700/60" />
+              {mriItems.map(({ label, href, icon }) => (
+                <Link
+                  key={href}
+                  href={href}
+                  className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-slate-200 hover:bg-slate-800 hover:text-white transition-colors"
+                >
+                  <span className="text-base leading-none">{icon}</span>
+                  {label}
+                </Link>
+              ))}
+              <div className="border-t border-slate-700/60 mt-2 pt-2 px-4 pb-1">
+                <Link
+                  href="/mri"
+                  className="flex items-center gap-1 text-xs font-medium text-blue-400 hover:text-blue-300 transition-colors"
+                >
+                  View MRI Overview →
+                </Link>
+              </div>
+            </div>
+          </div>
+
+          {/* Pricing */}
+          <Link
+            href="/pricing"
+            className="rounded-lg px-3 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-900"
+          >
+            Pricing
+          </Link>
         </nav>
 
         {/* Desktop auth */}
@@ -90,7 +153,11 @@ export default async function Header() {
         </div>
 
         {/* Mobile */}
-        <MobileMenu navLinks={navLinks} user={session?.user ?? null} />
+        <MobileMenu
+          navLinks={navLinks}
+          mriItems={mriItems}
+          user={session?.user ?? null}
+        />
       </div>
     </header>
   )
