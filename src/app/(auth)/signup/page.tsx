@@ -14,7 +14,6 @@ import {
   BookOpen,
   Building2,
 } from 'lucide-react'
-import { authApi } from '@/lib/api'
 
 // ── Role options ──────────────────────────────────────────────────────────────
 
@@ -122,17 +121,16 @@ export default function SignupPage() {
 
     setLoading(true)
 
-    const { error: apiError } = await authApi.register({
-      name,
-      email,
-      password,
-      organization: organization || undefined,
-      role: selectedRole,
+    const res = await fetch('/api/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, email, password, organization: organization || undefined, role: selectedRole }),
     })
+    const json = (await res.json()) as { id?: string; error?: string }
 
-    if (apiError) {
+    if (!res.ok) {
       setLoading(false)
-      setError(apiError)
+      setError(json.error ?? 'Registration failed. Please try again.')
       return
     }
 
