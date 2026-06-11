@@ -49,15 +49,15 @@ export default function MobileMenu({ navLinks, mriItems, user }: MobileMenuProps
     }
   }, [open])
 
-  // Build the enriched nav links with MRI children inserted after Research Center
+  // All nav links + MRI accordion inserted before Pricing
   const enrichedLinks: NavLink[] = [
-    ...navLinks.slice(0, 6).map((l) => ({ ...l })),
+    ...navLinks.slice(0, navLinks.length - 1).map((l) => ({ ...l })),
     {
       label: 'MRI',
       href: '/mri',
       children: mriItems,
     },
-    navLinks[6], // Pricing
+    navLinks[navLinks.length - 1], // Pricing always last
   ]
 
   return (

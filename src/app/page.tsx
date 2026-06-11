@@ -267,6 +267,36 @@ export default async function HomePage() {
         </div>
       </section>
 
+      {/* ── All Services Navigation Hub ── */}
+      <section className="bg-white py-10 border-b border-gray-100">
+        <div className="mx-auto max-w-7xl px-6">
+          <p className="mb-6 text-center text-xs font-semibold uppercase tracking-widest text-gray-400">Explore All Platform Services</p>
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+            {[
+              { icon: '🔍', label: 'Browse Grants', desc: 'Grants & fellowships', href: '/grants', color: 'hover:border-blue-300 hover:bg-blue-50' },
+              { icon: '🎓', label: 'Scholarships', desc: 'UG to PhD funding', href: '/scholarships', color: 'hover:border-amber-300 hover:bg-amber-50' },
+              { icon: '🏢', label: 'Business Grants', desc: 'MSME & startup funds', href: '/business-grants', color: 'hover:border-green-300 hover:bg-green-50' },
+              { icon: '✍️', label: 'Writing Lab', desc: 'Humanised writing', href: '/writing-lab', color: 'hover:border-teal-300 hover:bg-teal-50' },
+              { icon: '📤', label: 'Publish Research', desc: 'Repository & journals', href: '/publish', color: 'hover:border-indigo-300 hover:bg-indigo-50' },
+              { icon: '🛠️', label: 'Services', desc: 'Expert consultants', href: '/services', color: 'hover:border-orange-300 hover:bg-orange-50' },
+              { icon: '👩‍🏫', label: 'Experts', desc: 'Researchers & mentors', href: '/experts', color: 'hover:border-pink-300 hover:bg-pink-50' },
+              { icon: '📚', label: 'AfriPublish', desc: 'Articles & journals', href: '/articles', color: 'hover:border-purple-300 hover:bg-purple-50' },
+              { icon: '🔬', label: 'Research Center', desc: 'Tools & resources', href: '/research-center', color: 'hover:border-cyan-300 hover:bg-cyan-50' },
+              { icon: '🏛️', label: 'MRI Institute', desc: 'Mabrig Research', href: '/mri', color: 'hover:border-slate-400 hover:bg-slate-50' },
+            ].map(({ icon, label, desc, href, color }) => (
+              <Link key={href} href={href}
+                className={`flex items-center gap-3 rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3.5 transition-all hover:-translate-y-0.5 hover:shadow-sm ${color}`}>
+                <span className="text-xl shrink-0">{icon}</span>
+                <div className="min-w-0">
+                  <div className="truncate text-sm font-semibold text-gray-800">{label}</div>
+                  <div className="truncate text-xs text-gray-500">{desc}</div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ── Funding categories ── */}
       <section className="mx-auto max-w-7xl px-6 py-14">
         <div className="mb-8 flex items-center justify-between">

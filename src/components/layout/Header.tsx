@@ -16,8 +16,11 @@ const mriItems = [
   { label: 'Publish Your Research', href: '/publish', icon: '✍️' },
 ]
 
+// All top-level nav links (used by desktop nav, mobile menu, and homepage nav hub)
 const navLinks = [
   { label: 'Browse Grants', href: '/grants' },
+  { label: 'Scholarships', href: '/scholarships' },
+  { label: 'Business Grants', href: '/business-grants' },
   { label: 'Writing Lab', href: '/writing-lab' },
   { label: 'Publish', href: '/publish' },
   { label: 'Services', href: '/services' },
@@ -28,6 +31,7 @@ const navLinks = [
 ]
 
 export const mriNavLinks = mriItems
+export { navLinks as allNavLinks }
 
 export default async function Header() {
   const session = await auth()
@@ -46,13 +50,12 @@ export default async function Header() {
         </Link>
 
         {/* Desktop nav */}
-        <nav className="hidden items-center gap-0.5 lg:flex">
-          {/* Links before MRI */}
-          {navLinks.slice(0, 6).map(({ label, href }) => (
+        <nav className="hidden items-center gap-0.5 xl:flex">
+          {navLinks.map(({ label, href }) => (
             <Link
               key={href}
               href={href}
-              className="rounded-lg px-3 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-900"
+              className="rounded-lg px-2.5 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-900"
             >
               {label}
             </Link>
@@ -62,14 +65,14 @@ export default async function Header() {
           <div className="relative group">
             <Link
               href="/mri"
-              className="flex items-center gap-1 rounded-lg px-3 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-900"
+              className="flex items-center gap-1 rounded-lg px-2.5 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-900"
             >
               MRI
               <ChevronDown className="size-3.5 transition-transform duration-200 group-hover:rotate-180" />
             </Link>
 
             {/* Dropdown panel */}
-            <div className="absolute top-full left-0 hidden group-hover:block w-64 rounded-2xl bg-slate-900 shadow-2xl border border-slate-700 py-2 z-50">
+            <div className="absolute top-full right-0 hidden group-hover:block w-64 rounded-2xl bg-slate-900 shadow-2xl border border-slate-700 py-2 z-50">
               <div className="px-4 pb-2 pt-1">
                 <p className="text-xs font-semibold uppercase tracking-widest text-slate-400">
                   Mabrig Research Institute
@@ -96,14 +99,6 @@ export default async function Header() {
               </div>
             </div>
           </div>
-
-          {/* Pricing */}
-          <Link
-            href="/pricing"
-            className="rounded-lg px-3 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-900"
-          >
-            Pricing
-          </Link>
         </nav>
 
         {/* Desktop auth */}
