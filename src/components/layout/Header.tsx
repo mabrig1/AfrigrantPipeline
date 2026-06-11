@@ -13,11 +13,13 @@ const mriItems = [
   { label: 'Publications', href: '/mri/publications', icon: '📚' },
   { label: 'Research Consulting', href: '/mri/research-consulting', icon: '💡' },
   { label: 'Monitoring & Evaluation', href: '/mri/monitoring-evaluation', icon: '📈' },
+  { label: 'Publish Your Research', href: '/publish', icon: '✍️' },
 ]
 
 const navLinks = [
   { label: 'Browse Grants', href: '/grants' },
   { label: 'Writing Lab', href: '/writing-lab' },
+  { label: 'Publish', href: '/publish' },
   { label: 'Services', href: '/services' },
   { label: 'Experts', href: '/experts' },
   { label: 'AfriPublish', href: '/articles' },
