@@ -1,38 +1,33 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { getToken } from 'next-auth/jwt'
+import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
 
-export async function middleware(req: NextRequest) {
-  const { pathname } = req.nextUrl
-  const token = await getToken({
-    req,
-    secret: process.env.AUTH_SECRET,
-  })
+// List of protected routes
+const protectedRoutes = ['/admin', '/api/admin'];
 
-  const isLoggedIn = !!token
-  const isDashboard = pathname.startsWith('/dashboard')
-  const isAuthPage =
-    pathname.startsWith('/login') ||
-    pathname.startsWith('/signup')
+// Check if the user is authenticated as admin
+function isAdmin(request: NextRequest): boolean {
+  const token = request.cookies.get('admin-token')?.value;
+  // Replace with your actual admin validation logic
+  // Example: Check if token matches ADMIN_SETUP_SECRET
+  return token === process.env.ADMIN_SETUP_SECRET;
+}
 
-  if (isDashboard && !isLoggedIn) {
-    const loginUrl = new URL('/login', req.nextUrl)
-    loginUrl.searchParams.set('callbackUrl', pathname)
-    return NextResponse.redirect(loginUrl)
+export function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+
+  // Check if the route is protected
+  const isProtected = protectedRoutes.some((route) => pathname.startsWith(route));
+
+  if (isProtected && !isAdmin(request)) {
+    // Redirect to login or home if not admin
+    const loginUrl = new URL('/api/auth/signin', request.url);
+    loginUrl.searchParams.set('callbackUrl', pathname);
+    return NextResponse.redirect(loginUrl);
   }
 
-  if (isAuthPage && isLoggedIn) {
-    const callbackUrl = req.nextUrl.searchParams.get('callbackUrl') ?? '/dashboard'
-    const safeCallback = callbackUrl.startsWith('/') ? callbackUrl : '/dashboard'
-    return NextResponse.redirect(new URL(safeCallback, req.nextUrl))
-  }
-
-  return NextResponse.next()
+  return NextResponse.next();
 }
 
 export const config = {
-  matcher: [
-    '/dashboard/:path*',
-    '/login',
-    '/signup',
-  ],
-}
+  matcher: ['/admin/:path*', '/api/admin/:path*'],
+};
