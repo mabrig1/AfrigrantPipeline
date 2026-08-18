@@ -267,6 +267,36 @@ export default async function HomePage() {
         </div>
       </section>
 
+      {/* ── All Services Navigation Hub ── */}
+      <section className="bg-white py-10 border-b border-gray-100">
+        <div className="mx-auto max-w-7xl px-6">
+          <p className="mb-6 text-center text-xs font-semibold uppercase tracking-widest text-gray-400">Explore All Platform Services</p>
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+            {[
+              { icon: '🔍', label: 'Browse Grants', desc: 'Grants & fellowships', href: '/grants', color: 'hover:border-blue-300 hover:bg-blue-50' },
+              { icon: '🎓', label: 'Scholarships', desc: 'UG to PhD funding', href: '/scholarships', color: 'hover:border-amber-300 hover:bg-amber-50' },
+              { icon: '🏢', label: 'Business Grants', desc: 'MSME & startup funds', href: '/business-grants', color: 'hover:border-green-300 hover:bg-green-50' },
+              { icon: '✍️', label: 'Writing Lab', desc: 'Humanised writing', href: '/writing-lab', color: 'hover:border-teal-300 hover:bg-teal-50' },
+              { icon: '📤', label: 'Publish Research', desc: 'Repository & journals', href: '/publish', color: 'hover:border-indigo-300 hover:bg-indigo-50' },
+              { icon: '🛠️', label: 'Services', desc: 'Expert consultants', href: '/services', color: 'hover:border-orange-300 hover:bg-orange-50' },
+              { icon: '👩‍🏫', label: 'Experts', desc: 'Researchers & mentors', href: '/experts', color: 'hover:border-pink-300 hover:bg-pink-50' },
+              { icon: '📚', label: 'AfriPublish', desc: 'Articles & journals', href: '/articles', color: 'hover:border-purple-300 hover:bg-purple-50' },
+              { icon: '🔬', label: 'Research Center', desc: 'Tools & resources', href: '/research-center', color: 'hover:border-cyan-300 hover:bg-cyan-50' },
+              { icon: '🏛️', label: 'MRI Institute', desc: 'Mabrig Research', href: '/mri', color: 'hover:border-slate-400 hover:bg-slate-50' },
+            ].map(({ icon, label, desc, href, color }) => (
+              <Link key={href} href={href}
+                className={`flex items-center gap-3 rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3.5 transition-all hover:-translate-y-0.5 hover:shadow-sm ${color}`}>
+                <span className="text-xl shrink-0">{icon}</span>
+                <div className="min-w-0">
+                  <div className="truncate text-sm font-semibold text-gray-800">{label}</div>
+                  <div className="truncate text-xs text-gray-500">{desc}</div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ── Funding categories ── */}
       <section className="mx-auto max-w-7xl px-6 py-14">
         <div className="mb-8 flex items-center justify-between">
@@ -488,6 +518,76 @@ export default async function HomePage() {
                       <span className="text-base">{icon}</span>
                       {label}
                       <ArrowRight className="ml-auto size-3.5 opacity-40" />
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Publish Your Research ── */}
+      <section className="bg-gray-50 py-20">
+        <div className="mx-auto max-w-7xl px-6">
+          <div className="overflow-hidden rounded-3xl border border-blue-100 bg-white">
+            <div className="grid lg:grid-cols-2">
+              {/* Left */}
+              <div className="px-8 py-14 sm:px-12">
+                <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-yellow-100 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-yellow-700">
+                  <FileText className="size-3.5" /> Publish Your Research
+                </div>
+                <h2 className="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+                  Your research deserves<br />
+                  <span className="text-blue-700">a global audience</span>
+                </h2>
+                <p className="mt-4 text-base leading-relaxed text-gray-600">
+                  From repository uploads to high-impact journal submissions, AfriGrantPipeline and Mabrig Research Institute give African researchers a credible, indexed, and globally visible publishing home.
+                </p>
+                <ul className="mt-6 space-y-3">
+                  {[
+                    'Open-access repository with DOI & citation tracking',
+                    'MRI Working Papers & Policy Briefs series',
+                    'Expert-guided open access journal submissions',
+                    'High-impact Q1/Q2 journal preparation support',
+                    'Ethical, plagiarism-free, fully original outputs',
+                  ].map((item) => (
+                    <li key={item} className="flex items-center gap-3 text-sm text-gray-600">
+                      <CheckCircle className="size-4 shrink-0 text-blue-700" />
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+                <div className="mt-8 flex flex-wrap gap-3">
+                  <Link href="/publish"
+                    className="inline-flex items-center gap-2 rounded-full bg-blue-700 px-7 py-3 text-sm font-bold text-white transition-colors hover:bg-blue-800">
+                    Start Publishing <ArrowRight className="size-4" />
+                  </Link>
+                  <Link href="/mri/publications"
+                    className="inline-flex items-center gap-2 rounded-full border border-gray-200 px-7 py-3 text-sm font-semibold text-gray-700 transition-colors hover:border-blue-200 hover:bg-blue-50">
+                    Browse MRI Publications
+                  </Link>
+                </div>
+              </div>
+
+              {/* Right: publishing paths */}
+              <div className="border-l border-gray-100 bg-gradient-to-br from-blue-700 to-indigo-800 px-8 py-14 sm:px-12">
+                <p className="mb-6 text-xs font-semibold uppercase tracking-widest text-blue-200">Publishing Pathways</p>
+                <div className="space-y-3">
+                  {[
+                    { icon: '📁', label: 'Repository Upload', desc: 'Thesis, papers, reports — open access with DOI', href: '/publish#repository' },
+                    { icon: '📄', label: 'Working Papers Series', desc: 'MRI-branded pre-print and policy research', href: '/mri/working-papers' },
+                    { icon: '🌐', label: 'Open Access Journals', desc: 'Expert guidance for APC-free publication', href: '/publish#open-access' },
+                    { icon: '🏆', label: 'High-Impact Journals', desc: 'Q1/Q2 Scopus & WoS submission support', href: '/publish#high-impact' },
+                  ].map(({ icon, label, desc, href }) => (
+                    <Link key={label} href={href}
+                      className="flex items-center gap-4 rounded-2xl border border-white/10 bg-white/10 px-5 py-4 transition-colors hover:bg-white/20">
+                      <span className="text-2xl">{icon}</span>
+                      <div className="flex-1">
+                        <div className="text-sm font-semibold text-white">{label}</div>
+                        <div className="text-xs text-blue-200">{desc}</div>
+                      </div>
+                      <ArrowRight className="size-4 shrink-0 text-blue-300" />
                     </Link>
                   ))}
                 </div>
