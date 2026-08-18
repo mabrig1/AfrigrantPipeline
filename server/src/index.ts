@@ -1,103 +1,57 @@
-import 'dotenv/config'
-import express from 'express'
-import cors from 'cors'
-import helmet from 'helmet'
-import rateLimit from 'express-rate-limit'
-import mongoose from 'mongoose'
+import express from 'express';
+import mongoose from 'mongoose';
+import cookieParser from 'cookie-parser';
+import cors from 'cors';
+import { Request, Response, NextFunction } from 'express';
 
-import authRoutes from './routes/auth'
-import grantsRoutes from './routes/grants'
-import applicationsRoutes from './routes/applications'
-import articlesRoutes from './routes/articles'
-import collaborationsRoutes from './routes/collaborations'
-import mentorshipsRoutes from './routes/mentorships'
-import profilesRoutes from './routes/profiles'
-import aiRoutes from './routes/ai'
+const app = express();
 
-const app = express()
-const PORT = process.env.PORT ?? 8080
+// Middleware
+app.use(express.json());
+app.use(cookieParser());
+app.use(cors({
+  origin: process.env.NODE_ENV === 'production'
+    ? 'https://afrigrantpipeline.com'
+    : 'http://localhost:3000',
+  credentials: true,
+}));
 
-// ── Proxy & security ──────────────────────────────────────────────────────────
+// Connect to MongoDB
+mongoose.connect(process.env.DATABASE_URL!)
+  .then(() => console.log('✅ Connected to MongoDB'))
+  .catch(err => console.error('❌ MongoDB connection error:', err));
 
-app.set('trust proxy', 1)
-app.use(helmet())
+// Middleware to check if user is admin
+function requireAdmin(req: Request, res: Response, next: NextFunction) {
+  const adminToken = req.cookies['admin-token'];
+  if (adminToken !== process.env.ADMIN_SETUP_SECRET) {
+    return res.status(403).json({ error: 'Unauthorized: Not an admin' });
+  }
+  next();
+}
 
-// ── CORS ──────────────────────────────────────────────────────────────────────
+// Admin setup endpoint
+app.post('/api/admin/make-admin', (req: Request, res: Response) => {
+  const { secret } = req.body;
+  if (secret !== process.env.ADMIN_SETUP_SECRET) {
+    return res.status(401).json({ error: 'Invalid admin secret' });
+  }
 
-const allowedOrigins = [
-  'https://afrigrantpipeline.com',
-  'https://www.afrigrantpipeline.com',
-  'http://localhost:3000',
-  ...(process.env.EXTRA_ORIGINS ? process.env.EXTRA_ORIGINS.split(',') : []),
-]
+  // Set admin cookie
+  res.cookie('admin-token', process.env.ADMIN_SETUP_SECRET!, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
+    sameSite: 'strict',
+  });
 
-app.use(
-  cors({
-    origin: (origin, callback) => {
-      // Allow server-to-server (no origin) and whitelisted origins
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true)
-      } else {
-        callback(new Error(`CORS: origin '${origin}' not allowed`))
-      }
-    },
-    credentials: true,
-    methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-  }),
-)
+  return res.json({ message: 'Admin activated! Refresh the page.' });
+});
 
-app.use(express.json({ limit: '10mb' }))
+// Example protected route
+app.get('/api/admin/test', requireAdmin, (req: Request, res: Response) => {
+  res.json({ message: 'You are an admin!' });
+});
 
-// ── Global rate limit ─────────────────────────────────────────────────────────
-
-app.use(
-  rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 min
-    max: 200,
-    standardHeaders: true,
-    legacyHeaders: false,
-    // Respect Cloudflare real IP
-    keyGenerator: (req) =>
-      (req.headers['cf-connecting-ip'] as string) ?? req.ip ?? 'unknown',
-  }),
-)
-
-// ── Health check ──────────────────────────────────────────────────────────────
-
-app.get('/health', (_req, res) => res.json({ status: 'ok', timestamp: new Date().toISOString() }))
-
-// ── API v1 routes ─────────────────────────────────────────────────────────────
-
-app.use('/api/v1/auth', authRoutes)
-app.use('/api/v1/grants', grantsRoutes)
-app.use('/api/v1/applications', applicationsRoutes)
-app.use('/api/v1/articles', articlesRoutes)
-app.use('/api/v1/collaborations', collaborationsRoutes)
-app.use('/api/v1/mentorships', mentorshipsRoutes)
-app.use('/api/v1/profiles', profilesRoutes)
-app.use('/api/v1/ai', aiRoutes)
-
-// ── 404 fallthrough ───────────────────────────────────────────────────────────
-
-app.use((_req, res) => res.status(404).json({ error: 'Route not found' }))
-
-// ── Database & server start ───────────────────────────────────────────────────
-
-// Start HTTP server immediately so Railway healthcheck passes,
-// then connect to MongoDB. If DB connection fails, log and exit.
-const server = app.listen(PORT, () => console.log(`Server running on port ${PORT}`))
-
-mongoose
-  .connect(process.env.MONGODB_URI!, {
-    maxPoolSize: 10,
-    serverSelectionTimeoutMS: 5000,
-    socketTimeoutMS: 45000,
-  })
-  .then(() => console.log('MongoDB connected'))
-  .catch((err) => {
-    console.error('MongoDB connection failed:', err)
-    server.close(() => process.exit(1))
-  })
-
-export default app
+// Export for Vercel
+export default app;
