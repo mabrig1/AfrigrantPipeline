@@ -1,57 +1,97 @@
 import express from 'express';
 import mongoose from 'mongoose';
-import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import { Request, Response, NextFunction } from 'express';
 
 const app = express();
 
-// Middleware
 app.use(express.json());
-app.use(cookieParser());
 app.use(cors({
-  origin: process.env.NODE_ENV === 'production'
-    ? 'https://afrigrantpipeline.com'
-    : 'http://localhost:3000',
+  origin: (origin, callback) => {
+    const allowedOrigins = process.env.NODE_ENV === 'production'
+      ? ['https://afrigrantpipeline.com', 'https://www.afrigrantpipeline.com']
+      : ['http://localhost:3000'];
+
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
 }));
 
-// Connect to MongoDB
-mongoose.connect(process.env.DATABASE_URL!)
-  .then(() => console.log('✅ Connected to MongoDB'))
-  .catch(err => console.error('❌ MongoDB connection error:', err));
+const databaseUrl = process.env.DATABASE_URL;
+if (!databaseUrl) {
+  console.error('❌ DATABASE_URL is not configured');
+} else {
+  mongoose.connect(databaseUrl)
+    .then(() => console.log('✅ Connected to MongoDB'))
+    .catch((err) => console.error('❌ MongoDB connection error:', err));
+}
 
-// Middleware to check if user is admin
+function getCookie(req: Request, name: string): string | undefined {
+  const header = req.headers.cookie;
+  if (!header) return undefined;
+
+  const prefix = `${name}=`;
+  const cookie = header
+    .split(';')
+    .map((part) => part.trim())
+    .find((part) => part.startsWith(prefix));
+
+  return cookie ? decodeURIComponent(cookie.slice(prefix.length)) : undefined;
+}
+
+function setAdminCookie(res: Response, secret: string): void {
+  const maxAge = 60 * 60 * 24 * 7;
+  const attributes = [
+    'Path=/',
+    `Max-Age=${maxAge}`,
+    'HttpOnly',
+    'SameSite=Lax',
+    ...(process.env.NODE_ENV === 'production' ? ['Secure'] : []),
+  ];
+
+  res.setHeader('Set-Cookie', `admin-token=${encodeURIComponent(secret)}; ${attributes.join('; ')}`);
+}
+
 function requireAdmin(req: Request, res: Response, next: NextFunction) {
-  const adminToken = req.cookies['admin-token'];
-  if (adminToken !== process.env.ADMIN_SETUP_SECRET) {
+  const secret = process.env.ADMIN_SETUP_SECRET;
+  const adminToken = getCookie(req, 'admin-token');
+
+  if (!secret || adminToken !== secret) {
     return res.status(403).json({ error: 'Unauthorized: Not an admin' });
   }
+
   next();
 }
 
-// Admin setup endpoint
+app.get('/api/health', (_req: Request, res: Response) => {
+  res.json({
+    ok: true,
+    mongodb: mongoose.connection.readyState === 1,
+  });
+});
+
 app.post('/api/admin/make-admin', (req: Request, res: Response) => {
-  const { secret } = req.body;
-  if (secret !== process.env.ADMIN_SETUP_SECRET) {
+  const configuredSecret = process.env.ADMIN_SETUP_SECRET;
+  const { secret } = req.body as { secret?: string };
+
+  if (!configuredSecret) {
+    return res.status(500).json({ error: 'ADMIN_SETUP_SECRET is not configured' });
+  }
+
+  if (!secret || secret !== configuredSecret) {
     return res.status(401).json({ error: 'Invalid admin secret' });
   }
 
-  // Set admin cookie
-  res.cookie('admin-token', process.env.ADMIN_SETUP_SECRET!, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
-    sameSite: 'strict',
-  });
-
+  setAdminCookie(res, configuredSecret);
   return res.json({ message: 'Admin activated! Refresh the page.' });
 });
 
-// Example protected route
-app.get('/api/admin/test', requireAdmin, (req: Request, res: Response) => {
+app.get('/api/admin/test', requireAdmin, (_req: Request, res: Response) => {
   res.json({ message: 'You are an admin!' });
 });
 
-// Export for Vercel
 export default app;
