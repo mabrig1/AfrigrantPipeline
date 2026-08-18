@@ -11,8 +11,12 @@ const nextConfig: NextConfig = {
   },
   async rewrites() {
     const railwayUrl = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080";
+
     return [
       { source: "/api/v1/:path*", destination: `${railwayUrl}/api/v1/:path*` },
+      // Proxy admin requests through Next.js to the Express/MongoDB backend.
+      { source: "/api/admin/:path*", destination: `${railwayUrl}/api/admin/:path*` },
+      { source: "/api/health", destination: `${railwayUrl}/api/health` },
     ];
   },
   async headers() {
