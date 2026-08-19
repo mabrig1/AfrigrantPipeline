@@ -6,8 +6,6 @@ import { connectDB } from '@/lib/mongodb'
 import User from '@/models/User'
 import type { UserRole, SubscriptionPlan } from '@/types/database'
 
-// ── Module augmentation ───────────────────────────────────────────────────────
-
 declare module 'next-auth' {
   interface Session {
     user: {
@@ -22,28 +20,19 @@ declare module 'next-auth' {
   }
 }
 
-declare module 'next-auth/jwt' {
-  interface JWT {
-    id: string
-    role: UserRole
-    subscription: SubscriptionPlan
-  }
+type AppToken = {
+  id?: string
+  role?: UserRole
+  subscription?: SubscriptionPlan
 }
 
-// ── NextAuth config ───────────────────────────────────────────────────────────
-
 export const { handlers, signIn, signOut, auth } = NextAuth({
-  // No MongoDBAdapter — we use JWT strategy and manage users directly via Mongoose
   session: { strategy: 'jwt' },
-
-  // Required when running behind Cloudflare / Railway reverse proxies
   trustHost: true,
-
   pages: {
     signIn: '/login',
     error: '/login',
   },
-
   providers: [
     Google({
       clientId: process.env.GOOGLE_CLIENT_ID!,
@@ -59,7 +48,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         }
       },
     }),
-
     Credentials({
       credentials: {
         email: { label: 'Email', type: 'email' },
@@ -69,17 +57,13 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         try {
           const email = credentials?.email
           const password = credentials?.password
-
           if (typeof email !== 'string' || typeof password !== 'string') return null
           if (!email || !password) return null
-
           await connectDB()
           const user = await User.findOne({ email: email.toLowerCase().trim() }).lean()
           if (!user || !user.password) return null
-
           const valid = await bcrypt.compare(password, user.password)
           if (!valid) return null
-
           return {
             id: user._id.toString(),
             email: user.email,
@@ -94,10 +78,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       },
     }),
   ],
-
   callbacks: {
     async signIn({ user, account, profile }) {
-      // For Google OAuth: upsert the user in our MongoDB
       if (account?.provider === 'google' && profile?.email) {
         try {
           await connectDB()
@@ -114,51 +96,51 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                 avatar: (profile as { picture?: string }).picture ?? user.image ?? undefined,
               },
             },
-            { upsert: true, new: true }
+            { upsert: true, new: true },
           )
         } catch {
-          // Don't block sign-in if upsert fails
+          // Don't block sign-in if the profile upsert fails.
         }
       }
       return true
     },
-
     async jwt({ token, user, trigger, session, account, profile }) {
-      // On first sign-in, populate from the returned user object
+      const appToken = token as typeof token & AppToken
       if (user) {
-        token.id = user.id as string
-        token.role = (user.role ?? 'student') as UserRole
-        token.subscription = (user.subscription ?? 'free') as SubscriptionPlan
+        appToken.id = user.id as string
+        appToken.role = (user.role ?? 'student') as UserRole
+        appToken.subscription = (user.subscription ?? 'free') as SubscriptionPlan
       }
-
-      // For Google OAuth, look up the real role/subscription from DB
       if (account?.provider === 'google' && profile?.email) {
         try {
           await connectDB()
-          const dbUser = await User.findOne({ email: (profile.email as string).toLowerCase() })
+          const dbUser = await User.findOne({
+            email: (profile.email as string).toLowerCase(),
+          })
             .select('_id role subscription')
             .lean()
           if (dbUser) {
-            token.id = dbUser._id.toString()
-            token.role = (dbUser.role ?? 'researcher') as UserRole
-            token.subscription = (dbUser.subscription ?? 'free') as SubscriptionPlan
+            appToken.id = dbUser._id.toString()
+            appToken.role = (dbUser.role ?? 'researcher') as UserRole
+            appToken.subscription = (dbUser.subscription ?? 'free') as SubscriptionPlan
           }
         } catch {
-          // fall through — use defaults
+          // Keep existing token values.
         }
       }
-
       if (trigger === 'update') {
-        if (session?.role) token.role = session.role as UserRole
-        if (session?.subscription) token.subscription = session.subscription as SubscriptionPlan
+        if (session?.role) appToken.role = session.role as UserRole
+        if (session?.subscription) {
+          appToken.subscription = session.subscription as SubscriptionPlan
+        }
       }
-      return token
+      return appToken
     },
-
     async session({ session, token }) {
-      session.user.id = token.id
-      session.user.role = token.role
-      session.user.subscription = token.subscription ?? 'free'
+      const appToken = token as typeof token & AppToken
+      session.user.id = appToken.id ?? ''
+      session.user.role = appToken.role ?? 'student'
+      session.user.subscription = appToken.subscription ?? 'free'
       return session
     },
   },
