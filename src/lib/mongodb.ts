@@ -1,8 +1,6 @@
 import mongoose from 'mongoose'
 import { MongoClient, type MongoClientOptions } from 'mongodb'
 
-// ── Shared connection options ─────────────────────────────────────────────────
-
 const POOL_SIZE = 10
 const SERVER_SELECTION_TIMEOUT = 5_000
 const SOCKET_TIMEOUT = 45_000
@@ -14,14 +12,12 @@ const clientOptions: MongoClientOptions = {
 }
 
 function getMongoURI(): string {
-  const uri = process.env.MONGODB_URI
-  if (!uri) throw new Error('MONGODB_URI environment variable is not defined')
+  // DATABASE_URL is the canonical production variable. MONGODB_URI is kept as
+  // a backward-compatible fallback for existing local environments.
+  const uri = process.env.DATABASE_URL ?? process.env.MONGODB_URI
+  if (!uri) throw new Error('DATABASE_URL environment variable is not defined')
   return uri
 }
-
-// ── Mongoose singleton (model queries) ───────────────────────────────────────
-//
-// Next.js HMR re-executes modules on every save in dev, so we cache in global.
 
 declare global {
   // eslint-disable-next-line no-var
@@ -54,13 +50,6 @@ export async function connectDB(): Promise<typeof mongoose> {
   return mongooseCache.conn
 }
 
-// ── MongoClient singleton (NextAuth / MongoDBAdapter) ─────────────────────────
-//
-// MongoDBAdapter accepts a Promise<MongoClient>. We export a lazy promise that
-// defers the connection until it is first awaited (i.e. during an actual request)
-// rather than at module-import time, so the Next.js build succeeds even without
-// MONGODB_URI in the build environment.
-
 declare global {
   // eslint-disable-next-line no-var
   var _mongoClientPromise: Promise<MongoClient> | undefined
@@ -81,16 +70,14 @@ function resolveClientPromise(): Promise<MongoClient> {
   return _prodClientPromise
 }
 
-// A thenable that only creates the MongoClient when first awaited.
 export const clientPromise: Promise<MongoClient> = {
   then: <TResult1 = MongoClient, TResult2 = never>(
-    onfulfilled?: ((value: MongoClient) => TResult1 | PromiseLike<TResult1>) | null | undefined,
-    onrejected?: ((reason: unknown) => TResult2 | PromiseLike<TResult2>) | null | undefined,
+    onfulfilled?: ((value: MongoClient) => TResult1 | PromiseLike<TResult1>) | null,
+    onrejected?: ((reason: unknown) => TResult2 | PromiseLike<TResult2>) | null,
   ) => resolveClientPromise().then(onfulfilled, onrejected),
   catch: <TResult = never>(
-    onrejected?: ((reason: unknown) => TResult | PromiseLike<TResult>) | null | undefined,
+    onrejected?: ((reason: unknown) => TResult | PromiseLike<TResult>) | null,
   ) => resolveClientPromise().catch(onrejected),
-  finally: (onfinally?: (() => void) | null | undefined) =>
-    resolveClientPromise().finally(onfinally),
+  finally: (onfinally?: (() => void) | null) => resolveClientPromise().finally(onfinally),
   [Symbol.toStringTag]: 'Promise',
 } as Promise<MongoClient>
