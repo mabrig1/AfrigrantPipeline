@@ -104,13 +104,15 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       }
       return true
     },
-    async jwt({ token, user, trigger, session, account, profile }) {
+    async jwt({ token, user, trigger, account, profile }) {
       const appToken = token as typeof token & AppToken
+
       if (user) {
         appToken.id = user.id as string
         appToken.role = (user.role ?? 'student') as UserRole
         appToken.subscription = (user.subscription ?? 'free') as SubscriptionPlan
       }
+
       if (account?.provider === 'google' && profile?.email) {
         try {
           await connectDB()
@@ -128,12 +130,30 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           // Keep existing token values.
         }
       }
+
+      // Never trust role/subscription values supplied by the browser during
+      // session.update(). Refresh privileges from MongoDB instead.
       if (trigger === 'update') {
-        if (session?.role) appToken.role = session.role as UserRole
-        if (session?.subscription) {
-          appToken.subscription = session.subscription as SubscriptionPlan
+        try {
+          await connectDB()
+          const dbUser = appToken.id
+            ? await User.findById(appToken.id).select('_id role subscription').lean()
+            : token.email
+              ? await User.findOne({ email: token.email.toLowerCase() })
+                  .select('_id role subscription')
+                  .lean()
+              : null
+
+          if (dbUser) {
+            appToken.id = dbUser._id.toString()
+            appToken.role = (dbUser.role ?? 'student') as UserRole
+            appToken.subscription = (dbUser.subscription ?? 'free') as SubscriptionPlan
+          }
+        } catch {
+          // Keep the previous server-issued token values if refresh fails.
         }
       }
+
       return appToken
     },
     async session({ session, token }) {
