@@ -51,6 +51,12 @@ function LoginForm() {
   const [showPassword, setShowPassword] = useState(false)
   const [formError, setFormError] = useState('')
 
+  // Only allow same-site callback paths to avoid open redirects.
+  const requestedCallback = params.get('callbackUrl')
+  const callbackUrl = requestedCallback?.startsWith('/') && !requestedCallback.startsWith('//')
+    ? requestedCallback
+    : '/dashboard'
+
   // Error forwarded by NextAuth via ?error= query param
   const urlError = params.get('error')
   const errorMessage = urlError ? (AUTH_ERRORS[urlError] ?? AUTH_ERRORS.Default) : ''
@@ -83,7 +89,7 @@ function LoginForm() {
     if (result?.error) {
       setFormError('Invalid email or password. If you just registered, please try registering again — your previous attempt may not have saved.')
     } else {
-      router.push('/dashboard')
+      router.push(callbackUrl)
       router.refresh()
     }
   }
@@ -92,7 +98,7 @@ function LoginForm() {
 
   async function handleGoogle() {
     setGoogleLoading(true)
-    await signIn('google', { callbackUrl: '/dashboard' })
+    await signIn('google', { callbackUrl })
   }
 
   // ── Shared input class ──────────────────────────────────────────────────────
