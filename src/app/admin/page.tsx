@@ -1,19 +1,32 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { useSession } from 'next-auth/react'
 import { Shield, Loader2, CheckCircle, AlertCircle } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 function AdminSetup() {
-  const { data: session, update } = useSession()
+  const router = useRouter()
+  const { data: session, status: sessionStatus, update } = useSession()
   const [secret, setSecret] = useState('')
   const [status, setStatus] = useState<'idle' | 'loading' | 'ok' | 'error'>('idle')
   const [msg, setMsg] = useState('')
 
   const alreadyAdmin = session?.user?.role === 'admin'
 
+  useEffect(() => {
+    if (sessionStatus === 'unauthenticated') {
+      router.replace('/login?callbackUrl=%2Fadmin')
+    }
+  }, [router, sessionStatus])
+
   async function activate() {
+    if (sessionStatus !== 'authenticated') {
+      router.replace('/login?callbackUrl=%2Fadmin')
+      return
+    }
+
     setStatus('loading')
     setMsg('')
 
@@ -27,6 +40,11 @@ function AdminSetup() {
 
       const json = await res.json()
 
+      if (res.status === 401) {
+        router.replace('/login?callbackUrl=%2Fadmin')
+        return
+      }
+
       if (res.ok) {
         // Refresh the JWT from MongoDB. The auth callback ignores any client-
         // supplied role and reloads the server-side privileges instead.
@@ -34,7 +52,7 @@ function AdminSetup() {
         setStatus('ok')
         setMsg(json.message ?? 'Admin access activated.')
         setSecret('')
-        window.setTimeout(() => window.location.reload(), 700)
+        router.refresh()
       } else {
         setStatus('error')
         setMsg(json.error ?? 'Failed to activate admin role.')
@@ -43,6 +61,19 @@ function AdminSetup() {
       setStatus('error')
       setMsg('Network error. Check your connection and try again.')
     }
+  }
+
+  if (sessionStatus === 'loading' || sessionStatus === 'unauthenticated') {
+    return (
+      <div className="rounded-xl border border-border bg-card p-6">
+        <div className="flex items-center gap-3 text-sm text-muted-foreground">
+          <Loader2 className="size-5 animate-spin text-gold" />
+          {sessionStatus === 'loading'
+            ? 'Checking your account session…'
+            : 'Redirecting you to sign in…'}
+        </div>
+      </div>
+    )
   }
 
   if (alreadyAdmin) {
@@ -74,11 +105,9 @@ function AdminSetup() {
         configured in the deployed environment.
       </p>
 
-      {session?.user?.email && (
-        <p className="mb-3 text-xs text-muted-foreground">
-          Signed in as <span className="font-medium text-foreground">{session.user.email}</span>
-        </p>
-      )}
+      <p className="mb-3 text-xs text-muted-foreground">
+        Signed in as <span className="font-medium text-foreground">{session?.user?.email}</span>
+      </p>
 
       <div className="flex gap-2">
         <input
