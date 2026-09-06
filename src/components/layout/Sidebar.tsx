@@ -15,22 +15,24 @@ import {
   Sparkles,
   Edit3,
   ShieldCheck,
+  Radar,
 } from 'lucide-react'
 
 const baseNavItems = [
-  { href: '/dashboard',                  label: 'Overview',     icon: LayoutDashboard },
-  { href: '/dashboard/grants',           label: 'Grants',       icon: Search },
-  { href: '/dashboard/applications',     label: 'Applications', icon: FileText },
-  { href: '/dashboard/my-articles',      label: 'My Articles',  icon: BookOpen },
-  { href: '/dashboard/writing-lab',      label: 'Writing Lab',  icon: Edit3 },
-  { href: '/dashboard/collaborate',      label: 'Collaborate',  icon: Users },
-  { href: '/dashboard/mentorship',       label: 'Mentorship',   icon: GraduationCap },
-  { href: '/dashboard/settings',         label: 'Settings',     icon: Settings },
+  { href: '/dashboard',                    label: 'Overview',           icon: LayoutDashboard },
+  { href: '/dashboard/grants',             label: 'Grants',             icon: Search },
+  { href: '/dashboard/grant-intelligence', label: 'Grant Intelligence', icon: Radar },
+  { href: '/dashboard/applications',       label: 'Applications',       icon: FileText },
+  { href: '/dashboard/my-articles',        label: 'My Articles',        icon: BookOpen },
+  { href: '/dashboard/writing-lab',        label: 'Writing Lab',        icon: Edit3 },
+  { href: '/dashboard/collaborate',        label: 'Collaborate',        icon: Users },
+  { href: '/dashboard/mentorship',         label: 'Mentorship',         icon: GraduationCap },
+  { href: '/dashboard/settings',           label: 'Settings',           icon: Settings },
 ]
 
 const adminNavItems = [
-  { href: '/dashboard/ai-tools',         label: 'AI Tools',     icon: Sparkles },
-  { href: '/dashboard/admin',            label: 'Admin',        icon: ShieldCheck },
+  { href: '/dashboard/ai-tools',           label: 'AI Tools',           icon: Sparkles },
+  { href: '/dashboard/admin',              label: 'Admin',              icon: ShieldCheck },
 ]
 
 export default function Sidebar() {
