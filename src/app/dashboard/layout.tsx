@@ -10,6 +10,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
   const initials = session.user.name
     ? session.user.name.split(' ').map((p) => p[0]).slice(0, 2).join('').toUpperCase()
     : '?'
+  const isAdmin = session.user.role === 'admin'
 
   return (
     <div className="min-h-screen bg-background">
@@ -36,7 +37,11 @@ export default async function DashboardLayout({ children }: { children: React.Re
       </header>
 
       <nav aria-label="Dashboard navigation" className="flex flex-wrap gap-4 border-b border-border px-4 py-3 text-sm lg:hidden">
-        <Link href="/dashboard/consultancy">Consultancy desk</Link><Link href="/dashboard/grant-intelligence">Grant intelligence</Link><Link href="/dashboard">Overview</Link><Link href="/admin">Creator access</Link>
+        {isAdmin && <Link className="font-semibold text-gold" href="/dashboard/personal-grant-pipeline">My Grant Pipeline</Link>}
+        <Link href="/dashboard/consultancy">Consultancy desk</Link>
+        <Link href="/dashboard/grant-intelligence">Grant intelligence</Link>
+        <Link href="/dashboard">Overview</Link>
+        <Link href="/admin">Creator access</Link>
       </nav>
       {/* Page body */}
       <div className="mx-auto flex max-w-7xl">
