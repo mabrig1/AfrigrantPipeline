@@ -16,6 +16,7 @@ import {
   Edit3,
   ShieldCheck,
   Radar,
+  Rocket,
 } from 'lucide-react'
 
 const baseNavItems = [
@@ -32,6 +33,7 @@ const baseNavItems = [
 ]
 
 const adminNavItems = [
+  { href: '/dashboard/personal-grant-pipeline', label: 'My Grant Pipeline', icon: Rocket },
   { href: '/dashboard/ai-tools',           label: 'AI Tools',           icon: Sparkles },
   { href: '/admin',              label: 'Admin',              icon: ShieldCheck },
 ]
