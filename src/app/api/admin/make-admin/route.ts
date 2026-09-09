@@ -3,22 +3,15 @@ import { auth } from '@/lib/auth'
 import { connectDB } from '@/lib/mongodb'
 import User from '@/models/User'
 
-const DEFAULT_OWNER_EMAILS = ['mabrig1@gmail.com']
-
-function ownerEmails(): Set<string> {
-  const configured = (process.env.ADMIN_EMAILS ?? '')
-    .split(',')
-    .map((email) => email.trim().toLowerCase())
-    .filter(Boolean)
-
-  return new Set([...DEFAULT_OWNER_EMAILS, ...configured])
-}
+import { isOwnerEmail } from '@/lib/owner'
+import { checkOrigin } from '@/lib/consultancy/access'
 
 // One-time route: promotes the signed-in owner (or a user with the setup secret)
 // to admin. The owner path prevents an environment-secret mismatch from locking
 // the repository owner out of the first admin bootstrap.
 export async function POST(req: Request) {
   try {
+    checkOrigin(req)
     const session = await auth()
     if (!session?.user?.email) {
       return NextResponse.json({ error: 'You must be signed in' }, { status: 401 })
@@ -33,7 +26,9 @@ export async function POST(req: Request) {
     }
 
     const email = session.user.email.trim().toLowerCase()
-    const isOwner = ownerEmails().has(email)
+    await connectDB()
+    const current = await User.findById(session.user.id).select('email role emailVerified').lean()
+    const isOwner = Boolean(current && current.email === email && ((current.role === 'admin' && session.user.role === 'admin') || (session.user.verifiedOwner && current.emailVerified && isOwnerEmail(email))))
     const requiredSecret = process.env.ADMIN_SETUP_SECRET?.trim() ?? ''
     const secretMatches = Boolean(requiredSecret && secret && secret === requiredSecret)
 
@@ -42,7 +37,7 @@ export async function POST(req: Request) {
         return NextResponse.json(
           {
             error:
-              'Admin setup is not configured for this account. Add this email to ADMIN_EMAILS or set ADMIN_SETUP_SECRET in Vercel, then redeploy.',
+              'Use Google sign-in with your verified owner email, or supply the configured admin setup secret.',
           },
           { status: 503 },
         )
@@ -63,7 +58,7 @@ export async function POST(req: Request) {
       {
         role: 'admin',
         subscription: 'platinum',
-        subscriptionExpiresAt: new Date('2099-12-31T23:59:59.999Z'),
+        subscriptionExpiresAt: null,
       },
       { new: true },
     ).select('name email role subscription')
@@ -74,7 +69,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json({
       success: true,
-      message: `${user.email} now has admin and Platinum access.`,
+      message: `${user.email} now has permanent creator premium access. Sign in again if the workspace has not refreshed. No subscription is required.`,
       user: {
         name: user.name,
         email: user.email,

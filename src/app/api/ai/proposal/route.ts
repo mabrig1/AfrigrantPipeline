@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from 'next/server'
-import { auth } from '@/lib/auth'
+import { consultancyActor, failure } from '@/lib/consultancy/access'
 import Anthropic from '@anthropic-ai/sdk'
 
 let _anthropic: Anthropic | null = null
@@ -103,10 +103,7 @@ function buildUserPrompt(body: ProposalBody): string {
 }
 
 export async function POST(req: NextRequest) {
-  const session = await auth()
-  if (!session?.user?.id) {
-    return NextResponse.json({ error: 'Authentication required' }, { status: 401 })
-  }
+  try { await consultancyActor(true) } catch (error) { return failure(error) }
 
   let body: ProposalBody
   try {

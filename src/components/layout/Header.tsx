@@ -28,7 +28,7 @@ const navLinks = [
   { label: 'AfriPublish', href: '/articles' },
   { label: 'Research Center', href: '/research-center' },
   { label: 'Newsletter', href: '/newsletter' },
-  { label: 'Pricing', href: '/pricing' },
+  { label: 'Consultancy', href: '/consultancy' },
 ]
 
 export const mriNavLinks = mriItems

@@ -4,12 +4,14 @@ import Google from 'next-auth/providers/google'
 import bcrypt from 'bcryptjs'
 import { connectDB } from '@/lib/mongodb'
 import User from '@/models/User'
+import { isOwnerEmail } from '@/lib/owner'
 import type { UserRole, SubscriptionPlan } from '@/types/database'
 
 declare module 'next-auth' {
   interface Session {
     user: {
       id: string
+      verifiedOwner: boolean
       role: UserRole
       subscription: SubscriptionPlan
     } & DefaultSession['user']
@@ -22,6 +24,7 @@ declare module 'next-auth' {
 
 type AppToken = {
   id?: string
+  verifiedOwner?: boolean
   role?: UserRole
   subscription?: SubscriptionPlan
 }
@@ -81,25 +84,29 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   callbacks: {
     async signIn({ user, account, profile }) {
       if (account?.provider === 'google' && profile?.email) {
+        if ((profile as { email_verified?: boolean }).email_verified !== true) return false
         try {
           await connectDB()
+          const existingOwner = isOwnerEmail(profile.email) ? await User.findOne({ email: profile.email.toLowerCase() }).select('role').lean() : null
           await User.findOneAndUpdate(
             { email: profile.email.toLowerCase() },
             {
+              ...(isOwnerEmail(profile.email) && existingOwner?.role !== 'admin' ? { $unset: { password: 1 } } : {}),
               $setOnInsert: {
                 name: profile.name ?? user.name ?? 'Google User',
                 email: profile.email.toLowerCase(),
-                role: 'researcher' as UserRole,
-                subscription: 'free' as SubscriptionPlan,
+                ...(!isOwnerEmail(profile.email) ? { role: 'researcher' as UserRole, subscription: 'free' as SubscriptionPlan } : {}),
               },
               $set: {
+                emailVerified: new Date(),
+                ...(isOwnerEmail(profile.email) ? { role: 'admin', subscription: 'platinum', subscriptionExpiresAt: null } : {}),
                 avatar: (profile as { picture?: string }).picture ?? user.image ?? undefined,
               },
             },
             { upsert: true, new: true },
           )
         } catch {
-          // Don't block sign-in if the profile upsert fails.
+          return false // A durable, verified database identity is required.
         }
       }
       return true
@@ -108,6 +115,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       const appToken = token as typeof token & AppToken
 
       if (user) {
+        appToken.verifiedOwner = account?.provider === 'google' && (profile as { email_verified?: boolean } | undefined)?.email_verified === true && isOwnerEmail(user.email || '')
         appToken.id = user.id as string
         appToken.role = (user.role ?? 'student') as UserRole
         appToken.subscription = (user.subscription ?? 'free') as SubscriptionPlan
@@ -146,7 +154,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
           if (dbUser) {
             appToken.id = dbUser._id.toString()
-            appToken.role = (dbUser.role ?? 'student') as UserRole
+            appToken.role = dbUser.role === 'admin' && appToken.role !== 'admin' && !appToken.verifiedOwner ? 'student' : (dbUser.role ?? 'student') as UserRole
             appToken.subscription = (dbUser.subscription ?? 'free') as SubscriptionPlan
           }
         } catch {
@@ -159,6 +167,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     async session({ session, token }) {
       const appToken = token as typeof token & AppToken
       session.user.id = appToken.id ?? ''
+      session.user.verifiedOwner = appToken.verifiedOwner ?? false
       session.user.role = appToken.role ?? 'student'
       session.user.subscription = appToken.subscription ?? 'free'
       return session

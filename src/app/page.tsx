@@ -1,5 +1,6 @@
 import Link from 'next/link'
-import { auth } from '@/lib/auth'
+import { connectDB } from '@/lib/mongodb'
+import Grant from '@/models/Grant'
 import {
   ArrowRight, Globe, Search, Users, GraduationCap,
   Lightbulb, Bell, Star, Sparkles, TrendingUp, Award, Building2,
@@ -85,134 +86,32 @@ const fundingCategories = [
   { label: 'Accelerators', count: '40+', icon: Zap, href: '/grants?type=seed' },
 ]
 
-const stats = [
-  { value: '1,200+', label: 'Funding Opportunities' },
-  { value: '40+', label: 'African Countries' },
-  { value: '15K+', label: 'Researchers & Founders' },
-  { value: '₦2B+', label: 'Grants Facilitated' },
-]
-
-const featuredGrants = [
-  {
-    title: 'Cambridge-Africa ALBORADA Fund 2026',
-    funder: 'University of Cambridge',
-    amount: '£25,000',
-    deadline: 'Sep 3, 2026',
-    type: 'Research',
-    status: 'Open',
-    href: '/grants',
-  },
-  {
-    title: 'Tony Elumelu Foundation Programme',
-    funder: 'Tony Elumelu Foundation',
-    amount: '$5,000 + Training',
-    deadline: 'Jan 2027',
-    type: 'Startup',
-    status: 'Opening Soon',
-    href: '/business-grants',
-  },
-  {
-    title: 'DAAD Scholarships Germany 2026/27',
-    funder: 'German Academic Exchange',
-    amount: '€934/month',
-    deadline: 'Oct 15, 2026',
-    type: 'Scholarship',
-    status: 'Open',
-    href: '/scholarships',
-  },
-  {
-    title: 'Mastercard Foundation Scholars',
-    funder: 'Mastercard Foundation',
-    amount: 'Fully Funded',
-    deadline: 'Varies by university',
-    type: 'Scholarship',
-    status: 'Open',
-    href: '/scholarships',
-  },
-]
-
-const successStories = [
-  {
-    name: 'Dr. Amina Yusuf',
-    role: 'Climate Researcher, Abuja',
-    result: 'Secured $18,000 GCIP grant for solar micro-grid project',
-    avatar: 'AY',
-    color: 'bg-blue-100 text-blue-700',
-  },
-  {
-    name: 'Chukwuemeka Obi',
-    role: 'PhD Candidate, Lagos',
-    result: 'Won Chevening Scholarship — studying at University of Exeter',
-    avatar: 'CO',
-    color: 'bg-emerald-100 text-emerald-700',
-  },
-  {
-    name: 'Fatima Al-Hassan',
-    role: 'AgriTech Founder, Kano',
-    result: 'TEF Programme alumna — grew to 12 employees with seed capital',
-    avatar: 'FA',
-    color: 'bg-purple-100 text-purple-700',
-  },
-]
-
 const membershipTiers = [
-  {
-    name: 'Free',
-    price: '₦0',
-    period: 'forever',
-    description: "Get started with Africa's largest grant directory.",
-    features: ['Basic grant search & alerts', 'Community forum access', 'Save up to 5 opportunities', 'Monthly newsletter'],
-    cta: 'Get Started Free',
-    href: '/signup',
-    highlight: false,
-  },
-  {
-    name: 'Silver',
-    price: '₦3,000',
-    period: '/month',
-    description: 'Personalized matching and weekly grant intelligence.',
-    features: ['Everything in Free', 'AI-powered grant matching', 'Weekly curated newsletters', 'Unlimited saved opportunities', 'Deadline reminders'],
-    cta: 'Start Silver',
-    href: '/signup?plan=silver',
-    highlight: false,
-  },
-  {
-    name: 'Gold',
-    price: '₦8,000',
-    period: '/month',
-    description: 'Premium access with proposal support and live webinars.',
-    features: ['Everything in Silver', 'One proposal review/month', 'Premium grant database', 'Monthly live webinars', 'Application templates library'],
-    cta: 'Start Gold',
-    href: '/signup?plan=gold',
-    highlight: true,
-  },
-  {
-    name: 'Platinum',
-    price: '₦18,000',
-    period: '/month',
-    description: 'Full concierge service for serious researchers and founders.',
-    features: ['Everything in Gold', 'Grant concierge service', 'One-on-one consulting session', 'Priority support', 'Custom opportunity alerts'],
-    cta: 'Start Platinum',
-    href: '/signup?plan=platinum',
-    highlight: false,
-  },
+  { name: 'Discovery', price: 'Project quote', period: '', description: 'Identify funding suited to your research.', features: ['Research brief assessment', 'Source-linked grant shortlist', 'Eligibility and deadline review'], cta: 'Request grant search', href: '/dashboard/consultancy', highlight: false },
+  { name: 'Application', price: 'Project quote', period: '', description: 'Prepare an evidence-based application.', features: ['Concept note and proposal', 'Budget and work plan', 'Document review and revisions'], cta: 'Request proposal support', href: '/dashboard/consultancy', highlight: true },
+  { name: 'Partnerships', price: 'Project quote', period: '', description: 'Develop research collaborations.', features: ['Potential partner research', 'Outreach and partnership brief', 'MoU discussion draft'], cta: 'Develop a partnership', href: '/dashboard/consultancy', highlight: false },
+  { name: 'Management', price: 'Project quote', period: '', description: 'Organize grant delivery and reporting.', features: ['Milestones and deliverables', 'Progress report preparation', 'Monitoring and reporting plan'], cta: 'Discuss grant management', href: '/dashboard/consultancy', highlight: false },
 ]
 
-const trustLogos = ['African Union', 'UNESCO Africa', 'World Bank', 'Gates Foundation', 'African Development Bank', 'USAID']
 
 // ── Page ──────────────────────────────────────────────────────────────────
 
-const PAID_PLANS = ['silver', 'gold', 'platinum']
+
+
+export const dynamic = 'force-dynamic'
 
 export default async function HomePage() {
-  const session = await auth()
-  const fullAccess =
-    session?.user?.role === 'admin' ||
-    PAID_PLANS.includes(session?.user?.subscription ?? 'free')
+  let featuredGrants: { title: string; funder: string; amount: string; deadline: string; type: string; status: string; href: string }[] = []
+  try {
+    await connectDB()
+    const grants = await Grant.find({ status: 'open', $or: [{ isRolling: true }, { deadline: { $gte: new Date() } }] }).sort({ relevanceScore: -1 }).limit(4).lean()
+    featuredGrants = grants.map(g => ({ title: g.title, funder: g.funder, amount: g.fundingText || (g.amount ? `${g.currency} ${g.amount.toLocaleString()}` : 'Amount not stated'), deadline: g.isRolling ? 'Rolling' : new Date(g.deadline).toLocaleDateString('en-NG'), type: g.grantType || 'Research', status: g.verificationStatus === 'verified' ? 'Reviewed' : 'Check eligibility', href: '/grants' }))
+  } catch { /* Keep the consultancy entry page usable when the catalogue is unavailable. */ }
 
   return (
     <div className="min-h-screen bg-gray-50">
 
+      <div className="bg-blue-900 px-5 py-4 text-center text-white"><Link href="/consultancy" className="font-semibold">New: Academic grant consultancy for UNN, NOUN and Nigerian researchers — request a project quote →</Link></div>
       {/* ── Hero ── */}
       <section className="relative overflow-hidden bg-gradient-to-br from-blue-700 via-blue-800 to-indigo-900 text-white">
         <div className="absolute inset-0 opacity-10">
@@ -244,26 +143,7 @@ export default async function HomePage() {
             </Link>
           </div>
 
-          <div className="mt-12 grid grid-cols-2 gap-4 sm:grid-cols-4">
-            {stats.map(({ value, label }) => (
-              <div key={label} className="rounded-2xl border border-white/20 bg-white/10 px-4 py-4 text-center backdrop-blur-sm">
-                <div className="text-2xl font-bold text-yellow-300">{value}</div>
-                <div className="mt-0.5 text-xs text-blue-200">{label}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
 
-      {/* ── Trust bar ── */}
-      <section className="border-y border-gray-200 bg-white py-5">
-        <div className="mx-auto max-w-6xl px-6">
-          <p className="mb-3 text-center text-xs font-semibold uppercase tracking-widest text-gray-400">Trusted by organizations across Africa</p>
-          <div className="flex flex-wrap items-center justify-center gap-x-10 gap-y-2">
-            {trustLogos.map((name) => (
-              <span key={name} className="text-sm font-semibold text-gray-400 transition-colors hover:text-gray-600">{name}</span>
-            ))}
-          </div>
         </div>
       </section>
 
@@ -330,24 +210,20 @@ export default async function HomePage() {
               <div className="mb-2 inline-flex items-center gap-2 rounded-full bg-yellow-100 px-3 py-1 text-xs font-semibold text-yellow-700">
                 <Star className="size-3.5 fill-yellow-500 text-yellow-500" /> Featured Opportunities
               </div>
-              <h2 className="text-2xl font-bold tracking-tight text-gray-900">Top Funding Right Now</h2>
+              <h2 className="text-2xl font-bold tracking-tight text-gray-900">Latest funding in the pipeline</h2>
             </div>
-            <Link href={fullAccess ? '/grants' : '/pricing?locked=grants'} className="hidden items-center gap-1 text-sm font-medium text-blue-700 hover:underline sm:flex">
+            <Link href="/grants" className="hidden items-center gap-1 text-sm font-medium text-blue-700 hover:underline sm:flex">
               All opportunities <ChevronRight className="size-4" />
             </Link>
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {featuredGrants.length === 0 && <p className="text-gray-600 sm:col-span-2 lg:col-span-4">No current calls are available to display. Request a grant search for your research topic.</p>}
             {featuredGrants.map((g) => {
-              const dest = fullAccess ? g.href : '/pricing?locked=grant'
+              const dest = g.href
               return (
                 <Link key={g.title} href={dest}
                   className="group relative flex flex-col rounded-3xl border border-gray-200 bg-gray-50 p-5 transition-all hover:-translate-y-1 hover:border-blue-200 hover:bg-white hover:shadow-lg">
-                  {!fullAccess && (
-                    <span className="absolute right-3 top-3 flex items-center gap-1 rounded-full bg-blue-700 px-2.5 py-1 text-xs font-bold text-white">
-                      🔒 Subscribe
-                    </span>
-                  )}
                   <div className="mb-3 flex items-center justify-between">
                     <span className={`rounded-full px-3 py-1 text-xs font-semibold ${
                       g.status === 'Open' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'
@@ -597,51 +473,18 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ── Success stories ── */}
-      <section className="bg-gray-50 py-16">
-        <div className="mx-auto max-w-7xl px-6">
-          <div className="mb-10 text-center">
-            <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-emerald-100 px-4 py-1.5 text-sm font-medium text-emerald-700">
-              <TrendingUp className="size-4" /> Success Stories
-            </div>
-            <h2 className="text-3xl font-bold tracking-tight text-gray-900">
-              Real Results for African Researchers
-            </h2>
-          </div>
-          <div className="grid gap-5 sm:grid-cols-3">
-            {successStories.map(({ name, role, result, avatar, color }) => (
-              <div key={name} className="rounded-3xl border border-gray-200 bg-white p-6">
-                <div className="mb-4 flex items-center gap-3">
-                  <div className={`flex size-11 items-center justify-center rounded-full text-sm font-bold ${color}`}>
-                    {avatar}
-                  </div>
-                  <div>
-                    <div className="font-semibold text-gray-900">{name}</div>
-                    <div className="text-xs text-gray-500">{role}</div>
-                  </div>
-                </div>
-                <div className="flex items-start gap-2">
-                  <CheckCircle className="mt-0.5 size-4 shrink-0 text-emerald-500" />
-                  <p className="text-sm text-gray-700">{result}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── Membership tiers ── */}
+      {/* ── Consultancy services ── */}
       <section className="bg-white py-20">
         <div className="mx-auto max-w-7xl px-6">
           <div className="mb-12 text-center">
             <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-yellow-100 px-4 py-1.5 text-sm font-medium text-yellow-700">
-              <BarChart3 className="size-4" /> Membership Plans
+              <BarChart3 className="size-4" /> Consultancy Services
             </div>
             <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
-              Invest in Your Research Future
+              Choose the support your research needs
             </h2>
             <p className="mx-auto mt-3 max-w-xl text-gray-500">
-              From free access to full concierge service — choose the plan that matches your ambition.
+              Project-based services for lecturers and postgraduate students at UNN, NOUN and across Nigeria. No subscriptions.
             </p>
           </div>
 
@@ -659,7 +502,7 @@ export default async function HomePage() {
                 )}
                 <div className={`mb-1 text-sm font-semibold ${highlight ? 'text-blue-200' : 'text-blue-700'}`}>{name}</div>
                 <div className="flex items-end gap-1">
-                  <span className={`text-3xl font-bold ${highlight ? 'text-white' : 'text-gray-900'}`}>{price}</span>
+                  <span className={`text-2xl font-bold ${highlight ? 'text-white' : 'text-gray-900'}`}>{price}</span>
                   <span className={`mb-1 text-sm ${highlight ? 'text-blue-200' : 'text-gray-400'}`}>{period}</span>
                 </div>
                 <p className={`mb-5 mt-2 text-sm ${highlight ? 'text-blue-100' : 'text-gray-500'}`}>{description}</p>
@@ -690,7 +533,7 @@ export default async function HomePage() {
         <div className="mx-auto max-w-5xl px-6">
           <div className="mb-12 text-center">
             <h2 className="text-3xl font-bold tracking-tight text-gray-900">Up and running in minutes</h2>
-            <p className="mt-3 text-gray-500">Join thousands of African researchers, students, and entrepreneurs already on the platform.</p>
+            <p className="mt-3 text-gray-500">Create your free account and tell us about your next research project.</p>
           </div>
           <div className="grid gap-6 sm:grid-cols-3">
             {[
@@ -708,27 +551,27 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ── Subscription CTA ── */}
+      {/* ── Consultancy CTA ── */}
       <section className="bg-blue-700 py-14">
         <div className="mx-auto max-w-4xl px-6 text-center">
           <Bell className="mx-auto mb-4 size-10 text-blue-200" />
           <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">
-            Get Weekly Grant Intelligence
+            Start with your research brief
           </h2>
           <p className="mx-auto mt-3 max-w-md text-blue-100">
-            Updated grant lists, deadline reminders, application templates, and funding intelligence — delivered every week.
+            Work with Mabrig Korie on grant discovery, proposal preparation, partnerships and grant management.
           </p>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
-            <a href="https://store.mabrigkorie.org" target="_blank" rel="noopener noreferrer"
+            <a href="/dashboard/consultancy"
               className="rounded-full bg-white px-8 py-3.5 text-sm font-bold text-blue-700 transition-colors hover:bg-gray-100">
-              Start Quarterly Subscription — ₦12,000
+              Request Consultancy
             </a>
             <Link href="/signup"
               className="rounded-full border border-blue-400 px-8 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-blue-600">
               Create Free Account
             </Link>
           </div>
-          <p className="mt-4 text-sm text-blue-200">Cancel anytime · Quarterly updates · Application templates included</p>
+          <p className="mt-4 text-sm text-blue-200">Agreed scope · Project quote · No recurring charge</p>
         </div>
       </section>
 
@@ -759,7 +602,7 @@ export default async function HomePage() {
               },
               {
                 title: 'Company',
-                links: [['About', '/about'], ['Pricing', '/pricing'], ['Blog', '/blog'], ['Privacy', '/privacy'], ['Contact', '/contact']],
+                links: [['About', '/about'], ['Consultancy', '/consultancy'], ['Blog', '/blog'], ['Privacy', '/privacy'], ['Contact', '/contact']],
               },
             ].map(({ title, links }) => (
               <div key={title}>
