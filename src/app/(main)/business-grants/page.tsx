@@ -265,7 +265,7 @@ function BusinessPaywallGate({ isLoggedIn, total }: { isLoggedIn: boolean; total
         </div>
         <h2 className="mt-2 text-2xl font-bold text-gray-900">Unlock Full Access</h2>
         <p className="mt-2 max-w-md text-sm text-gray-500">
-          You&apos;re seeing {FREE_PREVIEW} of <strong>{total}</strong> business grants. Subscribe to access all opportunities — full details, application links, eligibility, and Smart Match results.
+          You&apos;re seeing {FREE_PREVIEW} of <strong>{total}</strong> business grants. Request consultancy for application support — full details, application links, eligibility, and Smart Match results.
         </p>
         <ul className="mt-5 space-y-2 text-left text-sm text-gray-700">
           {[
@@ -282,7 +282,7 @@ function BusinessPaywallGate({ isLoggedIn, total }: { isLoggedIn: boolean; total
         <div className="mt-7 flex flex-wrap justify-center gap-3">
           <Link href="/pricing"
             className="inline-flex items-center gap-2 rounded-full bg-[#0A5C36] px-7 py-3 text-sm font-bold text-white transition-opacity hover:opacity-90">
-            <Sparkles className="size-4" /> View Plans — From ₦3,000/month
+            <Sparkles className="size-4" /> Request project quote
           </Link>
           <a href="https://store.mabrigkorie.org" target="_blank" rel="noopener noreferrer"
             className="inline-flex items-center gap-2 rounded-full border border-gray-300 bg-white px-7 py-3 text-sm font-semibold text-gray-700 hover:bg-gray-50">
@@ -291,14 +291,14 @@ function BusinessPaywallGate({ isLoggedIn, total }: { isLoggedIn: boolean; total
         </div>
         {!isLoggedIn && (
           <p className="mt-4 text-xs text-gray-400">
-            Already subscribed?{' '}
+            Already registered?{' '}
             <Link href="/login" className="font-medium text-[#0A5C36] hover:underline">Sign in</Link>
           </p>
         )}
         {isLoggedIn && (
           <p className="mt-4 text-xs text-gray-400">
             You&apos;re on the free plan.{' '}
-            <Link href="/pricing" className="font-medium text-[#0A5C36] hover:underline">Upgrade to unlock full access.</Link>
+            <Link href="/pricing" className="font-medium text-[#0A5C36] hover:underline">Discuss your project.</Link>
           </p>
         )}
       </div>
@@ -311,7 +311,7 @@ function BusinessPaywallGate({ isLoggedIn, total }: { isLoggedIn: boolean; total
 export default function BusinessGrantsPage() {
   const { data: session } = useSession()
   const isLoggedIn = !!session?.user
-  const fullAccess = session?.user?.role === 'admin' || PAID_PLANS.includes(session?.user?.subscription ?? 'free')
+  const fullAccess = true
 
   const [search, setSearch] = useState('')
   const [typeFilter, setTypeFilter] = useState<string[]>([])
@@ -482,7 +482,7 @@ export default function BusinessGrantsPage() {
             {!fullAccess ? (
               <Link href="/pricing"
                 className="flex items-center gap-2 rounded-full bg-[#0A5C36] px-7 py-3 text-sm font-bold text-white transition-opacity hover:opacity-90">
-                <Lock className="size-4" /> Subscribe to Use Smart Match
+                <Lock className="size-4" /> Request consultancy
               </Link>
             ) : (
               <button
@@ -507,7 +507,7 @@ export default function BusinessGrantsPage() {
           <div className="mx-auto max-w-7xl px-6 py-3 flex flex-wrap items-center justify-between gap-3">
             <div className="flex items-center gap-2 text-sm text-[#0A5C36]">
               <Lock className="size-4 shrink-0" />
-              <span className="font-semibold">Subscriber-only content</span>
+              <span className="font-semibold">Project-based consultancy</span>
               <span className="text-[#0A5C36]/70">— showing {FREE_PREVIEW} of {GRANTS.length} grants</span>
             </div>
             <div className="flex gap-2">

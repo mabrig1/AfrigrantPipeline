@@ -19,6 +19,7 @@ import {
 } from 'lucide-react'
 
 const baseNavItems = [
+  { href: '/dashboard/consultancy', label: 'Consultancy desk', icon: FileText },
   { href: '/dashboard',                    label: 'Overview',           icon: LayoutDashboard },
   { href: '/dashboard/grants',             label: 'Grants',             icon: Search },
   { href: '/dashboard/grant-intelligence', label: 'Grant Intelligence', icon: Radar },
@@ -32,7 +33,7 @@ const baseNavItems = [
 
 const adminNavItems = [
   { href: '/dashboard/ai-tools',           label: 'AI Tools',           icon: Sparkles },
-  { href: '/dashboard/admin',              label: 'Admin',              icon: ShieldCheck },
+  { href: '/admin',              label: 'Admin',              icon: ShieldCheck },
 ]
 
 export default function Sidebar() {

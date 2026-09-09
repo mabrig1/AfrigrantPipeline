@@ -5,7 +5,7 @@ import Sidebar from '@/components/layout/Sidebar'
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const session = await auth()
-  if (!session?.user) redirect('/login')
+  if (!session?.user) redirect('/login?callbackUrl=%2Fdashboard%2Fconsultancy')
 
   const initials = session.user.name
     ? session.user.name.split(' ').map((p) => p[0]).slice(0, 2).join('').toUpperCase()
@@ -35,6 +35,9 @@ export default async function DashboardLayout({ children }: { children: React.Re
         </div>
       </header>
 
+      <nav aria-label="Dashboard navigation" className="flex flex-wrap gap-4 border-b border-border px-4 py-3 text-sm lg:hidden">
+        <Link href="/dashboard/consultancy">Consultancy desk</Link><Link href="/dashboard/grant-intelligence">Grant intelligence</Link><Link href="/dashboard">Overview</Link><Link href="/admin">Creator access</Link>
+      </nav>
       {/* Page body */}
       <div className="mx-auto flex max-w-7xl">
         <Sidebar />

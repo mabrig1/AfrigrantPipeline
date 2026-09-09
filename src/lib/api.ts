@@ -513,3 +513,14 @@ export const aiApi = {
       token,
     ),
 }
+
+// Consultancy routes run on this Next.js deployment and use its secure session cookie.
+export async function consultancyRequest<T>(path = '', method = 'GET', body?: unknown): Promise<T> {
+  const response = await fetch(`/api/consultancy/cases${path}`, {
+    method, cache: 'no-store', headers: { 'Content-Type': 'application/json' },
+    ...(body === undefined ? {} : { body: JSON.stringify(body) }),
+  })
+  const payload = await response.json()
+  if (!response.ok) throw new ApiError(payload.error || 'Request failed. Please retry.', response.status)
+  return payload as T
+}

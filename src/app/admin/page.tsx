@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useSession } from 'next-auth/react'
@@ -81,7 +82,7 @@ function AdminSetup() {
       <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/5 p-6">
         <div className="flex items-center gap-2 text-emerald-400">
           <CheckCircle className="size-5" />
-          <h2 className="font-semibold">Admin access active</h2>
+          <h2 className="font-semibold">Creator premium access active</h2>
         </div>
         <p className="mt-2 text-sm text-muted-foreground">
           {session.user.email} has administrator access. You can use the protected admin tools and grant intelligence controls.
@@ -94,11 +95,11 @@ function AdminSetup() {
     <div className="rounded-xl border border-border bg-card p-6">
       <div className="mb-4 flex items-center gap-2">
         <Shield className="size-5 text-gold" />
-        <h2 className="font-semibold">Step 1: Activate admin role</h2>
+        <h2 className="font-semibold">Activate creator premium access</h2>
       </div>
 
       <p className="mb-4 text-sm text-muted-foreground">
-        Authorized owner accounts can activate directly. For any other account, enter the{' '}
+        Sign in with Google using your verified owner email to activate directly. For any other account, enter the{' '}
         <code className="rounded bg-surface-2 px-1 py-0.5 text-xs">
           ADMIN_SETUP_SECRET
         </code>{' '}
@@ -153,15 +154,16 @@ function AdminSetup() {
 
 export default function AdminPage() {
   return (
-    <div className="space-y-8">
+    <div className="mx-auto max-w-4xl space-y-8 px-5 py-12">
       <div>
-        <h1 className="text-2xl font-extrabold tracking-tight">Admin Panel</h1>
+        <h1 className="text-2xl font-extrabold tracking-tight">Creator access</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Manage grants, subscriptions, and platform settings.
+          Manage consultancy clients, grant searches, documents and project delivery. Creator access has no recurring charge.
         </p>
       </div>
 
       <AdminSetup />
+      <Link href="/dashboard/consultancy" className="inline-flex rounded-xl bg-gold px-6 py-3 font-bold text-black">Open consultancy desk</Link>
     </div>
   )
 }

@@ -8,7 +8,7 @@ import type { ArticleListParams } from '@/lib/api'
 import ArticleCard from '@/components/articles/ArticleCard'
 import ArticleFilters from '@/components/articles/ArticleFilters'
 
-const PAID_PLANS = ['silver', 'gold', 'platinum']
+
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -50,11 +50,6 @@ export const metadata = { title: 'AfriPublish — Research Repository' }
 export default async function ArticlesPage({ searchParams }: PageProps) {
   const params = await searchParams
   const session = await auth()
-
-  const role = session?.user?.role
-  const subscription = session?.user?.subscription ?? 'free'
-  const fullAccess = role === 'admin' || PAID_PLANS.includes(subscription)
-  if (!fullAccess) redirect('/pricing?locked=articles')
 
   const apiParams: ArticleListParams = {
     status: 'published',

@@ -193,8 +193,8 @@ export default function GrantIntelligencePage() {
               Agentic Grant <span className="text-gold">Intelligence</span>
             </h1>
             <p className="mt-3 max-w-2xl text-sm leading-6 text-muted-foreground sm:text-base">
-              A continuously refreshed funding layer for African academics. The agent discovers calls, checks deadlines,
-              scores Nigeria eligibility, records source provenance and keeps the grant database current.
+              Funding discovery for Nigerian lecturers, postgraduate students and independent researchers. The agent discovers calls, checks deadlines,
+              flags possible Nigeria eligibility, records source provenance and keeps the grant database current.
             </p>
           </div>
 
@@ -229,7 +229,7 @@ export default function GrantIntelligencePage() {
       <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
         {[
           ['Agent-tracked', stats.totalAgentGrants],
-          ['Auto-verified', stats.verified],
+          ['Reviewed', stats.verified],
           ['Nigeria eligible', stats.nigeriaEligible],
           ['Needs review', stats.needsReview],
           ['Stale >14 days', stats.stale],
@@ -328,7 +328,7 @@ export default function GrantIntelligencePage() {
                           <span className="rounded-full bg-emerald-500/10 px-2 py-0.5 text-[11px] font-semibold text-emerald-300">Nigeria eligible</span>
                         )}
                         <span className={`rounded-full px-2 py-0.5 text-[11px] font-semibold ${grant.verificationStatus === 'verified' ? 'bg-blue-500/10 text-blue-300' : 'bg-amber-500/10 text-amber-300'}`}>
-                          {grant.verificationStatus === 'verified' ? 'Auto-verified' : 'Needs review'}
+                          {grant.verificationStatus === 'verified' ? 'Reviewed' : 'Needs review'}
                         </span>
                         <span className="rounded-full bg-gold/10 px-2 py-0.5 text-[11px] font-semibold text-gold">
                           Relevance {Math.round(grant.relevanceScore ?? 0)}/100
@@ -377,7 +377,7 @@ export default function GrantIntelligencePage() {
             ))}
           </div>
           <p className="mt-4 text-[11px] leading-5 text-muted-foreground">
-            “Auto-verified” means the source and extracted fields passed automated confidence checks. Applicants should still read the official call before submission.
+            “Reviewed” means the source and extracted fields passed automated confidence checks. Applicants should still read the official call before submission.
           </p>
         </div>
       </section>
