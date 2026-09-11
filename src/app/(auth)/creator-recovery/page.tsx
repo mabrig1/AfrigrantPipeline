@@ -1,6 +1,6 @@
 'use client'
 
-import { FormEvent, useState } from 'react'
+import { FormEvent, useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { AlertCircle, CheckCircle2, Eye, EyeOff, KeyRound, Loader2 } from 'lucide-react'
@@ -35,7 +35,7 @@ export default function CreatorRecoveryPage() {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'same-origin',
-      body: JSON.stringify({ email, secret, password, confirm }),
+      body: JSON.stringify({ email, secret: token ? undefined : secret, token: token || undefined, password, confirm }),
     })
     const json = (await res.json()) as { error?: string; message?: string }
 
@@ -99,25 +99,31 @@ export default function CreatorRecoveryPage() {
           />
         </div>
 
-        <div>
-          <label htmlFor="secret" className="mb-1.5 block text-sm font-medium">
-            Creator recovery secret
-          </label>
-          <input
-            id="secret"
-            name="secret"
-            type="password"
-            autoComplete="off"
-            required
-            minLength={12}
-            placeholder="OWNER_RECOVERY_SECRET"
-            className={inputCls}
-          />
-          <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">
-            This is the server-side recovery secret configured in Vercel. It is
-            never stored in the browser.
-          </p>
-        </div>
+        {token ? (
+          <div className="rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-400">
+            One-time creator reset link verified locally. Choose a new password below.
+          </div>
+        ) : (
+          <div>
+            <label htmlFor="secret" className="mb-1.5 block text-sm font-medium">
+              Creator recovery secret
+            </label>
+            <input
+              id="secret"
+              name="secret"
+              type="password"
+              autoComplete="off"
+              required={!token}
+              minLength={12}
+              placeholder="OWNER_RECOVERY_SECRET"
+              className={inputCls}
+            />
+            <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">
+              Use the server-side recovery secret configured in Vercel, or open
+              a one-time creator reset link.
+            </p>
+          </div>
+        )}
 
         <div>
           <label htmlFor="password" className="mb-1.5 block text-sm font-medium">
