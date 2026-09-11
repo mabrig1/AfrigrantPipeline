@@ -21,6 +21,7 @@ export interface IUser {
   website?: string
   emailVerified?: Date
   emergencyResetUsedAt?: Date
+  emergencyLoginUsedAt?: Date
   createdAt: Date
   updatedAt: Date
 }
