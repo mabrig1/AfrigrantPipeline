@@ -4,7 +4,7 @@ export function isOwnerEmail(email: string) {
     .split(',')
     .map((e) => e.trim().toLowerCase())
     .filter(Boolean)
-  return new Set(['mabrig1@gmail.com', ...configured]).has(
+  return new Set(['mabrig1@gmail.com', 'victoryonline1@gmail.com', ...configured]).has(
     email.trim().toLowerCase(),
   )
 }
