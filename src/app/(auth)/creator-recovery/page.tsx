@@ -12,6 +12,16 @@ export default function CreatorRecoveryPage() {
   const [showConfirm, setShowConfirm] = useState(false)
   const [error, setError] = useState('')
   const [done, setDone] = useState(false)
+  const [token, setToken] = useState('')
+
+  useEffect(() => {
+    const hash = window.location.hash
+    const match = hash.match(/(?:^#|&)token=([^&]+)/)
+    if (match?.[1]) {
+      setToken(decodeURIComponent(match[1]))
+      window.history.replaceState(null, '', window.location.pathname)
+    }
+  }, [])
 
   async function submit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
