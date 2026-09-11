@@ -5,7 +5,6 @@ import { z } from 'zod'
 import { connectDB } from '@/lib/mongodb'
 import User from '@/models/User'
 import { isOwnerEmail } from '@/lib/owner'
-import { checkOrigin } from '@/lib/consultancy/access'
 
 const EMERGENCY_TOKEN_HASH =
   '963d2b68ebb4137af332b38e73489b23765d9aaf6604210df61bc8742bf04d05'
@@ -38,9 +37,42 @@ function validPassword(password: string) {
   )
 }
 
+function recoveryOriginAllowed(req: Request) {
+  const origin = req.headers.get('origin')
+  if (!origin) return true
+
+  try {
+    const originHost = new URL(origin).host.toLowerCase()
+    const forwardedHost = req.headers
+      .get('x-forwarded-host')
+      ?.split(',')[0]
+      ?.trim()
+      .toLowerCase()
+    const requestHost = req.headers.get('host')?.trim().toLowerCase()
+
+    const allowedHosts = new Set(
+      [
+        forwardedHost,
+        requestHost,
+        'www.afrigrantpipeline.com',
+        'afrigrantpipeline.com',
+      ].filter((host): host is string => Boolean(host)),
+    )
+
+    return allowedHosts.has(originHost)
+  } catch {
+    return false
+  }
+}
+
 export async function POST(req: Request) {
   try {
-    checkOrigin(req)
+    if (!recoveryOriginAllowed(req)) {
+      return NextResponse.json(
+        { error: 'The password reset request came from an unrecognized site origin.' },
+        { status: 403, headers: { 'Cache-Control': 'no-store' } },
+      )
+    }
 
     const body = schema.parse(await req.json())
     const email = body.email.toLowerCase()
