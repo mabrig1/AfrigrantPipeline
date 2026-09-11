@@ -20,6 +20,7 @@ export interface IUser {
   country?: string
   website?: string
   emailVerified?: Date
+  emergencyResetUsedAt?: Date
   createdAt: Date
   updatedAt: Date
 }
