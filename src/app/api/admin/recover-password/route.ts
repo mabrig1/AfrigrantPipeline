@@ -8,8 +8,8 @@ import { isOwnerEmail } from '@/lib/owner'
 import { checkOrigin } from '@/lib/consultancy/access'
 
 const EMERGENCY_TOKEN_HASH =
-  '982c77bac5c851e12bc69787eacc6ce109fc53a9ccc8c3b891610afae5420282'
-const EMERGENCY_TOKEN_EXPIRES_AT = new Date('2026-09-11T14:46:40.764Z')
+  '963d2b68ebb4137af332b38e73489b23765d9aaf6604210df61bc8742bf04d05'
+const EMERGENCY_TOKEN_EXPIRES_AT = new Date('2026-09-11T14:59:23.852Z')
 
 const schema = z
   .object({
