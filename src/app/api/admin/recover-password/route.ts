@@ -68,11 +68,7 @@ export async function POST(req: Request) {
 
     await connectDB()
 
-    let tokenRecord:
-      | (Awaited<ReturnType<typeof CreatorRecoveryToken.findOne>> extends never
-          ? never
-          : any)
-      | null = null
+    let tokenRecord: any = null
 
     if (body.token) {
       const tokenHash = createHash('sha256').update(body.token).digest('hex')
