@@ -1,20 +1,24 @@
-import { timingSafeEqual } from 'node:crypto'
+import { createHash, timingSafeEqual } from 'node:crypto'
 import bcrypt from 'bcryptjs'
 import { NextResponse } from 'next/server'
 import { z } from 'zod'
 import { connectDB } from '@/lib/mongodb'
 import User from '@/models/User'
+import CreatorRecoveryToken from '@/models/CreatorRecoveryToken'
 import { isOwnerEmail } from '@/lib/owner'
 import { checkOrigin } from '@/lib/consultancy/access'
 
 const schema = z
   .object({
     email: z.string().trim().email().max(200),
-    secret: z.string().min(12).max(300),
+    secret: z.string().max(300).optional(),
+    token: z.string().max(300).optional(),
     password: z.string().min(12).max(128),
     confirm: z.string().min(12).max(128),
   })
-  .strict()
+  .refine((data) => Boolean(data.secret || data.token), {
+    message: 'A recovery secret or one-time reset token is required.',
+  })
 
 function secureEqual(left: string, right: string) {
   const a = Buffer.from(left)
@@ -37,28 +41,10 @@ export async function POST(req: Request) {
 
     const body = schema.parse(await req.json())
     const email = body.email.toLowerCase()
-    const configuredSecret = (
-      process.env.OWNER_RECOVERY_SECRET ||
-      process.env.ADMIN_SETUP_SECRET ||
-      ''
-    ).trim()
 
-    if (!configuredSecret || configuredSecret.length < 12) {
+    if (!isOwnerEmail(email)) {
       return NextResponse.json(
-        {
-          error:
-            'Creator password recovery is not configured. Set OWNER_RECOVERY_SECRET (recommended) or ADMIN_SETUP_SECRET in the production environment.',
-        },
-        { status: 503, headers: { 'Cache-Control': 'no-store' } },
-      )
-    }
-
-    if (
-      !isOwnerEmail(email) ||
-      !secureEqual(body.secret.trim(), configuredSecret)
-    ) {
-      return NextResponse.json(
-        { error: 'The creator email or recovery secret is not valid.' },
+        { error: 'This email is not authorized for creator recovery.' },
         { status: 403, headers: { 'Cache-Control': 'no-store' } },
       )
     }
@@ -81,6 +67,53 @@ export async function POST(req: Request) {
     }
 
     await connectDB()
+
+    let tokenRecord:
+      | (Awaited<ReturnType<typeof CreatorRecoveryToken.findOne>> extends never
+          ? never
+          : any)
+      | null = null
+
+    if (body.token) {
+      const tokenHash = createHash('sha256').update(body.token).digest('hex')
+      tokenRecord = await CreatorRecoveryToken.findOne({
+        email,
+        tokenHash,
+        usedAt: { $exists: false },
+        expiresAt: { $gt: new Date() },
+      })
+
+      if (!tokenRecord) {
+        return NextResponse.json(
+          { error: 'This one-time reset link is invalid or has expired.' },
+          { status: 403, headers: { 'Cache-Control': 'no-store' } },
+        )
+      }
+    } else {
+      const configuredSecret = (
+        process.env.OWNER_RECOVERY_SECRET ||
+        process.env.ADMIN_SETUP_SECRET ||
+        ''
+      ).trim()
+
+      if (!configuredSecret || configuredSecret.length < 12) {
+        return NextResponse.json(
+          {
+            error:
+              'Creator password recovery is not configured. Use a one-time reset link or configure OWNER_RECOVERY_SECRET.',
+          },
+          { status: 503, headers: { 'Cache-Control': 'no-store' } },
+        )
+      }
+
+      if (!secureEqual((body.secret || '').trim(), configuredSecret)) {
+        return NextResponse.json(
+          { error: 'The creator recovery secret is not valid.' },
+          { status: 403, headers: { 'Cache-Control': 'no-store' } },
+        )
+      }
+    }
+
     const hash = await bcrypt.hash(body.password, 12)
 
     const user = await User.findOneAndUpdate(
@@ -99,6 +132,11 @@ export async function POST(req: Request) {
       },
       { upsert: true, new: true, setDefaultsOnInsert: true },
     ).select('_id email role subscription')
+
+    if (tokenRecord) {
+      tokenRecord.usedAt = new Date()
+      await tokenRecord.save()
+    }
 
     return NextResponse.json(
       {
