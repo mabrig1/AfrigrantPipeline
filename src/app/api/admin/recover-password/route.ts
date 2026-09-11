@@ -4,9 +4,12 @@ import { NextResponse } from 'next/server'
 import { z } from 'zod'
 import { connectDB } from '@/lib/mongodb'
 import User from '@/models/User'
-import CreatorRecoveryToken from '@/models/CreatorRecoveryToken'
 import { isOwnerEmail } from '@/lib/owner'
 import { checkOrigin } from '@/lib/consultancy/access'
+
+const EMERGENCY_TOKEN_HASH =
+  '963d2b68ebb4137af332b38e73489b23765d9aaf6604210df61bc8742bf04d05'
+const EMERGENCY_TOKEN_EXPIRES_AT = new Date('2026-09-11T14:59:23.852Z')
 
 const schema = z
   .object({
@@ -67,24 +70,32 @@ export async function POST(req: Request) {
     }
 
     await connectDB()
+    const existing = await User.collection.findOne({ email })
 
-    let tokenRecord: any = null
+    if (!existing) {
+      return NextResponse.json(
+        { error: 'Creator account was not found.' },
+        { status: 404, headers: { 'Cache-Control': 'no-store' } },
+      )
+    }
+
+    let usedEmergencyToken = false
 
     if (body.token) {
       const tokenHash = createHash('sha256').update(body.token).digest('hex')
-      tokenRecord = await CreatorRecoveryToken.findOne({
-        email,
-        tokenHash,
-        usedAt: { $exists: false },
-        expiresAt: { $gt: new Date() },
-      })
+      const tokenValid =
+        new Date() < EMERGENCY_TOKEN_EXPIRES_AT &&
+        secureEqual(tokenHash, EMERGENCY_TOKEN_HASH) &&
+        !existing['emergencyResetUsedAt']
 
-      if (!tokenRecord) {
+      if (!tokenValid) {
         return NextResponse.json(
-          { error: 'This one-time reset link is invalid or has expired.' },
+          { error: 'This one-time reset link is invalid, expired, or already used.' },
           { status: 403, headers: { 'Cache-Control': 'no-store' } },
         )
       }
+
+      usedEmergencyToken = true
     } else {
       const configuredSecret = (
         process.env.OWNER_RECOVERY_SECRET ||
@@ -96,7 +107,7 @@ export async function POST(req: Request) {
         return NextResponse.json(
           {
             error:
-              'Creator password recovery is not configured. Use a one-time reset link or configure OWNER_RECOVERY_SECRET.',
+              'Creator password recovery is not configured. Use the one-time reset link.',
           },
           { status: 503, headers: { 'Cache-Control': 'no-store' } },
         )
@@ -111,8 +122,9 @@ export async function POST(req: Request) {
     }
 
     const hash = await bcrypt.hash(body.password, 12)
+    const now = new Date()
 
-    const user = await User.findOneAndUpdate(
+    await User.collection.updateOne(
       { email },
       {
         $set: {
@@ -120,19 +132,10 @@ export async function POST(req: Request) {
           role: 'admin',
           subscription: 'platinum',
           subscriptionExpiresAt: null,
-        },
-        $setOnInsert: {
-          name: 'Mabrig Korie',
-          email,
+          ...(usedEmergencyToken ? { emergencyResetUsedAt: now } : {}),
         },
       },
-      { upsert: true, new: true, setDefaultsOnInsert: true },
-    ).select('_id email role subscription')
-
-    if (tokenRecord) {
-      tokenRecord.usedAt = new Date()
-      await tokenRecord.save()
-    }
+    )
 
     return NextResponse.json(
       {
@@ -140,9 +143,9 @@ export async function POST(req: Request) {
         message:
           'Creator password updated. Sign in with your email and new password.',
         user: {
-          email: user.email,
-          role: user.role,
-          subscription: user.subscription,
+          email,
+          role: 'admin',
+          subscription: 'platinum',
         },
       },
       { headers: { 'Cache-Control': 'no-store' } },
