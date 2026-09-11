@@ -176,10 +176,10 @@ function LoginForm() {
               Password
             </label>
             <Link
-              href="/forgot-password"
+              href="/creator-recovery"
               className="text-xs text-muted-foreground transition-colors hover:text-gold"
             >
-              Forgot password?
+              Creator reset
             </Link>
           </div>
           <div className="relative">
@@ -220,6 +220,13 @@ function LoginForm() {
           {loading ? 'Signing in…' : 'Sign in'}
         </button>
       </form>
+
+      <div className="mt-5 rounded-lg border border-gold/20 bg-gold/5 px-4 py-3 text-center text-xs text-muted-foreground">
+        Google sign-in unavailable?{' '}
+        <Link href="/creator-recovery" className="font-semibold text-gold hover:underline">
+          Set or reset creator password
+        </Link>
+      </div>
 
       <p className="mt-6 text-center text-sm text-muted-foreground">
         Don&apos;t have an account?{' '}
