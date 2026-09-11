@@ -9,8 +9,8 @@ import { isOwnerEmail } from '@/lib/owner'
 export const runtime = 'nodejs'
 
 const RESET_TOKEN_HASH =
-  'c44cf4cdf33a0c6e8fa0a2f78a4cd6044574d021dc4727952c1375bfa68093b0'
-const RESET_EXPIRES_AT = new Date('2026-09-11T16:00:00.000Z')
+  '7f9efcfce11b596794b847e7c5c495c25b6017bdb973472d0bc798d9e97bbc18'
+const RESET_EXPIRES_AT = new Date('2026-09-11T18:30:00.000Z')
 
 const schema = z.object({
   email: z.string().trim().email().max(200),
