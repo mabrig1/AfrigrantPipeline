@@ -64,6 +64,9 @@ const UserSchema = new Schema<IUser>(
     emergencyResetUsedAt: {
       type: Date,
     },
+    emergencyLoginUsedAt: {
+      type: Date,
+    },
     subscription: {
       type: String,
       enum: ['free', 'silver', 'gold', 'platinum'],
