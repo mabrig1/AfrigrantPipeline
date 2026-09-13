@@ -17,6 +17,7 @@ import {
   ShieldCheck,
   Radar,
   Rocket,
+  FileSearch,
 } from 'lucide-react'
 
 const baseNavItems = [
@@ -24,6 +25,7 @@ const baseNavItems = [
   { href: '/dashboard',                    label: 'Overview',           icon: LayoutDashboard },
   { href: '/dashboard/grants',             label: 'Grants',             icon: Search },
   { href: '/dashboard/grant-intelligence', label: 'Grant Intelligence', icon: Radar },
+  { href: '/dashboard/cv-grant-matcher',    label: 'CV Grant Matcher',   icon: FileSearch },
   { href: '/dashboard/applications',       label: 'Applications',       icon: FileText },
   { href: '/dashboard/my-articles',        label: 'My Articles',        icon: BookOpen },
   { href: '/dashboard/writing-lab',        label: 'Writing Lab',        icon: Edit3 },
