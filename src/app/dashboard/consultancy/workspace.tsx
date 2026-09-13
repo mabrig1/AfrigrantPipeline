@@ -127,7 +127,7 @@ export default function ConsultancyWorkspace({
               : 'Academic consultancy'}
           </p>
           <h1 className="text-3xl font-bold">
-            {data?.isCreator ? 'Consultancy desk' : 'My consultancy cases'}
+            {data?.isCreator ? 'Grant Studio · Consultancy Desk' : 'My consultancy cases'}
           </h1>
           <p className="mt-2 text-muted-foreground">
             {data?.isCreator
@@ -147,6 +147,16 @@ export default function ConsultancyWorkspace({
         </button>
       </header>
       <nav className="flex flex-wrap gap-3 text-sm">
+        {data?.isCreator && (
+          <Link className="font-semibold text-gold underline" href="/dashboard/creator-studio">
+            Creator Studio
+          </Link>
+        )}
+        {data?.isCreator && (
+          <Link className="text-gold underline" href="/dashboard/cv-grant-matcher">
+            CV Grant Matcher
+          </Link>
+        )}
         <Link
           className="text-gold underline"
           href="/dashboard/grant-intelligence"
@@ -200,6 +210,22 @@ export default function ConsultancyWorkspace({
         </p>
       )}
       {!data && !error && <p role="status">Loading your workspace…</p>}
+      {data?.isCreator && !selected && !creating && (
+        <section className="rounded-2xl border border-gold/25 bg-gold/5 p-5">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-[0.16em] text-gold">Studio intake station</p>
+              <h2 className="mt-1 text-xl font-bold">Start with the applicant's CV</h2>
+              <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">
+                Analyse the CV, search live grants, identify real eligibility gaps, then bring viable opportunities into this consultancy desk for proposal execution.
+              </p>
+            </div>
+            <Link className={button} href="/dashboard/cv-grant-matcher">
+              Open CV Grant Matcher
+            </Link>
+          </div>
+        </section>
+      )}
       {data?.isCreator && !selected && !creating && (
         <section className="grid gap-3 sm:grid-cols-3">
           {[
