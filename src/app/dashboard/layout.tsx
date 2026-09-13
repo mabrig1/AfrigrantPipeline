@@ -40,6 +40,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
         {isAdmin && <Link className="font-semibold text-gold" href="/dashboard/personal-grant-pipeline">My Grant Pipeline</Link>}
         <Link href="/dashboard/consultancy">Consultancy desk</Link>
         <Link href="/dashboard/grant-intelligence">Grant intelligence</Link>
+        <Link href="/dashboard/cv-grant-matcher">CV grant matcher</Link>
         <Link href="/dashboard">Overview</Link>
         <Link href="/admin">Creator access</Link>
       </nav>
