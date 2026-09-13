@@ -91,7 +91,7 @@ export async function POST(req: Request) {
       .lean()
 
     const catalogueEvidence: GrantEvidence[] = grants
-      .map((grant) => {
+      .map((grant): GrantEvidence | null => {
         const url = grant.applicationLink || grant.sourceUrl
         if (!url || !/^https:\/\//i.test(url)) return null
         return {

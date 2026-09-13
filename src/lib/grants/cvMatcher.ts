@@ -388,7 +388,7 @@ function normalizeMatches(raw: JsonRecord, evidence: GrantEvidence[]) {
   const byUrl = new Map(evidence.map((item) => [item.url, item]))
 
   const matches: GrantMatch[] = matchesRaw
-    .map((item) => {
+    .map((item): GrantMatch | null => {
       if (!item || typeof item !== 'object') return null
       const record = item as JsonRecord
       const url = text(record.url, 2000)
