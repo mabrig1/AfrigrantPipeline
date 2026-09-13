@@ -37,7 +37,8 @@ export default async function DashboardLayout({ children }: { children: React.Re
       </header>
 
       <nav aria-label="Dashboard navigation" className="flex flex-wrap gap-4 border-b border-border px-4 py-3 text-sm lg:hidden">
-        {isAdmin && <Link className="font-semibold text-gold" href="/dashboard/personal-grant-pipeline">My Grant Pipeline</Link>}
+        {isAdmin && <Link className="font-semibold text-gold" href="/dashboard/creator-studio">Creator Studio</Link>}
+        {isAdmin && <Link href="/dashboard/personal-grant-pipeline">My Grant Pipeline</Link>}
         <Link href="/dashboard/consultancy">Consultancy desk</Link>
         <Link href="/dashboard/grant-intelligence">Grant intelligence</Link>
         <Link href="/dashboard/cv-grant-matcher">CV grant matcher</Link>
