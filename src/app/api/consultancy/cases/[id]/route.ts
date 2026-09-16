@@ -1,6 +1,7 @@
 import { randomUUID } from 'node:crypto'
 import { NextResponse } from 'next/server'
 import Case from '@/models/ConsultancyCase'
+import { reportMabrigConversion } from '@/lib/mabrig-growth'
 import {
   actionSchema,
   mayAccessCase,
@@ -24,7 +25,7 @@ export async function PATCH(
     if (!/^[a-f\d]{24}$/i.test(id))
       throw new ConsultancyError('Case not found.', 404)
     const input = actionSchema.parse(await readBody(req))
-    const record = await Case.findById(id)
+    const record = await Case.findById(id).select('+attributionToken')
     if (
       !record ||
       !mayAccessCase(actor.isCreator, actor.id, record.clientUserId)
@@ -44,6 +45,9 @@ export async function PATCH(
       )
     const now = new Date().toISOString()
     let event: string = input.action
+    let paymentToReport:
+      | { amount: number; reference: string; recordedAt: string }
+      | null = null
     switch (input.action) {
       case 'quote':
         if (record.quote?.status === 'accepted')
@@ -112,6 +116,11 @@ export async function PATCH(
           reference: input.reference,
           recordedAt: now,
         })
+        paymentToReport = {
+          amount: input.amount,
+          reference: input.reference,
+          recordedAt: now,
+        }
         event = `Payment recorded manually: NGN ${input.amount.toLocaleString()} (${input.reference}).`
         break
       case 'milestone':
@@ -165,6 +174,22 @@ export async function PATCH(
     }
     record.activity.push({ at: now, actor: actor.name, text: event })
     await record.save()
+
+    if (paymentToReport) {
+      await reportMabrigConversion({
+        id: `afrigrant:payment:${record._id.toString()}:${paymentToReport.reference.toLowerCase()}`,
+        type: 'purchase',
+        email: record.clientEmail,
+        amount: paymentToReport.amount,
+        currency: 'NGN',
+        attributionToken: record.attributionToken || undefined,
+        product: 'AfriGrantPipeline Consultancy',
+        reference: paymentToReport.reference,
+        occurredAt: paymentToReport.recordedAt,
+        source: 'afrigrant:manual-payment',
+      })
+    }
+
     return NextResponse.json({ success: true })
   } catch (error) {
     return failure(error)
