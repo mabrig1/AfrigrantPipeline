@@ -19,6 +19,7 @@ const schema = new Schema<StoredCase>(
     service: String,
     phone: String,
     deadline: String,
+    attributionToken: { type: String, maxlength: 2048, select: false },
     consentAt: { type: String, required: true },
     stage: { type: String, default: 'requested', index: true },
     quote: {
