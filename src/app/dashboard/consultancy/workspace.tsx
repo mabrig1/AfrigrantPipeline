@@ -34,6 +34,33 @@ const money = (value: number) =>
   }).format(value)
 const date = (value: string) => new Date(value).toLocaleDateString('en-NG')
 
+function browserAttributionToken() {
+  if (typeof window === 'undefined') return ''
+  const key = 'mabrig_attribution_v1'
+  try {
+    const incoming =
+      new URL(window.location.href).searchParams.get('mabrig_attribution') || ''
+    const valid = (value: string) =>
+      value.length >= 20 &&
+      value.length <= 2048 &&
+      /^[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$/.test(value)
+
+    if (valid(incoming)) {
+      window.sessionStorage.setItem(key, incoming)
+      window.localStorage.setItem(key, incoming)
+      return incoming
+    }
+
+    const stored =
+      window.sessionStorage.getItem(key) ||
+      window.localStorage.getItem(key) ||
+      ''
+    return valid(stored) ? stored : ''
+  } catch {
+    return ''
+  }
+}
+
 export default function ConsultancyWorkspace({
   name,
   email,
@@ -336,6 +363,7 @@ function IntakeForm({
         const f = new FormData(e.currentTarget)
         await submit({
           ...Object.fromEntries(f),
+          attributionToken: browserAttributionToken() || undefined,
           consent: f.get('consent') === 'on',
         })
       }}
