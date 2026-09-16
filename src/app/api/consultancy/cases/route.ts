@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server'
 import Case from '@/models/ConsultancyCase'
 import User from '@/models/User'
-import { intakeSchema } from '@/lib/consultancy/contracts'
+import { intakeSchema, services } from '@/lib/consultancy/contracts'
+import { reportMabrigConversion } from '@/lib/mabrig-growth'
 import {
   consultancyActor,
   failure,
@@ -91,6 +92,17 @@ export async function POST(req: Request) {
         { at: now, actor: actor.name, text: 'Consultancy brief received.' },
       ],
     })
+    await reportMabrigConversion({
+      id: `afrigrant:consultancy:${record._id.toString()}`,
+      type: 'quote_request',
+      email: record.clientEmail,
+      attributionToken: input.attributionToken,
+      product: services[input.service],
+      reference: record._id.toString(),
+      occurredAt: now,
+      source: 'afrigrant:consultancy',
+    })
+
     return NextResponse.json({ id: record._id.toString() }, { status: 201 })
   } catch (error) {
     return failure(error)
