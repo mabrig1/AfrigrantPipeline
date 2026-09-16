@@ -56,6 +56,12 @@ export const intakeSchema = z
       .regex(/^\d{4}-\d{2}-\d{2}$/)
       .or(z.literal(''))
       .optional(),
+    attributionToken: z
+      .string()
+      .min(20)
+      .max(2048)
+      .regex(/^[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$/)
+      .optional(),
     consent: z.literal(true),
   })
   .strict()
