@@ -1,9 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
+import { connectDB } from '@/lib/mongodb'
+import Grant from '@/models/Grant'
 import {
   calculateReadiness,
   matchScholarships,
   type ScholarshipApplicantProfile,
+  type ScholarshipOpportunity,
+  type ScholarshipLevel,
 } from '@/lib/scholarships/matcher'
 
 const profileSchema = z.object({
@@ -19,6 +23,77 @@ const profileSchema = z.object({
   hasReferences: z.boolean().default(false),
   hasEnglishProof: z.boolean().default(false),
 })
+
+const matcherLevels = new Set<ScholarshipLevel>([
+  'undergraduate',
+  'masters',
+  'phd',
+  'postdoc',
+  'fellowship',
+])
+
+function deadlineLabel(item: {
+  deadline?: Date
+  isRolling?: boolean
+  scholarshipDetails?: { applicationCycle?: string }
+}) {
+  if (item.isRolling) return 'Rolling applications'
+
+  const deadline = item.deadline ? new Date(item.deadline) : null
+  if (deadline && !Number.isNaN(deadline.getTime()) && deadline.getUTCFullYear() < 2098) {
+    return 'Deadline: ' + deadline.toISOString().slice(0, 10)
+  }
+
+  return item.scholarshipDetails?.applicationCycle || 'Verify current application window'
+}
+
+async function liveScholarshipCatalog(): Promise<ScholarshipOpportunity[]> {
+  await connectDB()
+
+  const records = await Grant.find({
+    grantType: 'scholarship',
+    discoveredBy: 'agent',
+    status: 'open',
+    deadline: { $gt: new Date() },
+    verificationStatus: { $in: ['verified', 'needs_review'] },
+  })
+    .sort({ verificationStatus: 1, relevanceScore: -1, deadline: 1 })
+    .limit(60)
+    .lean()
+
+  return records
+    .map((item): ScholarshipOpportunity | null => {
+      const details = item.scholarshipDetails
+      const levels = (details?.levels ?? []).filter(
+        (level): level is ScholarshipLevel => matcherLevels.has(level as ScholarshipLevel)
+      )
+
+      if (levels.length === 0 || !item.applicationLink) return null
+
+      return {
+        id: item._id.toString(),
+        title: item.title,
+        provider: item.funder,
+        levels,
+        funding: details?.fundingType === 'full' ? 'full' : 'partial',
+        countries:
+          details?.studyCountries?.length
+            ? details.studyCountries
+            : item.countries?.length
+              ? item.countries
+              : ['International'],
+        fields:
+          details?.fieldsOfStudy?.length
+            ? details.fieldsOfStudy
+            : item.categories?.filter((value) => value !== 'scholarship') ?? ['all'],
+        officialUrl: item.applicationLink,
+        verificationStatus:
+          item.verificationStatus === 'verified' ? 'official-source' : 'needs-verification',
+        deadlineLabel: deadlineLabel(item),
+      }
+    })
+    .filter((item): item is ScholarshipOpportunity => Boolean(item))
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -37,10 +112,16 @@ export async function POST(request: NextRequest) {
 
     const profile = parsed.data as ScholarshipApplicantProfile
     const readiness = calculateReadiness(profile)
-    const matches = matchScholarships(profile)
+    const liveCatalog = await liveScholarshipCatalog()
+    const matches = matchScholarships(
+      profile,
+      liveCatalog.length > 0 ? liveCatalog : undefined
+    )
 
     return NextResponse.json({
       generatedAt: new Date().toISOString(),
+      catalogSource: liveCatalog.length > 0 ? 'live-crawler' : 'starter-fallback',
+      opportunitiesScreened: liveCatalog.length > 0 ? liveCatalog.length : matches.length,
       readiness,
       matches,
       disclaimer:
