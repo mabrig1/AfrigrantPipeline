@@ -1,0 +1,58 @@
+name: DevShield Pre-Merge Gate
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+jobs:
+  devshield:
+    name: DevShield strict security review
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout full history
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          fetch-depth: 0
+
+      - name: Run MABRIG DevShield AI
+        id: devshield
+        uses: mabrig1/mabrig-devshield-ai@e229e3e4380fab8970a440bd59659260105cbd80
+        with:
+          github-token: ${{ github.token }}
+          policy: strict
+          scan-scope: changed-files
+          fail-on: high
+          dependency-review: auto
+          dependency-severity: low
+          comment: true
+          max-files: 250
+          sarif: true
+
+      - name: Write security summary
+        if: always()
+        env:
+          FINDINGS: ${{ steps.devshield.outputs.findings-count }}
+          NEW_FINDINGS: ${{ steps.devshield.outputs.new-findings }}
+          DEP_FINDINGS: ${{ steps.devshield.outputs.dependency-findings }}
+          DEP_STATUS: ${{ steps.devshield.outputs.dependency-review-status }}
+          RISK_SCORE: ${{ steps.devshield.outputs.risk-score }}
+          RISK_LEVEL: ${{ steps.devshield.outputs.risk-level }}
+          SCANNED_FILES: ${{ steps.devshield.outputs.scanned-files }}
+        run: |
+          {
+            echo "## MABRIG DevShield AI pre-merge review"
+            echo "- Scanned files: ${SCANNED_FILES:-unknown}"
+            echo "- Findings: ${FINDINGS:-unknown}"
+            echo "- New findings: ${NEW_FINDINGS:-unknown}"
+            echo "- Dependency findings: ${DEP_FINDINGS:-unknown}"
+            echo "- Dependency review: ${DEP_STATUS:-unknown}"
+            echo "- Risk score: ${RISK_SCORE:-unknown}"
+            echo "- Risk level: ${RISK_LEVEL:-unknown}"
+            echo "- Merge gate: fails on HIGH or CRITICAL findings"
+          } >> "$GITHUB_STEP_SUMMARY"

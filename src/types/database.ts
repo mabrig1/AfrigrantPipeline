@@ -46,6 +46,16 @@ export interface IGrant {
   countries: string[]
   region?: string
   applicationLink?: string
+  scholarshipDetails?: {
+    levels?: Array<'undergraduate' | 'masters' | 'phd' | 'postdoc' | 'fellowship' | 'other'>
+    fundingType?: 'full' | 'partial' | 'tuition-only' | 'stipend-only' | 'other'
+    benefits?: string[]
+    requiredDocuments?: string[]
+    fieldsOfStudy?: string[]
+    studyCountries?: string[]
+    applicationCycle?: string
+    officialProviderDomain?: string
+  }
   bookmarkedBy?: Types.ObjectId[]
   createdBy: Types.ObjectId
   createdAt: Date

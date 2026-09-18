@@ -3,6 +3,8 @@ import type { IGrant } from '@/types/database'
 
 type GrantVerificationStatus = 'unverified' | 'needs_review' | 'verified' | 'stale'
 type GrantDiscoveryMethod = 'manual' | 'agent' | 'import'
+type ScholarshipFundingType = 'full' | 'partial' | 'tuition-only' | 'stipend-only' | 'other'
+type ScholarshipLevel = 'undergraduate' | 'masters' | 'phd' | 'postdoc' | 'fellowship' | 'other'
 
 export interface IAgenticGrant extends IGrant {
   fundingText?: string
@@ -19,6 +21,16 @@ export interface IAgenticGrant extends IGrant {
   agentNotes?: string
   fingerprint?: string
   discoveredBy?: GrantDiscoveryMethod
+  scholarshipDetails?: {
+    levels?: ScholarshipLevel[]
+    fundingType?: ScholarshipFundingType
+    benefits?: string[]
+    requiredDocuments?: string[]
+    fieldsOfStudy?: string[]
+    studyCountries?: string[]
+    applicationCycle?: string
+    officialProviderDomain?: string
+  }
 }
 
 const GrantSchema = new Schema<IAgenticGrant>(
@@ -83,6 +95,23 @@ const GrantSchema = new Schema<IAgenticGrant>(
         message: '{VALUE} is not a valid grant type',
       },
       default: 'other',
+    },
+    scholarshipDetails: {
+      levels: {
+        type: [String],
+        enum: ['undergraduate', 'masters', 'phd', 'postdoc', 'fellowship', 'other'],
+        default: undefined,
+      },
+      fundingType: {
+        type: String,
+        enum: ['full', 'partial', 'tuition-only', 'stipend-only', 'other'],
+      },
+      benefits: { type: [String], default: undefined },
+      requiredDocuments: { type: [String], default: undefined },
+      fieldsOfStudy: { type: [String], default: undefined },
+      studyCountries: { type: [String], default: undefined },
+      applicationCycle: { type: String, trim: true, maxlength: 200 },
+      officialProviderDomain: { type: String, trim: true, maxlength: 255 },
     },
     eligibility: {
       type: [String],
@@ -183,6 +212,8 @@ GrantSchema.index({ status: 1, deadline: 1 })
 GrantSchema.index({ status: 1, createdAt: -1 })
 GrantSchema.index({ categories: 1 })
 GrantSchema.index({ grantType: 1 })
+GrantSchema.index({ grantType: 1, 'scholarshipDetails.levels': 1, status: 1, deadline: 1 })
+GrantSchema.index({ grantType: 1, 'scholarshipDetails.fundingType': 1, status: 1 })
 GrantSchema.index({ region: 1 })
 GrantSchema.index({ countries: 1 })
 GrantSchema.index({ createdBy: 1 })
