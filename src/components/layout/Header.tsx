@@ -27,6 +27,7 @@ const navLinks = [
   { label: 'Experts', href: '/experts' },
   { label: 'AfriPublish', href: '/articles' },
   { label: 'Research Center', href: '/research-center' },
+  { label: 'Research OS', href: '/research-os' },
   { label: 'Newsletter', href: '/newsletter' },
   { label: 'Consultancy', href: '/consultancy' },
 ]
