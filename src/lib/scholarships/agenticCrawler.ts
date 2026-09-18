@@ -8,10 +8,12 @@ import User from '@/models/User'
 
 export const SCHOLARSHIP_SOURCE_REGISTRY = [
   { name: 'Chevening', url: 'https://www.chevening.org/scholarships/' },
+  { name: 'Chevening Apply', url: 'https://www.chevening.org/apply/' },
   { name: 'Commonwealth Scholarship Commission', url: 'https://cscuk.fcdo.gov.uk/scholarships/' },
   { name: 'DAAD', url: 'https://www.daad.de/en/studying-in-germany/scholarships/' },
   { name: 'Erasmus Mundus', url: 'https://erasmus-plus.ec.europa.eu/opportunities/opportunities-for-individuals/students/erasmus-mundus-joint-masters' },
-  { name: 'Mastercard Foundation Scholars Program', url: 'https://mastercardfdn.org/all/scholars/' },
+  { name: 'Mastercard Foundation Scholars Program', url: 'https://mastercardfdn.org/en/what-we-do/our-programs/mastercard-foundation-scholars-program/' },
+  { name: 'Mastercard Scholars Where to Apply', url: 'https://mastercardfdn.org/en/what-we-do/our-programs/mastercard-foundation-scholars-program/where-to-apply/' },
   { name: 'Fulbright Foreign Student Program', url: 'https://foreign.fulbrightonline.org/' },
   { name: 'Gates Cambridge', url: 'https://www.gatescambridge.org/apply/how-to-apply/' },
   { name: 'Rhodes Scholarships', url: 'https://www.rhodeshouse.ox.ac.uk/scholarships/applications/' },
