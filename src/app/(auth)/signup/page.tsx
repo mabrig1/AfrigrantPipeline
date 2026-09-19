@@ -1,5 +1,7 @@
 'use client'
 
+const PASSWORD_MIN_LENGTH_MESSAGE = 'Password must be at least 8 characters.'
+
 import { useState } from 'react'
 import { signIn } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
@@ -97,7 +99,7 @@ export default function SignupPage() {
 
     if (data.name.trim().length < 2) errs.name = 'Full name must be at least 2 characters.'
     if (!/^\S+@\S+\.\S+$/.test(data.email)) errs.email = 'Please enter a valid email address.'
-    if (data.password.length < 8) errs.password = 'Password must be at least 8 characters.'
+    if (data.password.length < 8) errs.password = PASSWORD_MIN_LENGTH_MESSAGE
     if (data.password !== data.confirm) errs.confirm = 'Passwords do not match.'
 
     setFieldErrors(errs)
