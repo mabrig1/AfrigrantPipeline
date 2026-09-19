@@ -1,8 +1,11 @@
-name: DevShield Pre-Merge Gate
+name: DevShield Security Control Plane
 
 on:
   pull_request:
     types: [opened, synchronize, reopened, ready_for_review]
+  push:
+    branches:
+      - 'claude/afrigrant-pipeline-setup-pMr0K'
   workflow_dispatch:
 
 permissions:
@@ -11,8 +14,9 @@ permissions:
   issues: write
 
 jobs:
-  devshield:
-    name: DevShield strict security review
+  pull-request-review:
+    if: github.event_name == 'pull_request'
+    name: DevShield strict PR review
     runs-on: ubuntu-latest
     steps:
       - name: Checkout full history
@@ -20,9 +24,9 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Run MABRIG DevShield AI
+      - name: Run MABRIG DevShield AI v2.3
         id: devshield
-        uses: mabrig1/mabrig-devshield-ai@e229e3e4380fab8970a440bd59659260105cbd80
+        uses: mabrig1/mabrig-devshield-ai@973e44a09122b5a281b2e70cf22639cbd8dc0e20
         with:
           github-token: ${{ github.token }}
           policy: strict
@@ -30,29 +34,135 @@ jobs:
           fail-on: high
           dependency-review: auto
           dependency-severity: low
+          agentic-mode: plan
+          remediation-mode: propose
+          dependency-agentic: auto
+          security-graph: auto
+          control-plane: auto
+          security-history: auto
+          regression-gate: report
+          risk-exceptions: auto
           comment: true
-          max-files: 250
+          max-files: 300
           sarif: true
 
-      - name: Write security summary
+      - name: Write PR security summary
         if: always()
         env:
           FINDINGS: ${{ steps.devshield.outputs.findings-count }}
           NEW_FINDINGS: ${{ steps.devshield.outputs.new-findings }}
           DEP_FINDINGS: ${{ steps.devshield.outputs.dependency-findings }}
-          DEP_STATUS: ${{ steps.devshield.outputs.dependency-review-status }}
           RISK_SCORE: ${{ steps.devshield.outputs.risk-score }}
           RISK_LEVEL: ${{ steps.devshield.outputs.risk-level }}
           SCANNED_FILES: ${{ steps.devshield.outputs.scanned-files }}
+          AGENTIC_STATE: ${{ steps.devshield.outputs.agentic-state }}
+          AGENTIC_TASKS: ${{ steps.devshield.outputs.agentic-tasks }}
+          DEP_AGENTIC_STATE: ${{ steps.devshield.outputs.dependency-agentic-state }}
+          GRAPH_STATE: ${{ steps.devshield.outputs.security-graph-state }}
+          GRAPH_NODES: ${{ steps.devshield.outputs.security-graph-nodes }}
+          GRAPH_EDGES: ${{ steps.devshield.outputs.security-graph-edges }}
+          GRAPH_PATHS: ${{ steps.devshield.outputs.security-graph-paths }}
+          CONTROL_STATE: ${{ steps.devshield.outputs.control-plane-state }}
+          BLAST_RADIUS: ${{ steps.devshield.outputs.control-plane-blast-radius }}
+          HISTORY_STATE: ${{ steps.devshield.outputs.security-history-state }}
+          REGRESSION_STATE: ${{ steps.devshield.outputs.regression-gate-state }}
         run: |
           {
-            echo "## MABRIG DevShield AI pre-merge review"
+            echo "## MABRIG DevShield AI v2.3 PR review"
             echo "- Scanned files: ${SCANNED_FILES:-unknown}"
             echo "- Findings: ${FINDINGS:-unknown}"
             echo "- New findings: ${NEW_FINDINGS:-unknown}"
             echo "- Dependency findings: ${DEP_FINDINGS:-unknown}"
-            echo "- Dependency review: ${DEP_STATUS:-unknown}"
             echo "- Risk score: ${RISK_SCORE:-unknown}"
             echo "- Risk level: ${RISK_LEVEL:-unknown}"
-            echo "- Merge gate: fails on HIGH or CRITICAL findings"
+            echo "- Agentic state/tasks: ${AGENTIC_STATE:-unknown} / ${AGENTIC_TASKS:-unknown}"
+            echo "- Dependency mission: ${DEP_AGENTIC_STATE:-unknown}"
+            echo "- Security graph: ${GRAPH_STATE:-unknown} (${GRAPH_NODES:-0} nodes, ${GRAPH_EDGES:-0} edges, ${GRAPH_PATHS:-0} paths)"
+            echo "- Control plane: ${CONTROL_STATE:-unknown}; blast radius ${BLAST_RADIUS:-unknown}"
+            echo "- Security history: ${HISTORY_STATE:-unknown}"
+            echo "- Regression gate: ${REGRESSION_STATE:-unknown}"
+            echo "- Merge gate: fails on HIGH or CRITICAL deterministic findings"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  repository-security-scan:
+    if: github.event_name != 'pull_request'
+    name: DevShield v2.3 full repository scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout full history
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          fetch-depth: 0
+
+      - name: Run full MABRIG DevShield AI v2.3 security control plane
+        id: devshield
+        uses: mabrig1/mabrig-devshield-ai@973e44a09122b5a281b2e70cf22639cbd8dc0e20
+        with:
+          github-token: ${{ github.token }}
+          policy: strict
+          scan-scope: repository
+          fail-on: high
+          dependency-review: false
+          dependency-severity: low
+          agentic-mode: plan
+          remediation-mode: propose
+          dependency-agentic: on
+          security-graph: on
+          control-plane: on
+          security-history: on
+          regression-gate: report
+          risk-exceptions: off
+          comment: false
+          max-files: 500
+          sarif: true
+
+      - name: Write full repository security summary
+        if: always()
+        env:
+          FINDINGS: ${{ steps.devshield.outputs.findings-count }}
+          NEW_FINDINGS: ${{ steps.devshield.outputs.new-findings }}
+          EXISTING_FINDINGS: ${{ steps.devshield.outputs.existing-findings }}
+          DEP_FINDINGS: ${{ steps.devshield.outputs.dependency-findings }}
+          RISK_SCORE: ${{ steps.devshield.outputs.risk-score }}
+          RISK_LEVEL: ${{ steps.devshield.outputs.risk-level }}
+          SCANNED_FILES: ${{ steps.devshield.outputs.scanned-files }}
+          AGENTIC_STATE: ${{ steps.devshield.outputs.agentic-state }}
+          AGENTIC_TASKS: ${{ steps.devshield.outputs.agentic-tasks }}
+          ATTACK_PATHS: ${{ steps.devshield.outputs.agentic-attack-paths }}
+          REMEDIATION_CANDIDATES: ${{ steps.devshield.outputs.remediation-candidates }}
+          MANUAL_ONLY: ${{ steps.devshield.outputs.remediation-manual-only }}
+          DEP_AGENTIC_STATE: ${{ steps.devshield.outputs.dependency-agentic-state }}
+          DEP_PACKAGES: ${{ steps.devshield.outputs.dependency-agentic-packages }}
+          DEP_PATHS: ${{ steps.devshield.outputs.dependency-agentic-paths }}
+          DEP_REFS: ${{ steps.devshield.outputs.dependency-agentic-references }}
+          GRAPH_STATE: ${{ steps.devshield.outputs.security-graph-state }}
+          GRAPH_NODES: ${{ steps.devshield.outputs.security-graph-nodes }}
+          GRAPH_EDGES: ${{ steps.devshield.outputs.security-graph-edges }}
+          GRAPH_PATHS: ${{ steps.devshield.outputs.security-graph-paths }}
+          CONTROL_STATE: ${{ steps.devshield.outputs.control-plane-state }}
+          GRAPH_CHANGES: ${{ steps.devshield.outputs.control-plane-graph-changes }}
+          BLAST_RADIUS: ${{ steps.devshield.outputs.control-plane-blast-radius }}
+          RANKED_NODES: ${{ steps.devshield.outputs.control-plane-ranked-nodes }}
+          OWNERSHIP_HINTS: ${{ steps.devshield.outputs.control-plane-ownership-hints }}
+          HISTORY_STATE: ${{ steps.devshield.outputs.security-history-state }}
+          HISTORY_NEW_RISK: ${{ steps.devshield.outputs.security-history-new-risk }}
+          HISTORY_EXPANDED: ${{ steps.devshield.outputs.security-history-expanded-exposure }}
+          HISTORY_RESOLVED: ${{ steps.devshield.outputs.security-history-resolved-risk }}
+          REGRESSION_STATE: ${{ steps.devshield.outputs.regression-gate-state }}
+          REGRESSION_DECISION: ${{ steps.devshield.outputs.regression-gate-decision }}
+        run: |
+          {
+            echo "## MABRIG DevShield AI v2.3 full repository scan"
+            echo "- Scanned files: ${SCANNED_FILES:-unknown}"
+            echo "- Findings: ${FINDINGS:-unknown} (new ${NEW_FINDINGS:-unknown}, baseline-existing ${EXISTING_FINDINGS:-unknown})"
+            echo "- Dependency findings: ${DEP_FINDINGS:-unknown}"
+            echo "- Risk: ${RISK_LEVEL:-unknown} (${RISK_SCORE:-unknown}/100)"
+            echo "- Agentic mission: ${AGENTIC_STATE:-unknown}; tasks ${AGENTIC_TASKS:-0}; attack-path hypotheses ${ATTACK_PATHS:-0}"
+            echo "- Remediation: ${REMEDIATION_CANDIDATES:-0} candidate(s), ${MANUAL_ONLY:-0} manual-only"
+            echo "- Dependency mission: ${DEP_AGENTIC_STATE:-unknown}; packages ${DEP_PACKAGES:-0}; paths ${DEP_PATHS:-0}; references ${DEP_REFS:-0}"
+            echo "- Security graph: ${GRAPH_STATE:-unknown}; nodes ${GRAPH_NODES:-0}; edges ${GRAPH_EDGES:-0}; prioritized paths ${GRAPH_PATHS:-0}"
+            echo "- Control plane: ${CONTROL_STATE:-unknown}; graph changes ${GRAPH_CHANGES:-0}; blast radius ${BLAST_RADIUS:-0}; ranked nodes ${RANKED_NODES:-0}; ownership hints ${OWNERSHIP_HINTS:-0}"
+            echo "- History: ${HISTORY_STATE:-unknown}; new risk ${HISTORY_NEW_RISK:-0}; expanded exposure ${HISTORY_EXPANDED:-0}; resolved risk ${HISTORY_RESOLVED:-0}"
+            echo "- Regression policy: ${REGRESSION_STATE:-unknown} / ${REGRESSION_DECISION:-unknown} (report-only for first adoption)"
+            echo "- Enforcement: HIGH/CRITICAL deterministic findings fail this run"
           } >> "$GITHUB_STEP_SUMMARY"
