@@ -116,6 +116,15 @@ jobs:
           max-files: 500
           sarif: true
 
+      - name: Upload DevShield report bundle
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: devshield-v2.3-repository-report
+          path: .devshield
+          if-no-files-found: warn
+          retention-days: 14
+
       - name: Write full repository security summary
         if: always()
         env:
