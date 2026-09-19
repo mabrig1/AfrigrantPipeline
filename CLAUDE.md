@@ -127,28 +127,28 @@ server/             → Railway Express backend
 
 ### Vercel (Frontend .env.local)
 ```
-MONGODB_URI=mongodb+srv://user:pass@cluster.mongodb.net/afrigrant
-NEXTAUTH_SECRET=your-nextauth-secret-min-32-chars
+MONGODB_URI=
+NEXTAUTH_SECRET=
 NEXTAUTH_URL=https://afrigrantpipeline.com
 NEXT_PUBLIC_API_URL=https://api.afrigrantpipeline.com
 NEXT_PUBLIC_APP_URL=https://afrigrantpipeline.com
 NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=your-cloud-name
-OPENAI_API_KEY=sk-your-key
-RESEND_API_KEY=re_your-key
+OPENAI_API_KEY=
+RESEND_API_KEY=
 RESEND_FROM_EMAIL=noreply@afrigrantpipeline.com
 GOOGLE_CLIENT_ID=your-google-oauth-id
-GOOGLE_CLIENT_SECRET=your-google-oauth-secret
+GOOGLE_CLIENT_SECRET=
 ```
 
 ### Railway (Backend env vars)
 ```
-MONGODB_URI=mongodb+srv://user:pass@cluster.mongodb.net/afrigrant
-JWT_SECRET=your-jwt-secret-min-64-chars
-OPENAI_API_KEY=sk-your-key
-RESEND_API_KEY=re_your-key
+MONGODB_URI=
+JWT_SECRET=
+OPENAI_API_KEY=
+RESEND_API_KEY=
 CLOUDINARY_CLOUD_NAME=your-cloud-name
-CLOUDINARY_API_KEY=your-api-key
-CLOUDINARY_API_SECRET=your-api-secret
+CLOUDINARY_API_KEY=
+CLOUDINARY_API_SECRET=
 FRONTEND_URL=https://afrigrantpipeline.com
 PORT=8080
 NODE_ENV=production
