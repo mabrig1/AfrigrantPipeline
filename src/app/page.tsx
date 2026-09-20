@@ -5,7 +5,7 @@ import {
   ArrowRight, Globe, Search, Users, GraduationCap,
   Lightbulb, Bell, Star, Sparkles, TrendingUp, Award, Building2,
   FileText, Zap, Heart, CheckCircle, ChevronRight, Microscope,
-  Handshake, BarChart3, ShieldCheck,
+  Handshake, BarChart3, ShieldCheck, FileSearch,
 } from 'lucide-react'
 
 // ── Static data ────────────────────────────────────────────────────────────
@@ -18,6 +18,14 @@ const platformModules = [
     href: '/grants',
     badge: 'Core',
     color: 'bg-blue-100 text-blue-700',
+  },
+  {
+    icon: FileSearch,
+    title: 'CV Grant Matcher',
+    description: 'Upload a CV to find realistic funding matches, verify hard eligibility, and see exactly which requirements are still missing.',
+    href: '/dashboard/cv-grant-matcher',
+    badge: 'AI Match',
+    color: 'bg-emerald-100 text-emerald-700',
   },
   {
     icon: Microscope,
