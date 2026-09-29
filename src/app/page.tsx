@@ -54,7 +54,7 @@ const platformModules = [
   {
     icon: CheckCircle,
     title: '💯 Humanised Writing Service',
-    description: 'Expert-written proposals, abstracts, and reports — 100% human, zero AI detection flags. Guaranteed original and publishable.',
+    description: 'Researcher-reviewed proposals, abstracts, and reports with editing focused on clarity, originality, citation quality, and academic standards.',
     href: '/writing-lab',
     badge: 'Human',
     color: 'bg-teal-100 text-teal-700',
@@ -78,12 +78,12 @@ const platformModules = [
 ]
 
 const fundingCategories = [
-  { label: 'Research Grants', count: '500+', icon: Microscope, href: '/grants?type=research' },
-  { label: 'Scholarships', count: '120+', icon: GraduationCap, href: '/scholarships' },
-  { label: 'Business & MSME', count: '80+', icon: Building2, href: '/business-grants' },
-  { label: 'Fellowships', count: '200+', icon: Award, href: '/grants?type=fellowship' },
-  { label: 'NGO & Impact', count: '60+', icon: Heart, href: '/grants?type=project' },
-  { label: 'Accelerators', count: '40+', icon: Zap, href: '/grants?type=seed' },
+  { label: 'Research Grants', count: 'Explore', icon: Microscope, href: '/grants?type=research' },
+  { label: 'Scholarships', count: 'Explore', icon: GraduationCap, href: '/scholarships' },
+  { label: 'Business & MSME', count: 'Explore', icon: Building2, href: '/business-grants' },
+  { label: 'Fellowships', count: 'Explore', icon: Award, href: '/grants?type=fellowship' },
+  { label: 'NGO & Impact', count: 'Explore', icon: Heart, href: '/grants?type=project' },
+  { label: 'Accelerators', count: 'Explore', icon: Zap, href: '/grants?type=seed' },
 ]
 
 const membershipTiers = [
@@ -351,13 +351,13 @@ export default async function HomePage() {
                 </p>
                 <div className="mt-8 grid grid-cols-2 gap-3">
                   {[
-                    { label: 'Research Projects', count: '24+' },
-                    { label: 'Policy Briefs', count: '40+' },
-                    { label: 'Research Fellows', count: '18' },
-                    { label: 'Partner Institutions', count: '12' },
-                  ].map(({ label, count }) => (
+                    { label: 'Research Projects', value: 'Applied research' },
+                    { label: 'Policy Briefs', value: 'Evidence to action' },
+                    { label: 'Research Network', value: 'Collaboration' },
+                    { label: 'Institutional Support', value: 'Partnerships' },
+                  ].map(({ label, value }) => (
                     <div key={label} className="rounded-2xl border border-white/10 bg-white/5 p-4">
-                      <div className="text-2xl font-bold text-yellow-300">{count}</div>
+                      <div className="text-sm font-bold text-yellow-300">{value}</div>
                       <div className="mt-1 text-xs text-slate-400">{label}</div>
                     </div>
                   ))}
@@ -426,7 +426,7 @@ export default async function HomePage() {
                     'MRI Working Papers & Policy Briefs series',
                     'Expert-guided open access journal submissions',
                     'High-impact Q1/Q2 journal preparation support',
-                    'Ethical, plagiarism-free, fully original outputs',
+                    'Originality, citation and plagiarism review',
                   ].map((item) => (
                     <li key={item} className="flex items-center gap-3 text-sm text-gray-600">
                       <CheckCircle className="size-4 shrink-0 text-blue-700" />
