@@ -67,9 +67,9 @@ const sections = [
 ]
 
 const stats = [
-  { value: '40+', label: 'Research Projects' },
-  { value: '120+', label: 'Publications' },
-  { value: '18', label: 'African Countries' },
+  { value: 'Applied', label: 'Research Projects' },
+  { value: 'Scholarly', label: 'Publications' },
+  { value: 'African', label: 'Research Focus' },
   { value: '60+', label: 'Research Fellows' },
 ]
 
