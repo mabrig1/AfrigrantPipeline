@@ -590,6 +590,37 @@ export default async function HomePage() {
                 Africa&apos;s most comprehensive research, funding, and innovation ecosystem — connecting the continent&apos;s brightest minds with the resources they deserve.
               </p>
               <div className="mt-4 text-xs text-gray-400">Built for Africa, by Africa 🌍</div>
+              <div className="mt-5 space-y-1.5 text-sm text-gray-500">
+                <p className="font-semibold text-gray-700">Mabrig Korie · Founder &amp; Lead Consultant</p>
+                <p>
+                  Email:{' '}
+                  <a href="mailto:victoryonline1@gmail.com" className="hover:text-blue-700 hover:underline">
+                    victoryonline1@gmail.com
+                  </a>
+                </p>
+                <p>
+                  Phone / WhatsApp:{' '}
+                  <a
+                    href="https://wa.me/2347065342818"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="hover:text-blue-700 hover:underline"
+                  >
+                    +234 706 534 2818
+                  </a>
+                </p>
+                <p>
+                  Website:{' '}
+                  <a
+                    href="https://www.afrigrantpipeline.com"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="hover:text-blue-700 hover:underline"
+                  >
+                    www.afrigrantpipeline.com
+                  </a>
+                </p>
+              </div>
             </div>
             {[
               {
