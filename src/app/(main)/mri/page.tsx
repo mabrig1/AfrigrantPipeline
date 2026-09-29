@@ -142,7 +142,7 @@ export default function MRIPage() {
               {
                 icon: '🌍',
                 heading: 'Our Reach',
-                body: 'Active research partnerships spanning 18 African countries, with collaboration networks in Europe, North America, and Asia.',
+                body: 'Partnership development for African research institutions, independent researchers, and relevant international collaborators.',
               },
               {
                 icon: '🔑',
