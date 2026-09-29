@@ -67,9 +67,9 @@ const sections = [
 ]
 
 const stats = [
-  { value: '40+', label: 'Research Projects' },
-  { value: '120+', label: 'Publications' },
-  { value: '18', label: 'African Countries' },
+  { value: 'Applied', label: 'Research Projects' },
+  { value: 'Scholarly', label: 'Publications' },
+  { value: 'African', label: 'Research Focus' },
   { value: '60+', label: 'Research Fellows' },
 ]
 
@@ -142,7 +142,7 @@ export default function MRIPage() {
               {
                 icon: '🌍',
                 heading: 'Our Reach',
-                body: 'Active research partnerships spanning 18 African countries, with collaboration networks in Europe, North America, and Asia.',
+                body: 'Partnership development for African research institutions, independent researchers, and relevant international collaborators.',
               },
               {
                 icon: '🔑',

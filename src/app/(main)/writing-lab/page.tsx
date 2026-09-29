@@ -50,7 +50,7 @@ const packages = [
       'Methodology section review',
       'Abstract optimization',
       '2 revisions included',
-      'Turnitin-safe guarantee',
+      'Originality and citation review',
     ],
     bestFor: 'Master\'s theses, PhD chapters, research papers, journal submissions',
   },
@@ -204,16 +204,16 @@ function WritingLabPageInner() {
               </div>
             </div>
 
-            {/* Stats */}
+            {/* Service highlights */}
             <div className="grid grid-cols-2 gap-4">
               {[
-                { value: '500+', label: 'Documents Processed' },
-                { value: '98%', label: 'Client Satisfaction' },
-                { value: '24hr', label: 'Express Turnaround' },
-                { value: '4', label: 'Specialized Packages' },
+                { value: 'Editing', label: 'Academic clarity' },
+                { value: 'Review', label: 'Citations & originality' },
+                { value: 'Express', label: 'Optional turnaround' },
+                { value: 'Packages', label: 'Choose by need' },
               ].map(({ value, label }) => (
                 <div key={label} className="rounded-2xl border border-white/20 bg-white/10 p-5 text-center backdrop-blur-sm">
-                  <div className="text-3xl font-bold text-yellow-300">{value}</div>
+                  <div className="text-lg font-bold text-yellow-300">{value}</div>
                   <div className="mt-1 text-sm text-indigo-200">{label}</div>
                 </div>
               ))}
@@ -227,7 +227,7 @@ function WritingLabPageInner() {
         <div className="mx-auto max-w-5xl px-6 py-12">
           <div className="mb-6 text-center">
             <h2 className="text-2xl font-bold text-gray-900">See the Transformation</h2>
-            <p className="mt-2 text-gray-500 text-sm">Real example: AI-generated text → Humanized academic prose</p>
+            <p className="mt-2 text-gray-500 text-sm">Illustrative example: AI-assisted draft → researcher-reviewed academic prose</p>
           </div>
           <div className="rounded-3xl border border-gray-200 bg-gray-50 p-1">
             <div className="flex rounded-2xl bg-gray-200 p-1 mb-4 w-fit mx-auto">
@@ -347,7 +347,7 @@ function WritingLabPageInner() {
             {[
               {
                 title: 'PhD & Master\'s Students',
-                desc: 'Struggling to make ChatGPT-assisted chapters sound authentic for submission? Our researchers rewrite at publication quality.',
+                desc: 'Need an AI-assisted chapter revised for academic submission? Our researchers edit for clarity, structure, citations, and disciplinary fit.',
                 icon: '🎓',
               },
               {
