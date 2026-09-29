@@ -252,7 +252,7 @@ export default async function HomePage() {
               Everything you need, in one ecosystem
             </h2>
             <p className="mx-auto mt-3 max-w-2xl text-gray-500">
-              From grant discovery to publishing, collaboration to AI assistance — AfriGrantPipeline is the complete infrastructure for African research and innovation.
+              From grant discovery to publishing, collaboration and AI assistance, AfriGrantPipeline brings key research-support tools into one platform.
             </p>
           </div>
 
@@ -292,14 +292,14 @@ export default async function HomePage() {
                 <span className="text-yellow-300">Independent Researchers</span>
               </h2>
               <p className="mt-4 text-lg text-white/80">
-                Most grant platforms focus only on universities. AfriGrantPipeline uniquely serves independent researchers, non-affiliated scholars, authors, consultants, and faith-based innovators who are often invisible to mainstream funding.
+                AfriGrantPipeline is designed to support independent researchers, non-affiliated scholars, authors, consultants, and faith-based innovators alongside institution-based researchers.
               </p>
               <ul className="mt-6 space-y-3">
                 {[
-                  'No institutional affiliation required',
+                  'Opportunities that may accept non-affiliated applicants',
                   'Grants open to individuals and solo researchers',
-                  'Faith-based and ministry-linked funding',
-                  'Personal capacity grants and book publication funds',
+                  'Funding searches can include faith-based and ministry-linked opportunities',
+                  'Searches can include personal-capacity and publication funding where eligible',
                   'AI tools that work without a university email',
                 ].map((item) => (
                   <li key={item} className="flex items-center gap-3 text-sm text-white/90">
@@ -347,7 +347,7 @@ export default async function HomePage() {
                   <span className="text-yellow-300">Institute (MRI)</span>
                 </h2>
                 <p className="mt-4 text-base leading-relaxed text-slate-300">
-                  A dedicated African research body generating rigorous evidence, policy intelligence, and applied knowledge to drive development across the continent. From policy briefs to impact evaluations — MRI bridges research and action.
+                  A research initiative focused on evidence, policy intelligence, applied research, and practical knowledge for African development challenges.
                 </p>
                 <div className="mt-8 grid grid-cols-2 gap-3">
                   {[
@@ -418,7 +418,7 @@ export default async function HomePage() {
                   <span className="text-blue-700">a global audience</span>
                 </h2>
                 <p className="mt-4 text-base leading-relaxed text-gray-600">
-                  From repository uploads to high-impact journal submissions, AfriGrantPipeline and Mabrig Research Institute give African researchers a credible, indexed, and globally visible publishing home.
+                  From repository uploads to journal-submission support, AfriGrantPipeline and Mabrig Research Institute help researchers prepare, organize, and share scholarly work.
                 </p>
                 <ul className="mt-6 space-y-3">
                   {[
@@ -587,7 +587,7 @@ export default async function HomePage() {
                 <span className="text-lg font-bold text-gray-900">AfriGrant<span className="text-blue-700">Pipeline</span></span>
               </div>
               <p className="max-w-xs text-sm leading-relaxed text-gray-500">
-                Africa&apos;s most comprehensive research, funding, and innovation ecosystem — connecting the continent&apos;s brightest minds with the resources they deserve.
+                A research, funding, and innovation platform connecting African researchers with opportunities, tools, and collaborators.
               </p>
               <div className="mt-4 text-xs text-gray-400">Built for Africa, by Africa 🌍</div>
               <div className="mt-5 space-y-1.5 text-sm text-gray-500">
