@@ -8,6 +8,7 @@ export const SCHOLARSHIP_CATALOGUE_TARGET = 2000
 const OFA_BASE_URL = 'https://www.opportunitiesforafricans.com'
 const OFA_CATEGORY_URL = OFA_BASE_URL + '/category/scholarships/'
 const OFA_MAX_PAGES = 100
+const OFA_FETCH_BATCH_SIZE = 25
 const FETCH_TIMEOUT_MS = 12_000
 
 type GrantStatus = 'open' | 'closed' | 'draft'
@@ -446,7 +447,11 @@ async function ensureImporterUser() {
 async function bootstrapCatalogue(): Promise<ScholarshipCatalogueBootstrapSummary> {
   await connectDB()
 
-  const before = await Grant.countDocuments({ grantType: 'scholarship' })
+  const existing = await Grant.find({ grantType: 'scholarship' })
+    .select('fingerprint applicationLink')
+    .lean()
+
+  const before = existing.length
   if (before >= SCHOLARSHIP_CATALOGUE_TARGET) {
     return {
       target: SCHOLARSHIP_CATALOGUE_TARGET,
@@ -459,47 +464,6 @@ async function bootstrapCatalogue(): Promise<ScholarshipCatalogueBootstrapSummar
     }
   }
 
-  const now = new Date()
-  const pages = Array.from({ length: OFA_MAX_PAGES }, (_, index) => index + 1)
-  const fetched = await Promise.allSettled(pages.map(fetchArchivePage))
-
-  const errors: string[] = []
-  const recordsByFingerprint = new Map<string, CatalogueRecord>()
-  let pagesFetched = 0
-
-  for (let index = 0; index < fetched.length; index += 1) {
-    const result = fetched[index]
-    if (result.status === 'rejected') {
-      errors.push(
-        'Archive page ' +
-          pages[index] +
-          ': ' +
-          (result.reason instanceof Error ? result.reason.message : 'fetch failed')
-      )
-      continue
-    }
-
-    pagesFetched += 1
-    try {
-      for (const record of parsePage(result.value.html, result.value.url, now)) {
-        if (!recordsByFingerprint.has(record.fingerprint)) {
-          recordsByFingerprint.set(record.fingerprint, record)
-        }
-      }
-    } catch (error) {
-      errors.push(
-        'Archive page ' +
-          pages[index] +
-          ': ' +
-          (error instanceof Error ? error.message : 'parse failed')
-      )
-    }
-  }
-
-  const existing = await Grant.find({ grantType: 'scholarship' })
-    .select('fingerprint applicationLink')
-    .lean()
-
   const existingFingerprints = new Set(
     existing.map((item) => item.fingerprint).filter((value): value is string => Boolean(value))
   )
@@ -509,13 +473,63 @@ async function bootstrapCatalogue(): Promise<ScholarshipCatalogueBootstrapSummar
       .filter((value): value is string => Boolean(value))
   )
 
-  const needed = Math.max(0, SCHOLARSHIP_CATALOGUE_TARGET - existing.length)
-  const selected = [...recordsByFingerprint.values()]
-    .filter(
-      (record) =>
-        !existingFingerprints.has(record.fingerprint) && !existingLinks.has(record.applicationLink)
+  const needed = Math.max(0, SCHOLARSHIP_CATALOGUE_TARGET - before)
+  const now = new Date()
+  const errors: string[] = []
+  const recordsByFingerprint = new Map<string, CatalogueRecord>()
+  let pagesFetched = 0
+
+  // Fetch in bounded batches instead of hitting the entire archive at once.
+  // Stop as soon as enough unique, not-yet-imported records exist to reach the target.
+  for (
+    let firstPage = 1;
+    firstPage <= OFA_MAX_PAGES && recordsByFingerprint.size < needed;
+    firstPage += OFA_FETCH_BATCH_SIZE
+  ) {
+    const lastPage = Math.min(OFA_MAX_PAGES, firstPage + OFA_FETCH_BATCH_SIZE - 1)
+    const pages = Array.from(
+      { length: lastPage - firstPage + 1 },
+      (_, index) => firstPage + index
     )
-    .slice(0, needed)
+    const fetched = await Promise.allSettled(pages.map(fetchArchivePage))
+
+    for (let index = 0; index < fetched.length; index += 1) {
+      const result = fetched[index]
+      if (result.status === 'rejected') {
+        errors.push(
+          'Archive page ' +
+            pages[index] +
+            ': ' +
+            (result.reason instanceof Error ? result.reason.message : 'fetch failed')
+        )
+        continue
+      }
+
+      pagesFetched += 1
+      try {
+        for (const record of parsePage(result.value.html, result.value.url, now)) {
+          if (
+            existingFingerprints.has(record.fingerprint) ||
+            existingLinks.has(record.applicationLink)
+          ) {
+            continue
+          }
+          if (!recordsByFingerprint.has(record.fingerprint)) {
+            recordsByFingerprint.set(record.fingerprint, record)
+          }
+        }
+      } catch (error) {
+        errors.push(
+          'Archive page ' +
+            pages[index] +
+            ': ' +
+            (error instanceof Error ? error.message : 'parse failed')
+        )
+      }
+    }
+  }
+
+  const selected = [...recordsByFingerprint.values()].slice(0, needed)
 
   if (selected.length) {
     const createdBy = await ensureImporterUser()
@@ -542,7 +556,7 @@ async function bootstrapCatalogue(): Promise<ScholarshipCatalogueBootstrapSummar
         after +
         ' of ' +
         SCHOLARSHIP_CATALOGUE_TARGET +
-        ' records. Increase archive coverage or add another source before claiming the full target.'
+        ' records. Continue scheduled source-backed discovery before claiming the full target.'
     )
   }
 
