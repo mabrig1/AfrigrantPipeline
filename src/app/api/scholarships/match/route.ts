@@ -2,7 +2,7 @@ import { randomBytes } from 'node:crypto'
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 import { connectDB } from '@/lib/mongodb'
-import Grant from '@/models/Grant'
+import Grant, { type IAgenticGrant } from '@/models/Grant'
 import ScholarshipMatchSession from '@/models/ScholarshipMatchSession'
 import { extractScholarshipProfileFromCv } from '@/lib/scholarships/cvProfile'
 import {
