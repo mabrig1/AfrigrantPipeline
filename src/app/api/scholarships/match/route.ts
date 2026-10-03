@@ -54,8 +54,7 @@ type ScholarshipGrantRecord = {
 }
 
 function opportunityFromGrant(
-  item: ScholarshipGrantRecord,
-  targetLevel: ScholarshipLevel
+  item: ScholarshipGrantRecord
 ): ScholarshipOpportunity {
   const rawLevels = (item.scholarshipDetails?.levels ?? []).filter(
     (level): level is ScholarshipLevel => validLevels.has(level as ScholarshipLevel)
@@ -151,9 +150,7 @@ export async function POST(request: NextRequest) {
       .limit(2000)
       .lean()) as unknown as ScholarshipGrantRecord[]
 
-    const opportunities = records.map((item) =>
-      opportunityFromGrant(item, parsed.data.targetLevel)
-    )
+    const opportunities = records.map((item) => opportunityFromGrant(item))
     const allMatches = matchScholarships(profile, opportunities)
     const relevantMatches = allMatches.filter((match) => match.score >= 50)
     const strongCount = relevantMatches.filter((match) => match.score >= 75).length
