@@ -1,38 +1,123 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { connectDB } from '@/lib/mongodb'
 import Grant from '@/models/Grant'
+import {
+  ensureScholarshipCatalogue590,
+  SCHOLARSHIP_CATALOGUE_TARGET,
+} from '@/lib/scholarships/catalogue590'
 
 export const dynamic = 'force-dynamic'
+export const maxDuration = 60
+
+function escapeRegex(value: string) {
+  return value.replace(/[.*+?^{}()|[\]\\]/g, '\\$&')
+}
 
 export async function GET(req: NextRequest) {
-  await connectDB()
-
   const params = req.nextUrl.searchParams
+  const page = Math.max(1, Number(params.get('page') || 1))
+  const limit = Math.min(60, Math.max(1, Number(params.get('limit') || 24)))
+  const status = params.get('status') || 'all'
   const level = params.get('level')
   const funding = params.get('funding')
   const country = params.get('country')
+  const source = params.get('source')
+  const queryText = params.get('q')?.trim()
   const verifiedOnly = params.get('verified') === 'true'
-  const limit = Math.min(50, Math.max(1, Number(params.get('limit') || 24)))
+  const nigeriaOnly = params.get('nigeria') === 'true'
+
+  let bootstrap:
+    | Awaited<ReturnType<typeof ensureScholarshipCatalogue590>>
+    | undefined
+
+  // First catalogue request bootstraps the database once. The importer is
+  // source-backed, idempotent and stops when the catalogue reaches 590.
+  if (page === 1 && params.get('bootstrap') !== 'false') {
+    bootstrap = await ensureScholarshipCatalogue590()
+  }
+
+  await connectDB()
 
   const query: Record<string, unknown> = {
     grantType: 'scholarship',
-    discoveredBy: 'agent',
-    status: 'open',
-    deadline: { $gt: new Date() },
   }
 
-  if (level) query['scholarshipDetails.levels'] = level
-  if (funding) query['scholarshipDetails.fundingType'] = funding
-  if (country) query['scholarshipDetails.studyCountries'] = { $regex: country, $options: 'i' }
-  if (verifiedOnly) query.verificationStatus = 'verified'
+  if (status !== 'all' && ['open', 'closed', 'draft'].includes(status)) {
+    query.status = status
+  }
 
-  const items = await Grant.find(query)
-    .sort({ verificationStatus: 1, relevanceScore: -1, deadline: 1 })
-    .limit(limit)
-    .lean()
+  if (level && level !== 'all') query['scholarshipDetails.levels'] = level
+  if (funding && funding !== 'all') query['scholarshipDetails.fundingType'] = funding
+
+  if (country) {
+    query.$or = [
+      { 'scholarshipDetails.studyCountries': { $regex: escapeRegex(country), $options: 'i' } },
+      { countries: { $regex: escapeRegex(country), $options: 'i' } },
+    ]
+  }
+
+  if (source && ['agent', 'import', 'manual'].includes(source)) {
+    query.discoveredBy = source
+  }
+
+  if (verifiedOnly) query.verificationStatus = 'verified'
+  if (nigeriaOnly) query.nigeriaEligible = true
+
+  if (queryText) {
+    const textRegex = { $regex: escapeRegex(queryText), $options: 'i' }
+    const textQuery = [
+      { title: textRegex },
+      { funder: textRegex },
+      { description: textRegex },
+      { categories: textRegex },
+    ]
+
+    if (query.$or) {
+      query.$and = [{ $or: query.$or }, { $or: textQuery }]
+      delete query.$or
+    } else {
+      query.$or = textQuery
+    }
+  }
+
+  const skip = (page - 1) * limit
+
+  const [total, catalogueTotal, openTotal, verifiedTotal, nigeriaEligibleTotal, items] =
+    await Promise.all([
+      Grant.countDocuments(query),
+      Grant.countDocuments({ grantType: 'scholarship' }),
+      Grant.countDocuments({ grantType: 'scholarship', status: 'open' }),
+      Grant.countDocuments({
+        grantType: 'scholarship',
+        status: 'open',
+        verificationStatus: 'verified',
+      }),
+      Grant.countDocuments({
+        grantType: 'scholarship',
+        status: 'open',
+        nigeriaEligible: true,
+      }),
+      Grant.find(query)
+        .sort({ status: -1, relevanceScore: -1, deadline: 1, createdAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .lean(),
+    ])
 
   return NextResponse.json({
     count: items.length,
+    total,
+    page,
+    limit,
+    pages: Math.max(1, Math.ceil(total / limit)),
+    target: SCHOLARSHIP_CATALOGUE_TARGET,
+    stats: {
+      catalogueTotal,
+      open: openTotal,
+      verified: verifiedTotal,
+      nigeriaEligible: nigeriaEligibleTotal,
+    },
+    bootstrap,
     items: items.map((item) => ({
       id: item._id.toString(),
       title: item.title,
@@ -43,10 +128,17 @@ export async function GET(req: NextRequest) {
       currency: item.currency,
       deadline: item.deadline,
       isRolling: item.isRolling,
+      status: item.status,
       eligibility: item.eligibility,
+      categories: item.categories,
+      countries: item.countries,
+      region: item.region,
       applicationLink: item.applicationLink,
+      sourceName: item.sourceName,
       sourceUrl: item.sourceUrl,
+      discoveredBy: item.discoveredBy,
       verificationStatus: item.verificationStatus,
+      confidenceScore: item.confidenceScore,
       relevanceScore: item.relevanceScore,
       nigeriaEligible: item.nigeriaEligible,
       scholarshipDetails: item.scholarshipDetails,
