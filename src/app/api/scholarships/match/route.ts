@@ -40,6 +40,8 @@ type ScholarshipGrantRecord = {
   applicationLink?: string
   sourceUrl?: string
   verificationStatus?: string
+  nigeriaEligible?: boolean
+  eligibility?: string[]
   categories?: string[]
   countries?: string[]
   scholarshipDetails?: {
@@ -52,16 +54,17 @@ type ScholarshipGrantRecord = {
 }
 
 function opportunityFromGrant(
-  item: ScholarshipGrantRecord,
-  targetLevel: ScholarshipLevel
+  item: ScholarshipGrantRecord
 ): ScholarshipOpportunity {
   const rawLevels = (item.scholarshipDetails?.levels ?? []).filter(
     (level): level is ScholarshipLevel => validLevels.has(level as ScholarshipLevel)
   )
-  const levels = rawLevels.length ? rawLevels : [targetLevel]
+  const levels = rawLevels
   const fields = item.scholarshipDetails?.fieldsOfStudy?.length
     ? item.scholarshipDetails.fieldsOfStudy
-    : item.categories?.filter((value) => value !== 'scholarship' && !validLevels.has(value as ScholarshipLevel))
+    : item.categories?.filter(
+        (value) => value !== 'scholarship' && !validLevels.has(value as ScholarshipLevel)
+      )
 
   const deadline = item.deadline ? new Date(item.deadline) : null
   const deadlineLabel =
@@ -71,23 +74,36 @@ function opportunityFromGrant(
         ? 'Deadline: ' + deadline.toISOString().slice(0, 10)
         : item.scholarshipDetails?.applicationCycle || 'Current cycle requires provider verification'
 
+  const fundingType = item.scholarshipDetails?.fundingType
+  const sourceLink = item.applicationLink || item.sourceUrl || ''
+
   return {
     id: item._id.toString(),
     title: item.title,
     provider: item.funder,
     levels,
-    funding: item.scholarshipDetails?.fundingType === 'full' ? 'full' : 'partial',
+    funding:
+      fundingType === 'full'
+        ? 'full'
+        : fundingType && fundingType !== 'other'
+          ? 'partial'
+          : 'unknown',
     countries:
       item.scholarshipDetails?.studyCountries?.length
         ? item.scholarshipDetails.studyCountries
         : item.countries?.length
           ? item.countries
           : ['International'],
-    fields: fields?.length ? fields : ['all'],
-    officialUrl: item.applicationLink || item.sourceUrl || '',
+    fields: fields?.length ? fields : [],
+    officialUrl: sourceLink,
     verificationStatus:
       item.verificationStatus === 'verified' ? 'official-source' : 'needs-verification',
     deadlineLabel,
+    catalogueStatus:
+      item.status === 'open' ? 'open' : item.status === 'draft' ? 'draft' : undefined,
+    nigeriaEligible: item.nigeriaEligible === true,
+    eligibility: item.eligibility ?? [],
+    hasSourceLink: Boolean(sourceLink),
   }
 }
 
@@ -120,6 +136,7 @@ export async function POST(request: NextRequest) {
       hasStatement: false,
       hasReferences: false,
       hasEnglishProof: false,
+      keywords: extracted.keywords,
     }
 
     await connectDB()
@@ -133,9 +150,7 @@ export async function POST(request: NextRequest) {
       .limit(2000)
       .lean()) as unknown as ScholarshipGrantRecord[]
 
-    const opportunities = records.map((item) =>
-      opportunityFromGrant(item, parsed.data.targetLevel)
-    )
+    const opportunities = records.map((item) => opportunityFromGrant(item))
     const allMatches = matchScholarships(profile, opportunities)
     const relevantMatches = allMatches.filter((match) => match.score >= 50)
     const strongCount = relevantMatches.filter((match) => match.score >= 75).length
