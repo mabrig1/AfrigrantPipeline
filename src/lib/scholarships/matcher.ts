@@ -20,6 +20,10 @@ export interface ScholarshipOpportunity {
   nigeriaEligible?: boolean
   eligibility?: string[]
   hasSourceLink?: boolean
+  confidenceScore?: number
+  relevanceScore?: number
+  lastCheckedAt?: string
+  lastVerifiedAt?: string
 }
 
 export interface ScholarshipApplicantProfile {
@@ -199,14 +203,16 @@ export function matchScholarship(
   profile: ScholarshipApplicantProfile,
   opportunity: ScholarshipOpportunity
 ): ScholarshipMatch {
-  let score = 25
+  let score = 20
   const reasons: string[] = []
   const gaps: string[] = []
+  let structuredSignals = 0
 
   if (opportunity.levels.length === 0) {
     gaps.push('Study level is not yet structured in the catalogue; verify it with the provider.')
   } else if (opportunity.levels.includes(profile.targetLevel)) {
     score += 25
+    structuredSignals += 1
     reasons.push('Study level aligns with this opportunity.')
   } else {
     score -= 25
@@ -216,9 +222,11 @@ export function matchScholarship(
   const fieldFit = fieldAlignment(profile, opportunity.fields)
   if (fieldFit === 'specific') {
     score += 15
+    structuredSignals += 1
     reasons.push('Your CV field or skills align with the listed programme areas.')
   } else if (fieldFit === 'broad') {
     score += 7
+    structuredSignals += 1
     reasons.push('The opportunity is listed as open to broad or all fields.')
   } else if (fieldFit === 'unknown') {
     gaps.push('Field coverage is not yet structured; verify the programme-specific course list.')
@@ -230,6 +238,7 @@ export function matchScholarship(
   if (profile.needsFullFunding) {
     if (opportunity.funding === 'full') {
       score += 12
+      structuredSignals += 1
       reasons.push('Funding type matches your preference for fully funded opportunities.')
     } else if (opportunity.funding === 'partial') {
       score -= 10
@@ -240,33 +249,42 @@ export function matchScholarship(
   }
 
   if (opportunity.verificationStatus === 'official-source') {
-    score += 8
+    score += 10
+    structuredSignals += 1
     reasons.push('The stored record has provider-level source verification.')
   } else {
+    score -= 2
     gaps.push('This catalogue record still needs current provider-level verification.')
   }
 
   if (opportunity.catalogueStatus === 'open') {
-    score += 5
+    score += 6
+    structuredSignals += 1
     reasons.push('The stored application cycle is currently marked open.')
   } else if (opportunity.catalogueStatus === 'draft') {
-    score -= 4
+    score -= 5
     gaps.push('The current application window or deadline still needs verification.')
   }
 
   if (opportunity.hasSourceLink === false) {
-    score -= 10
+    score -= 12
     gaps.push('A direct provider/source link has not yet been attached to this catalogue record.')
+  } else if (opportunity.hasSourceLink === true) {
+    score += 3
+    structuredSignals += 1
+    reasons.push('A provider or source link is attached to the catalogue record.')
   }
 
   if (
     normalise(profile.nationality) === 'nigeria' &&
     opportunity.nigeriaEligible === true
   ) {
-    score += 10
+    score += 12
+    structuredSignals += 1
     reasons.push('The catalogue explicitly marks Nigerian applicants as eligible.')
   } else if (eligibilityMentionsNationality(profile, opportunity.eligibility ?? [])) {
-    score += 6
+    score += 8
+    structuredSignals += 1
     reasons.push('Stored eligibility text explicitly mentions your nationality.')
   }
 
@@ -304,6 +322,39 @@ export function matchScholarship(
   if (profile.hasCv && profile.hasTranscript) {
     score += 5
     reasons.push('Core academic documents are already available.')
+  }
+
+  if (typeof opportunity.confidenceScore === 'number') {
+    if (opportunity.confidenceScore >= 0.85) {
+      score += 4
+      reasons.push('The catalogue record has high extraction/source confidence.')
+    } else if (opportunity.confidenceScore < 0.5) {
+      score -= 4
+      gaps.push('This catalogue record has low extraction/source confidence.')
+    }
+  }
+
+  if (typeof opportunity.relevanceScore === 'number' && opportunity.relevanceScore >= 85) {
+    score += 3
+  }
+
+  const checkedAt = opportunity.lastVerifiedAt || opportunity.lastCheckedAt
+  if (checkedAt) {
+    const ageMs = Date.now() - new Date(checkedAt).getTime()
+    const ninetyDays = 90 * 24 * 60 * 60 * 1000
+    const oneYear = 365 * 24 * 60 * 60 * 1000
+    if (Number.isFinite(ageMs) && ageMs >= 0 && ageMs <= ninetyDays) {
+      score += 4
+      reasons.push('The source record was checked recently.')
+    } else if (Number.isFinite(ageMs) && ageMs > oneYear) {
+      score -= 5
+      gaps.push('The stored source check is more than a year old; verify the current cycle.')
+    }
+  }
+
+  if (structuredSignals < 2) {
+    score -= 10
+    gaps.push('Too little structured evidence is available for a high-confidence match.')
   }
 
   score = Math.max(0, Math.min(100, score))
