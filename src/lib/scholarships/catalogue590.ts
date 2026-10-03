@@ -88,7 +88,7 @@ function decodeHtml(value: string) {
     .replace(/&pound;|&#163;/gi, '£')
     .replace(/&euro;|&#8364;/gi, '€')
     .replace(/&dollar;|&#36;/gi, '$')
-    .replace(/&#(d+);/g, (_, code: string) => {
+    .replace(/&#(\\d+);/g, (_, code: string) => {
       const value = Number(code)
       return Number.isFinite(value) ? String.fromCodePoint(value) : ''
     })
@@ -97,9 +97,9 @@ function decodeHtml(value: string) {
 function stripHtml(value: string) {
   return decodeHtml(
     value
-      .replace(/<script[sS]*?<\/script>/gi, ' ')
-      .replace(/<style[sS]*?<\/style>/gi, ' ')
-      .replace(/<svg[sS]*?<\/svg>/gi, ' ')
+      .replace(/<script[\\s\\S]*?<\\/script>/gi, ' ')
+      .replace(/<style[\\s\\S]*?<\\/style>/gi, ' ')
+      .replace(/<svg[\\s\\S]*?<\\/svg>/gi, ' ')
       .replace(/<[^>]+>/g, ' ')
   )
     .replace(/\s+/g, ' ')
