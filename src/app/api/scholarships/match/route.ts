@@ -30,8 +30,29 @@ const validLevels = new Set<ScholarshipLevel>([
   'fellowship',
 ])
 
+type ScholarshipGrantRecord = {
+  _id: { toString(): string }
+  title: string
+  funder: string
+  deadline?: Date
+  isRolling?: boolean
+  status?: string
+  applicationLink?: string
+  sourceUrl?: string
+  verificationStatus?: string
+  categories?: string[]
+  countries?: string[]
+  scholarshipDetails?: {
+    levels?: string[]
+    fundingType?: string
+    fieldsOfStudy?: string[]
+    studyCountries?: string[]
+    applicationCycle?: string
+  }
+}
+
 function opportunityFromGrant(
-  item: Awaited<ReturnType<typeof Grant.find>>[number],
+  item: ScholarshipGrantRecord,
   targetLevel: ScholarshipLevel
 ): ScholarshipOpportunity {
   const rawLevels = (item.scholarshipDetails?.levels ?? []).filter(
@@ -103,13 +124,14 @@ export async function POST(request: NextRequest) {
 
     await connectDB()
 
-    const records = await Grant.find({
+    const records = (await Grant.find({
       grantType: 'scholarship',
       status: { $in: ['open', 'draft'] },
       verificationStatus: { $ne: 'stale' },
     })
       .sort({ verificationStatus: 1, relevanceScore: -1, deadline: 1, createdAt: -1 })
       .limit(2000)
+      .lean()) as unknown as ScholarshipGrantRecord[]
 
     const opportunities = records.map((item) =>
       opportunityFromGrant(item, parsed.data.targetLevel)
