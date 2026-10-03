@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { connectDB } from '@/lib/mongodb'
 import Grant from '@/models/Grant'
 import {
-  ensureScholarshipCatalogue590,
+  ensureScholarshipCatalogueTarget,
   SCHOLARSHIP_CATALOGUE_TARGET,
 } from '@/lib/scholarships/catalogue590'
 
@@ -27,13 +27,13 @@ export async function GET(req: NextRequest) {
   const nigeriaOnly = params.get('nigeria') === 'true'
 
   let bootstrap:
-    | Awaited<ReturnType<typeof ensureScholarshipCatalogue590>>
+    | Awaited<ReturnType<typeof ensureScholarshipCatalogueTarget>>
     | undefined
 
   // First catalogue request bootstraps the database once. The importer is
-  // source-backed, idempotent and stops when the catalogue reaches 590.
+  // source-backed, idempotent and stops when the catalogue reaches the configured catalogue target.
   if (page === 1 && params.get('bootstrap') !== 'false') {
-    bootstrap = await ensureScholarshipCatalogue590()
+    bootstrap = await ensureScholarshipCatalogueTarget()
   }
 
   await connectDB()
