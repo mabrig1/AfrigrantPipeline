@@ -205,20 +205,19 @@ export default function ScholarshipMatcherPage() {
             <Sparkles className="size-4" />
             Agentic Scholarship Matcher
           </div>
-          <h1 className="mt-5 max-w-4xl text-4xl font-bold tracking-tight sm:text-6xl">
-            Upload your CV. Let AI find the scholarships that fit you.
+          <h1 className="mt-5 max-w-4xl text-4xl font-black tracking-tight sm:text-6xl">
+            Upload your CV now. AI finds the scholarships worth your time.
           </h1>
           <p className="mt-5 max-w-3xl text-lg leading-relaxed text-slate-300">
-            AfriGrantPipeline screens your CV against a curated scholarship catalogue,
-            shows your match count first, then lets you unlock the matched records for
-            ₦5,000 or US$5.
+            One CV. A growing database targeting 2,000+ curated scholarships. Continuous agentic discovery.
+            See your match count, then unlock the actual opportunities for ₦5,000 or US$5.
           </p>
 
           <div className="mt-8 grid max-w-4xl gap-3 sm:grid-cols-3">
             {[
-              ['2,000', 'curated scholarship target'],
-              ['AI', 'CV-to-scholarship matching'],
-              ['₦5,000 / $5', 'one-time match unlock'],
+              ['2,000+', 'curated scholarship target'],
+              ['Continuous AI', 'agentic scholarship discovery'],
+              ['₦5,000 / $5', 'paid result unlock'],
             ].map(([value, label]) => (
               <div key={label} className="rounded-2xl border border-white/10 bg-white/5 p-4">
                 <div className="text-2xl font-bold">{value}</div>
@@ -319,7 +318,7 @@ export default function ScholarshipMatcherPage() {
               className="flex w-full items-center justify-center gap-2 rounded-xl bg-blue-700 px-4 py-3 text-sm font-bold text-white hover:bg-blue-800 disabled:opacity-60"
             >
               {loading ? <Loader2 className="size-4 animate-spin" /> : <SearchCheck className="size-4" />}
-              {loading ? 'Analysing CV…' : 'Analyse CV & Find Matches'}
+              {loading ? 'Analysing CV…' : 'Upload CV & Find My Matches'}
             </button>
           </div>
         </form>
@@ -484,13 +483,11 @@ export default function ScholarshipMatcherPage() {
             <div className="rounded-3xl border border-dashed border-slate-300 bg-white p-10">
               <GraduationCap className="size-12 text-blue-700" />
               <h2 className="mt-5 text-2xl font-bold text-slate-950">
-                Your match count appears before you pay.
+                Upload your CV. See your match count. Pay to unlock the opportunities.
               </h2>
               <p className="mt-3 max-w-2xl leading-relaxed text-slate-600">
-                Upload your CV and choose the level you want to study. The agent extracts
-                your academic and professional profile, screens the scholarship catalogue,
-                and tells you how many relevant opportunities it found. You only pay if you
-                want to open the matched scholarship records.
+                The AI analyses your profile against the scholarship database and shows how many relevant
+                opportunities it found. Scholarship names, providers and application links remain locked until payment.
               </p>
 
               <div className="mt-8 grid gap-4 sm:grid-cols-3">
