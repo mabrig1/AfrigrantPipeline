@@ -47,3 +47,16 @@ The public flow is:
 3. The server screens the catalogue and returns only the match count/readiness summary.
 4. Scholarship titles, provider details, fit scores and application/source links remain protected.
 5. A verified Paystack payment of NGN 5,000 or USD 5 unlocks the matched records for the match session.
+
+
+### Open Opportunity Index
+- Repository: https://github.com/JuanPabloRoldan/open-opportunity-index
+- Use: current factual programme metadata and official provider URLs for globally accessible scholarships/fellowships.
+- AfriGrantPipeline imports only records whose eligibility scope can be safely represented by the current matcher; nationality/demographic-restricted records are excluded unless their restriction can be tested.
+- Imported records remain `needs_review` even when the upstream index records a recent verification date.
+
+### Scholar Departures
+- Repository: https://github.com/Jisco1/scholar-departures
+- Dataset: `data/data.json`.
+- Use: recent programme metadata with official links and 2026 source-check dates.
+- University tuition listings are not treated as scholarships; only scholarship/fellowship programme records are eligible for import.
