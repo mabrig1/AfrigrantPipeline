@@ -7,7 +7,7 @@ export const SCHOLARSHIP_CATALOGUE_TARGET = 590
 
 const OFA_BASE_URL = 'https://www.opportunitiesforafricans.com'
 const OFA_CATEGORY_URL = OFA_BASE_URL + '/category/scholarships/'
-const OFA_MAX_PAGES = 32
+const OFA_MAX_PAGES = 40
 const FETCH_TIMEOUT_MS = 12_000
 
 type GrantStatus = 'open' | 'closed' | 'draft'
