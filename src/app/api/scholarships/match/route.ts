@@ -40,6 +40,10 @@ type ScholarshipGrantRecord = {
   applicationLink?: string
   sourceUrl?: string
   verificationStatus?: string
+  confidenceScore?: number
+  relevanceScore?: number
+  lastCheckedAt?: Date
+  lastVerifiedAt?: Date
   nigeriaEligible?: boolean
   eligibility?: string[]
   categories?: string[]
@@ -104,6 +108,10 @@ function opportunityFromGrant(
     nigeriaEligible: item.nigeriaEligible === true,
     eligibility: item.eligibility ?? [],
     hasSourceLink: Boolean(sourceLink),
+    confidenceScore: item.confidenceScore,
+    relevanceScore: item.relevanceScore,
+    lastCheckedAt: item.lastCheckedAt?.toISOString(),
+    lastVerifiedAt: item.lastVerifiedAt?.toISOString(),
   }
 }
 
@@ -146,13 +154,26 @@ export async function POST(request: NextRequest) {
       status: { $in: ['open', 'draft'] },
       verificationStatus: { $ne: 'stale' },
     })
-      .sort({ verificationStatus: 1, relevanceScore: -1, deadline: 1, createdAt: -1 })
+      .sort({
+        nigeriaEligible: -1,
+        relevanceScore: -1,
+        confidenceScore: -1,
+        lastVerifiedAt: -1,
+        lastCheckedAt: -1,
+        deadline: 1,
+        createdAt: -1,
+      })
       .limit(2000)
       .lean()) as unknown as ScholarshipGrantRecord[]
 
     const opportunities = records.map((item) => opportunityFromGrant(item))
     const allMatches = matchScholarships(profile, opportunities)
-    const relevantMatches = allMatches.filter((match) => match.score >= 50)
+    const relevantMatches = allMatches.filter(
+      (match) =>
+        match.score >= 55 &&
+        Boolean(match.opportunity.officialUrl) &&
+        match.opportunity.levels.length > 0
+    )
     const strongCount = relevantMatches.filter((match) => match.score >= 75).length
     const possibleCount = relevantMatches.length - strongCount
     const readiness = calculateReadiness(profile)
