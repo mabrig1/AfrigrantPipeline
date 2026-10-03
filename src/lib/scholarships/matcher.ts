@@ -1,6 +1,6 @@
 export type ScholarshipLevel = 'undergraduate' | 'masters' | 'phd' | 'postdoc' | 'fellowship'
 
-export type FundingType = 'full' | 'partial'
+export type FundingType = 'full' | 'partial' | 'unknown'
 
 export interface ScholarshipOpportunity {
   id: string
@@ -16,6 +16,10 @@ export interface ScholarshipOpportunity {
   officialUrl: string
   verificationStatus: 'official-source' | 'needs-verification'
   deadlineLabel: string
+  catalogueStatus?: 'open' | 'draft'
+  nigeriaEligible?: boolean
+  eligibility?: string[]
+  hasSourceLink?: boolean
 }
 
 export interface ScholarshipApplicantProfile {
@@ -30,6 +34,7 @@ export interface ScholarshipApplicantProfile {
   hasStatement: boolean
   hasReferences: boolean
   hasEnglishProof: boolean
+  keywords?: string[]
 }
 
 export interface ScholarshipMatch {
@@ -132,15 +137,36 @@ function normalise(value: string) {
   return value.trim().toLowerCase()
 }
 
-function fieldMatches(applicantField: string, supportedFields: string[]) {
-  const field = normalise(applicantField)
-  if (!field) return false
-  if (supportedFields.includes('all')) return true
+type FieldAlignment = 'specific' | 'broad' | 'unknown' | 'mismatch'
 
-  return supportedFields.some((supported) => {
-    const candidate = normalise(supported)
-    return field.includes(candidate) || candidate.includes(field)
-  })
+function applicantTerms(profile: ScholarshipApplicantProfile) {
+  const terms = [profile.field, ...(profile.keywords ?? [])]
+    .map(normalise)
+    .filter((value) => value.length >= 3)
+
+  return [...new Set(terms)]
+}
+
+function fieldAlignment(profile: ScholarshipApplicantProfile, supportedFields: string[]): FieldAlignment {
+  const supported = supportedFields.map(normalise).filter(Boolean)
+  if (!supported.length) return 'unknown'
+  if (supported.includes('all') || supported.includes('any') || supported.includes('all fields')) {
+    return 'broad'
+  }
+
+  const terms = applicantTerms(profile)
+  if (!terms.length) return 'unknown'
+
+  const matched = supported.some((candidate) =>
+    terms.some((term) => term.includes(candidate) || candidate.includes(term))
+  )
+  return matched ? 'specific' : 'mismatch'
+}
+
+function eligibilityMentionsNationality(profile: ScholarshipApplicantProfile, eligibility: string[]) {
+  const nationality = normalise(profile.nationality)
+  if (!nationality || !eligibility.length) return false
+  return eligibility.some((rule) => normalise(rule).includes(nationality))
 }
 
 export function calculateReadiness(profile: ScholarshipApplicantProfile): ScholarshipReadiness {
@@ -173,11 +199,13 @@ export function matchScholarship(
   profile: ScholarshipApplicantProfile,
   opportunity: ScholarshipOpportunity
 ): ScholarshipMatch {
-  let score = 35
+  let score = 25
   const reasons: string[] = []
   const gaps: string[] = []
 
-  if (opportunity.levels.includes(profile.targetLevel)) {
+  if (opportunity.levels.length === 0) {
+    gaps.push('Study level is not yet structured in the catalogue; verify it with the provider.')
+  } else if (opportunity.levels.includes(profile.targetLevel)) {
     score += 25
     reasons.push('Study level aligns with this opportunity.')
   } else {
@@ -185,22 +213,61 @@ export function matchScholarship(
     gaps.push(`Targets ${opportunity.levels.join(', ')} rather than ${profile.targetLevel}.`)
   }
 
-  if (fieldMatches(profile.field, opportunity.fields)) {
+  const fieldFit = fieldAlignment(profile, opportunity.fields)
+  if (fieldFit === 'specific') {
     score += 15
-    reasons.push('Your field is compatible with the listed programme areas.')
+    reasons.push('Your CV field or skills align with the listed programme areas.')
+  } else if (fieldFit === 'broad') {
+    score += 7
+    reasons.push('The opportunity is listed as open to broad or all fields.')
+  } else if (fieldFit === 'unknown') {
+    gaps.push('Field coverage is not yet structured; verify the programme-specific course list.')
   } else {
     score -= 8
-    gaps.push('Field alignment should be checked against the programme-specific course list.')
+    gaps.push('Field alignment is not explicit in the stored programme areas.')
   }
 
   if (profile.needsFullFunding) {
     if (opportunity.funding === 'full') {
       score += 12
       reasons.push('Funding type matches your preference for fully funded opportunities.')
-    } else {
+    } else if (opportunity.funding === 'partial') {
       score -= 10
       gaps.push('This opportunity may not cover all study and living costs.')
+    } else {
+      gaps.push('Funding coverage is not yet verified; confirm what the award actually pays for.')
     }
+  }
+
+  if (opportunity.verificationStatus === 'official-source') {
+    score += 8
+    reasons.push('The stored record has provider-level source verification.')
+  } else {
+    gaps.push('This catalogue record still needs current provider-level verification.')
+  }
+
+  if (opportunity.catalogueStatus === 'open') {
+    score += 5
+    reasons.push('The stored application cycle is currently marked open.')
+  } else if (opportunity.catalogueStatus === 'draft') {
+    score -= 4
+    gaps.push('The current application window or deadline still needs verification.')
+  }
+
+  if (opportunity.hasSourceLink === false) {
+    score -= 10
+    gaps.push('A direct provider/source link has not yet been attached to this catalogue record.')
+  }
+
+  if (
+    normalise(profile.nationality) === 'nigeria' &&
+    opportunity.nigeriaEligible === true
+  ) {
+    score += 10
+    reasons.push('The catalogue explicitly marks Nigerian applicants as eligible.')
+  } else if (eligibilityMentionsNationality(profile, opportunity.eligibility ?? [])) {
+    score += 6
+    reasons.push('Stored eligibility text explicitly mentions your nationality.')
   }
 
   if (typeof opportunity.minGpa === 'number') {
