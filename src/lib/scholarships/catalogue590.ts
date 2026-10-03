@@ -3,7 +3,7 @@ import { connectDB } from '@/lib/mongodb'
 import Grant from '@/models/Grant'
 import User from '@/models/User'
 
-export const SCHOLARSHIP_CATALOGUE_TARGET = 1000
+export const SCHOLARSHIP_CATALOGUE_TARGET = 2000
 
 const OFA_BASE_URL = 'https://www.opportunitiesforafricans.com'
 const OFA_CATEGORY_URL = OFA_BASE_URL + '/category/scholarships/'
