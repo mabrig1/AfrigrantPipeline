@@ -1,128 +1,231 @@
 'use client'
 
 import type { FormEvent } from 'react'
-import { useState } from 'react'
-import Link from 'next/link'
+import { useEffect, useState } from 'react'
 import {
   AlertCircle,
-  ArrowRight,
   CheckCircle2,
   ExternalLink,
-  FileCheck2,
+  FileText,
   GraduationCap,
   Loader2,
+  LockKeyhole,
   SearchCheck,
+  ShieldCheck,
   Sparkles,
-  Target,
+  UploadCloud,
 } from 'lucide-react'
-import type {
-  ScholarshipApplicantProfile,
-  ScholarshipMatch,
-  ScholarshipReadiness,
-  ScholarshipLevel,
-} from '@/lib/scholarships/matcher'
 
-interface MatchResponse {
-  generatedAt: string
-  readiness: ScholarshipReadiness
-  matches: ScholarshipMatch[]
+type TargetLevel = 'undergraduate' | 'masters' | 'phd' | 'postdoc' | 'fellowship'
+
+type Preview = {
+  sessionId: string
+  screenedCount: number
+  matchCount: number
+  strongCount: number
+  possibleCount: number
+  readiness: { score: number; nextAction: string }
+  profileSummary: {
+    nationality: string
+    field: string
+    targetLevel: TargetLevel
+    workExperienceYears: number
+    educationSummary: string
+  }
+  price: { NGN: number; USD: number }
+  message: string
   disclaimer: string
 }
 
-const initialProfile: ScholarshipApplicantProfile = {
-  nationality: 'Nigeria',
-  targetLevel: 'masters',
-  field: '',
-  workExperienceYears: 0,
-  needsFullFunding: true,
-  hasCv: false,
-  hasTranscript: false,
-  hasStatement: false,
-  hasReferences: false,
-  hasEnglishProof: false,
+type UnlockedMatch = {
+  id: string
+  title: string
+  provider: string
+  description: string
+  score: number
+  label: string
+  reasons: string[]
+  gaps: string[]
+  fundingText?: string
+  status: string
+  deadline?: string
+  applicationCycle?: string
+  levels: string[]
+  studyCountries: string[]
+  verificationStatus?: string
+  applicationLink?: string
+  sourceUrl?: string
+  sourceName?: string
 }
 
-const documentChecks: Array<{
-  key: keyof Pick<
-    ScholarshipApplicantProfile,
-    'hasCv' | 'hasTranscript' | 'hasStatement' | 'hasReferences' | 'hasEnglishProof'
-  >
-  label: string
-}> = [
-  { key: 'hasCv', label: 'Academic CV ready' },
-  { key: 'hasTranscript', label: 'Transcript/result ready' },
-  { key: 'hasStatement', label: 'Statement of purpose ready' },
-  { key: 'hasReferences', label: 'Referees/reference letters ready' },
-  { key: 'hasEnglishProof', label: 'English-language evidence ready' },
-]
+type Results = {
+  unlocked: true
+  matchCount: number
+  strongCount: number
+  possibleCount: number
+  profile: { nationality: string; field: string; targetLevel: string }
+  matches: UnlockedMatch[]
+  disclaimer: string
+}
 
-function scoreClass(score: number) {
-  if (score >= 75) return 'bg-emerald-100 text-emerald-800'
-  if (score >= 50) return 'bg-amber-100 text-amber-800'
-  return 'bg-gray-100 text-gray-700'
+function deadlineLabel(match: UnlockedMatch) {
+  if (match.deadline) {
+    const date = new Date(match.deadline)
+    if (!Number.isNaN(date.getTime()) && date.getUTCFullYear() < 2098) {
+      return date.toLocaleDateString('en-NG', {
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric',
+      })
+    }
+  }
+  return match.applicationCycle || 'Verify current cycle'
 }
 
 export default function ScholarshipMatcherPage() {
-  const [profile, setProfile] = useState<ScholarshipApplicantProfile>(initialProfile)
-  const [gpaInput, setGpaInput] = useState('')
-  const [result, setResult] = useState<MatchResponse | null>(null)
+  const [email, setEmail] = useState('')
+  const [targetLevel, setTargetLevel] = useState<TargetLevel>('masters')
+  const [needsFullFunding, setNeedsFullFunding] = useState(true)
+  const [cv, setCv] = useState<File | null>(null)
+  const [preview, setPreview] = useState<Preview | null>(null)
+  const [results, setResults] = useState<Results | null>(null)
   const [loading, setLoading] = useState(false)
+  const [paying, setPaying] = useState<'NGN' | 'USD' | ''>('')
   const [error, setError] = useState('')
+  const [notice, setNotice] = useState('')
 
-  function update<K extends keyof ScholarshipApplicantProfile>(
-    key: K,
-    value: ScholarshipApplicantProfile[K]
-  ) {
-    setProfile((current) => ({ ...current, [key]: value }))
-  }
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    const sessionId = params.get('session')
+    const reference = params.get('reference') || params.get('trxref')
+    if (!sessionId || !reference) return
+
+    setLoading(true)
+    setNotice('Verifying payment and unlocking your scholarship matches…')
+
+    fetch('/api/scholarships/unlock/verify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ sessionId, reference }),
+    })
+      .then(async (response) => {
+        const payload = await response.json()
+        if (!response.ok) throw new Error(payload.error || 'Payment verification failed.')
+        const resultResponse = await fetch(
+          '/api/scholarships/unlock/results?sessionId=' + encodeURIComponent(sessionId),
+          { cache: 'no-store' }
+        )
+        const resultPayload = await resultResponse.json()
+        if (!resultResponse.ok) {
+          throw new Error(resultPayload.error || 'Unable to load unlocked matches.')
+        }
+        return resultPayload as Results
+      })
+      .then((payload) => {
+        setResults(payload)
+        setNotice('Payment verified. Your matched scholarships are unlocked.')
+        window.history.replaceState({}, '', '/scholarships/matcher')
+      })
+      .catch((reason: unknown) => {
+        setError(reason instanceof Error ? reason.message : 'Payment verification failed.')
+        setNotice('')
+      })
+      .finally(() => setLoading(false))
+  }, [])
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
     setError('')
-    setLoading(true)
+    setNotice('')
+    setResults(null)
 
+    if (!cv) {
+      setError('Upload your CV as PDF, TXT or Markdown.')
+      return
+    }
+
+    setLoading(true)
     try {
-      const payload: ScholarshipApplicantProfile = {
-        ...profile,
-        ...(gpaInput.trim() ? { gpa: Number(gpaInput) } : {}),
-      }
+      const form = new FormData()
+      form.set('email', email)
+      form.set('targetLevel', targetLevel)
+      form.set('needsFullFunding', String(needsFullFunding))
+      form.set('cv', cv)
 
       const response = await fetch('/api/scholarships/match', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
+        body: form,
       })
+      const payload = await response.json()
+      if (!response.ok) throw new Error(payload.error || 'Unable to match your CV.')
 
-      const data = await response.json()
-      if (!response.ok) {
-        throw new Error(data?.error ?? 'Unable to match scholarships.')
-      }
-
-      setResult(data as MatchResponse)
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Unable to match scholarships.')
+      setPreview(payload as Preview)
+    } catch (reason) {
+      setError(reason instanceof Error ? reason.message : 'Unable to match your CV.')
     } finally {
       setLoading(false)
     }
   }
 
+  async function unlock(currency: 'NGN' | 'USD') {
+    if (!preview) return
+    setError('')
+    setPaying(currency)
+
+    try {
+      const response = await fetch('/api/scholarships/unlock/initialize', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ sessionId: preview.sessionId, currency }),
+      })
+      const payload = await response.json()
+      if (!response.ok) throw new Error(payload.error || 'Unable to start payment.')
+
+      if (payload.alreadyUnlocked) {
+        const resultResponse = await fetch(payload.resultsUrl, { cache: 'no-store' })
+        const resultPayload = await resultResponse.json()
+        if (!resultResponse.ok) throw new Error(resultPayload.error || 'Unable to load matches.')
+        setResults(resultPayload as Results)
+        return
+      }
+
+      if (!payload.authorizationUrl) throw new Error('Payment link was not returned.')
+      window.location.assign(payload.authorizationUrl)
+    } catch (reason) {
+      setError(reason instanceof Error ? reason.message : 'Unable to start payment.')
+      setPaying('')
+    }
+  }
+
   return (
     <main className="min-h-screen bg-slate-50">
-      <section className="border-b border-slate-200 bg-white">
-        <div className="mx-auto max-w-7xl px-6 py-12">
-          <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-violet-100 px-4 py-1.5 text-sm font-semibold text-violet-700">
+      <section className="border-b border-slate-200 bg-slate-950 text-white">
+        <div className="mx-auto max-w-7xl px-6 py-14">
+          <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-1.5 text-sm font-semibold text-blue-100">
             <Sparkles className="size-4" />
-            Scholarship Intelligence Agent
+            Agentic Scholarship Matcher
           </div>
-          <h1 className="max-w-4xl text-4xl font-semibold tracking-tight text-slate-950 sm:text-5xl">
-            Stop searching blindly.
-            <span className="block text-blue-700">Find scholarships that fit your real profile.</span>
+          <h1 className="mt-5 max-w-4xl text-4xl font-bold tracking-tight sm:text-6xl">
+            Upload your CV. Let AI find the scholarships that fit you.
           </h1>
-          <p className="mt-5 max-w-3xl text-lg leading-relaxed text-slate-600">
-            Tell AfriGrantPipeline your study goal, field, experience and document readiness.
-            The matcher screens opportunities, explains why they fit, highlights missing
-            requirements and gives you a practical next action.
+          <p className="mt-5 max-w-3xl text-lg leading-relaxed text-slate-300">
+            AfriGrantPipeline screens your CV against a curated scholarship catalogue,
+            shows your match count first, then lets you unlock the matched records for
+            ₦5,000 or US$5.
           </p>
+
+          <div className="mt-8 grid max-w-4xl gap-3 sm:grid-cols-3">
+            {[
+              ['2,000', 'curated scholarship target'],
+              ['AI', 'CV-to-scholarship matching'],
+              ['₦5,000 / $5', 'one-time match unlock'],
+            ].map(([value, label]) => (
+              <div key={label} className="rounded-2xl border border-white/10 bg-white/5 p-4">
+                <div className="text-2xl font-bold">{value}</div>
+                <div className="mt-1 text-sm text-slate-300">{label}</div>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -132,33 +235,34 @@ export default function ScholarshipMatcherPage() {
           className="h-fit rounded-3xl border border-slate-200 bg-white p-6 shadow-sm lg:sticky lg:top-24"
         >
           <div className="mb-6 flex items-center gap-3">
-            <div className="flex size-10 items-center justify-center rounded-xl bg-blue-700 text-white">
-              <Target className="size-5" />
+            <div className="flex size-11 items-center justify-center rounded-2xl bg-blue-700 text-white">
+              <UploadCloud className="size-5" />
             </div>
             <div>
-              <h2 className="font-semibold text-slate-950">Your scholarship profile</h2>
-              <p className="text-xs text-slate-500">Takes about one minute.</p>
+              <h2 className="font-bold text-slate-950">Match my CV</h2>
+              <p className="text-xs text-slate-500">Your raw CV is not stored in the match session.</p>
             </div>
           </div>
 
           <div className="space-y-4">
             <label className="block">
-              <span className="mb-1.5 block text-sm font-medium text-slate-700">Nationality</span>
+              <span className="mb-1.5 block text-sm font-medium text-slate-700">Email</span>
               <input
-                value={profile.nationality}
-                onChange={(e) => update('nationality', e.target.value)}
+                type="email"
                 required
-                className="w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm outline-none transition focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
-                placeholder="Nigeria"
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
+                placeholder="you@example.com"
+                className="w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
               />
             </label>
 
             <label className="block">
               <span className="mb-1.5 block text-sm font-medium text-slate-700">Target level</span>
               <select
-                value={profile.targetLevel}
-                onChange={(e) => update('targetLevel', e.target.value as ScholarshipLevel)}
-                className="w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm outline-none transition focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
+                value={targetLevel}
+                onChange={(event) => setTargetLevel(event.target.value as TargetLevel)}
+                className="w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm"
               >
                 <option value="undergraduate">Undergraduate</option>
                 <option value="masters">Master&apos;s</option>
@@ -168,71 +272,32 @@ export default function ScholarshipMatcherPage() {
               </select>
             </label>
 
-            <label className="block">
-              <span className="mb-1.5 block text-sm font-medium text-slate-700">Field of study</span>
+            <label className="block rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50 p-5 text-center hover:border-blue-300">
+              <FileText className="mx-auto size-8 text-blue-700" />
+              <span className="mt-2 block text-sm font-semibold text-slate-800">
+                {cv ? cv.name : 'Choose your CV'}
+              </span>
+              <span className="mt-1 block text-xs text-slate-500">
+                PDF, TXT or Markdown · maximum 8 MB
+              </span>
               <input
-                value={profile.field}
-                onChange={(e) => update('field', e.target.value)}
+                type="file"
                 required
-                className="w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm outline-none transition focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
-                placeholder="e.g. Public administration"
+                accept=".pdf,.txt,.md,application/pdf,text/plain,text/markdown"
+                onChange={(event) => setCv(event.target.files?.[0] || null)}
+                className="sr-only"
               />
             </label>
 
-            <div className="grid grid-cols-2 gap-3">
-              <label className="block">
-                <span className="mb-1.5 block text-sm font-medium text-slate-700">GPA / 5.0</span>
-                <input
-                  type="number"
-                  min="0"
-                  max="5"
-                  step="0.01"
-                  value={gpaInput}
-                  onChange={(e) => setGpaInput(e.target.value)}
-                  className="w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm outline-none transition focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
-                  placeholder="Optional"
-                />
-              </label>
-
-              <label className="block">
-                <span className="mb-1.5 block text-sm font-medium text-slate-700">Work experience</span>
-                <input
-                  type="number"
-                  min="0"
-                  max="50"
-                  value={profile.workExperienceYears}
-                  onChange={(e) => update('workExperienceYears', Number(e.target.value))}
-                  className="w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm outline-none transition focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
-                />
-              </label>
-            </div>
-
-            <label className="flex items-center justify-between gap-4 rounded-xl border border-slate-200 bg-slate-50 p-3">
-              <span className="text-sm font-medium text-slate-700">I need full funding</span>
+            <label className="flex items-center justify-between gap-4 rounded-xl border border-slate-200 p-3">
+              <span className="text-sm font-medium text-slate-700">Prioritize fully funded awards</span>
               <input
                 type="checkbox"
-                checked={profile.needsFullFunding}
-                onChange={(e) => update('needsFullFunding', e.target.checked)}
+                checked={needsFullFunding}
+                onChange={(event) => setNeedsFullFunding(event.target.checked)}
                 className="size-4 accent-blue-700"
               />
             </label>
-
-            <div className="rounded-2xl border border-slate-200 p-4">
-              <p className="mb-3 text-sm font-semibold text-slate-800">Application documents</p>
-              <div className="space-y-2.5">
-                {documentChecks.map((item) => (
-                  <label key={item.key} className="flex items-center gap-2.5 text-sm text-slate-600">
-                    <input
-                      type="checkbox"
-                      checked={profile[item.key]}
-                      onChange={(e) => update(item.key, e.target.checked)}
-                      className="size-4 accent-blue-700"
-                    />
-                    {item.label}
-                  </label>
-                ))}
-              </div>
-            </div>
 
             {error && (
               <div className="flex gap-2 rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-700">
@@ -241,201 +306,208 @@ export default function ScholarshipMatcherPage() {
               </div>
             )}
 
+            {notice && (
+              <div className="flex gap-2 rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-800">
+                <ShieldCheck className="mt-0.5 size-4 shrink-0" />
+                {notice}
+              </div>
+            )}
+
             <button
               type="submit"
               disabled={loading}
-              className="flex w-full items-center justify-center gap-2 rounded-xl bg-blue-700 px-4 py-3 text-sm font-semibold text-white transition hover:bg-blue-800 disabled:cursor-not-allowed disabled:opacity-60"
+              className="flex w-full items-center justify-center gap-2 rounded-xl bg-blue-700 px-4 py-3 text-sm font-bold text-white hover:bg-blue-800 disabled:opacity-60"
             >
-              {loading ? (
-                <>
-                  <Loader2 className="size-4 animate-spin" />
-                  Matching opportunities…
-                </>
-              ) : (
-                <>
-                  <SearchCheck className="size-4" />
-                  Find My Best Matches
-                </>
-              )}
+              {loading ? <Loader2 className="size-4 animate-spin" /> : <SearchCheck className="size-4" />}
+              {loading ? 'Analysing CV…' : 'Analyse CV & Find Matches'}
             </button>
           </div>
         </form>
 
         <section className="min-w-0">
-          {!result ? (
-            <div className="rounded-3xl border border-dashed border-slate-300 bg-white p-8 sm:p-12">
-              <GraduationCap className="mb-5 size-12 text-blue-700" />
-              <h2 className="text-2xl font-semibold text-slate-950">
-                Your matched scholarships will appear here.
-              </h2>
-              <p className="mt-3 max-w-2xl leading-relaxed text-slate-600">
-                The engine evaluates study level, field alignment, funding preference,
-                experience and document readiness. It does not invent eligibility:
-                programme-specific requirements still need to be verified at the official source.
-              </p>
-
-              <div className="mt-8 grid gap-4 sm:grid-cols-3">
-                {[
-                  ['Fit score', 'See which opportunities align with your profile.'],
-                  ['Gap analysis', 'Know what is missing before you spend hours applying.'],
-                  ['Pathway', 'Get a next action when you are not application-ready yet.'],
-                ].map(([title, description]) => (
-                  <div key={title} className="rounded-2xl bg-slate-50 p-4">
-                    <p className="font-semibold text-slate-900">{title}</p>
-                    <p className="mt-1 text-sm text-slate-600">{description}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          ) : (
+          {results ? (
             <div className="space-y-6">
-              <div className="grid gap-4 sm:grid-cols-[180px_minmax(0,1fr)]">
-                <div className="rounded-3xl bg-slate-950 p-6 text-white">
-                  <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">
-                    Readiness
-                  </p>
-                  <div className="mt-3 text-5xl font-bold">{result.readiness.score}</div>
-                  <p className="text-sm text-slate-400">out of 100</p>
+              <div className="rounded-3xl border border-emerald-200 bg-emerald-50 p-6">
+                <div className="flex items-center gap-3">
+                  <CheckCircle2 className="size-7 text-emerald-700" />
+                  <div>
+                    <p className="text-sm font-semibold text-emerald-700">Unlocked</p>
+                    <h2 className="text-2xl font-bold text-emerald-950">
+                      {results.matchCount.toLocaleString()} matched scholarship records
+                    </h2>
+                  </div>
                 </div>
+              </div>
 
-                <div className="rounded-3xl border border-slate-200 bg-white p-6">
+              <div className="space-y-4">
+                {results.matches.map((match) => {
+                  const link = match.applicationLink || match.sourceUrl
+                  return (
+                    <article key={match.id} className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+                      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                        <div>
+                          <div className="mb-2 flex flex-wrap gap-2">
+                            <span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-bold text-blue-700">
+                              {match.score}% · {match.label}
+                            </span>
+                            <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-700">
+                              {match.verificationStatus === 'verified' ? 'Provider verified' : 'Verify current cycle'}
+                            </span>
+                          </div>
+                          <h3 className="text-xl font-bold text-slate-950">{match.title}</h3>
+                          <p className="mt-1 font-medium text-blue-700">{match.provider}</p>
+                          <p className="mt-2 text-sm text-slate-500">
+                            {match.studyCountries?.join(', ') || 'International'} · {deadlineLabel(match)}
+                          </p>
+                        </div>
+
+                        {link ? (
+                          <a
+                            href={link}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-blue-700 px-4 py-2.5 text-sm font-bold text-white hover:bg-blue-800"
+                          >
+                            View source <ExternalLink className="size-4" />
+                          </a>
+                        ) : (
+                          <span className="rounded-xl bg-amber-50 px-4 py-2.5 text-xs font-semibold text-amber-800">
+                            Provider link pending verification
+                          </span>
+                        )}
+                      </div>
+
+                      <p className="mt-4 text-sm leading-6 text-slate-600">{match.description}</p>
+                      <div className="mt-4 grid gap-3 md:grid-cols-2">
+                        <div className="rounded-2xl bg-emerald-50 p-4">
+                          <p className="text-sm font-bold text-emerald-900">Why it matches</p>
+                          <ul className="mt-2 space-y-1.5 text-sm text-emerald-900/80">
+                            {match.reasons.map((reason) => <li key={reason}>• {reason}</li>)}
+                          </ul>
+                        </div>
+                        <div className="rounded-2xl bg-amber-50 p-4">
+                          <p className="text-sm font-bold text-amber-900">Checks before applying</p>
+                          <ul className="mt-2 space-y-1.5 text-sm text-amber-900/80">
+                            {match.gaps.length
+                              ? match.gaps.map((gap) => <li key={gap}>• {gap}</li>)
+                              : <li>• Confirm the current provider requirements and deadline.</li>}
+                          </ul>
+                        </div>
+                      </div>
+                    </article>
+                  )
+                })}
+              </div>
+
+              <p className="text-xs leading-relaxed text-slate-500">{results.disclaimer}</p>
+            </div>
+          ) : preview ? (
+            <div className="space-y-6">
+              <div className="rounded-3xl border border-blue-200 bg-white p-7 shadow-sm">
+                <p className="text-sm font-bold uppercase tracking-wide text-blue-700">CV match complete</p>
+                <div className="mt-3 flex items-end gap-3">
+                  <div className="text-6xl font-black text-slate-950">{preview.matchCount}</div>
+                  <div className="pb-2 text-slate-500">relevant records found</div>
+                </div>
+                <p className="mt-4 text-sm leading-6 text-slate-600">
+                  We screened {preview.screenedCount.toLocaleString()} catalogue records.
+                  {preview.strongCount > 0 && <> {preview.strongCount} are strong matches.</>}
+                  {preview.possibleCount > 0 && <> {preview.possibleCount} are possible matches.</>}
+                </p>
+
+                <div className="mt-5 grid gap-3 sm:grid-cols-2">
+                  <div className="rounded-2xl bg-slate-50 p-4">
+                    <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Detected field</p>
+                    <p className="mt-1 font-bold text-slate-900">{preview.profileSummary.field}</p>
+                    <p className="mt-1 text-sm text-slate-600">{preview.profileSummary.nationality}</p>
+                  </div>
+                  <div className="rounded-2xl bg-slate-50 p-4">
+                    <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Application readiness</p>
+                    <p className="mt-1 text-2xl font-bold text-slate-900">{preview.readiness.score}/100</p>
+                    <p className="mt-1 text-xs text-slate-600">{preview.readiness.nextAction}</p>
+                  </div>
+                </div>
+              </div>
+
+              {preview.matchCount > 0 && (
+                <div className="rounded-3xl bg-slate-950 p-7 text-white">
                   <div className="flex items-start gap-3">
-                    <FileCheck2 className="mt-0.5 size-5 text-blue-700" />
+                    <LockKeyhole className="mt-1 size-6 text-blue-300" />
                     <div>
-                      <h2 className="font-semibold text-slate-950">Your next best action</h2>
-                      <p className="mt-1 text-sm leading-relaxed text-slate-600">
-                        {result.readiness.nextAction}
+                      <p className="text-sm font-semibold text-blue-200">Unlock your matched records</p>
+                      <h2 className="mt-1 text-2xl font-bold">
+                        See names, fit scores, provider details and application links.
+                      </h2>
+                      <p className="mt-2 text-sm leading-6 text-slate-300">
+                        One payment unlocks this match session for seven days.
                       </p>
                     </div>
                   </div>
 
-                  {result.readiness.missing.length > 0 && (
-                    <div className="mt-4 flex flex-wrap gap-2">
-                      {result.readiness.missing.map((item) => (
-                        <span
-                          key={item}
-                          className="rounded-full bg-amber-50 px-3 py-1 text-xs font-medium text-amber-800"
-                        >
-                          Missing: {item}
-                        </span>
-                      ))}
-                    </div>
+                  <div className="mt-6 grid gap-3 sm:grid-cols-2">
+                    <button
+                      type="button"
+                      disabled={Boolean(paying)}
+                      onClick={() => unlock('NGN')}
+                      className="rounded-2xl bg-white px-5 py-4 text-left text-slate-950 disabled:opacity-60"
+                    >
+                      <div className="text-2xl font-black">₦5,000</div>
+                      <div className="mt-1 text-xs font-semibold text-slate-500">
+                        Pay in Naira with Paystack
+                      </div>
+                    </button>
+                    <button
+                      type="button"
+                      disabled={Boolean(paying)}
+                      onClick={() => unlock('USD')}
+                      className="rounded-2xl border border-white/20 bg-white/10 px-5 py-4 text-left disabled:opacity-60"
+                    >
+                      <div className="text-2xl font-black">US$5</div>
+                      <div className="mt-1 text-xs font-semibold text-slate-300">
+                        Pay in USD where enabled
+                      </div>
+                    </button>
+                  </div>
+
+                  {paying && (
+                    <p className="mt-4 flex items-center gap-2 text-sm text-blue-200">
+                      <Loader2 className="size-4 animate-spin" />
+                      Opening secure payment…
+                    </p>
                   )}
                 </div>
-              </div>
+              )}
 
-              <div className="flex items-end justify-between gap-4">
-                <div>
-                  <p className="text-sm font-medium text-blue-700">Profile-based results</p>
-                  <h2 className="text-2xl font-semibold text-slate-950">Your scholarship matches</h2>
-                </div>
-                <span className="text-xs text-slate-500">{result.matches.length} screened</span>
-              </div>
+              <p className="text-xs leading-relaxed text-slate-500">{preview.disclaimer}</p>
+            </div>
+          ) : (
+            <div className="rounded-3xl border border-dashed border-slate-300 bg-white p-10">
+              <GraduationCap className="size-12 text-blue-700" />
+              <h2 className="mt-5 text-2xl font-bold text-slate-950">
+                Your match count appears before you pay.
+              </h2>
+              <p className="mt-3 max-w-2xl leading-relaxed text-slate-600">
+                Upload your CV and choose the level you want to study. The agent extracts
+                your academic and professional profile, screens the scholarship catalogue,
+                and tells you how many relevant opportunities it found. You only pay if you
+                want to open the matched scholarship records.
+              </p>
 
-              <div className="space-y-4">
-                {result.matches.map((match) => (
-                  <article
-                    key={match.opportunity.id}
-                    className="rounded-3xl border border-slate-200 bg-white p-6 transition hover:border-blue-200 hover:shadow-md"
-                  >
-                    <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-                      <div className="min-w-0">
-                        <div className="mb-2 flex flex-wrap gap-2">
-                          <span className={`rounded-full px-3 py-1 text-xs font-semibold ${scoreClass(match.score)}`}>
-                            {match.score}% · {match.label}
-                          </span>
-                          <span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-medium text-blue-700">
-                            {match.opportunity.funding === 'full' ? 'Fully funded' : 'Partial funding'}
-                          </span>
-                          <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-700">
-                            Official source
-                          </span>
-                        </div>
-                        <h3 className="text-lg font-semibold text-slate-950">
-                          {match.opportunity.title}
-                        </h3>
-                        <p className="mt-1 text-sm font-medium text-blue-700">
-                          {match.opportunity.provider}
-                        </p>
-                        <p className="mt-1 text-sm text-slate-500">
-                          {match.opportunity.countries.join(', ')} · {match.opportunity.deadlineLabel}
-                        </p>
-                      </div>
-
-                      <a
-                        href={match.opportunity.officialUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex shrink-0 items-center justify-center gap-1.5 rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700"
-                      >
-                        Verify <ExternalLink className="size-4" />
-                      </a>
+              <div className="mt-8 grid gap-4 sm:grid-cols-3">
+                {[
+                  ['1', 'Upload CV', 'PDF or text CV is analysed for scholarship-relevant signals.'],
+                  ['2', 'See match count', 'Know how many relevant records were found before paying.'],
+                  ['3', 'Unlock results', 'Pay once to view the actual matched opportunities and links.'],
+                ].map(([step, title, description]) => (
+                  <div key={step} className="rounded-2xl bg-slate-50 p-4">
+                    <div className="flex size-8 items-center justify-center rounded-full bg-blue-700 text-sm font-bold text-white">
+                      {step}
                     </div>
-
-                    <div className="mt-5 grid gap-4 md:grid-cols-2">
-                      <div className="rounded-2xl bg-emerald-50/70 p-4">
-                        <p className="mb-2 text-sm font-semibold text-emerald-900">Why it matches</p>
-                        <ul className="space-y-2">
-                          {match.reasons.length > 0 ? (
-                            match.reasons.map((reason) => (
-                              <li key={reason} className="flex gap-2 text-sm text-emerald-900/80">
-                                <CheckCircle2 className="mt-0.5 size-4 shrink-0" />
-                                {reason}
-                              </li>
-                            ))
-                          ) : (
-                            <li className="text-sm text-emerald-900/70">
-                              Verify programme-specific requirements before applying.
-                            </li>
-                          )}
-                        </ul>
-                      </div>
-
-                      <div className="rounded-2xl bg-amber-50/70 p-4">
-                        <p className="mb-2 text-sm font-semibold text-amber-900">Gaps / checks</p>
-                        <ul className="space-y-2">
-                          {match.gaps.length > 0 ? (
-                            match.gaps.map((gap) => (
-                              <li key={gap} className="flex gap-2 text-sm text-amber-900/80">
-                                <AlertCircle className="mt-0.5 size-4 shrink-0" />
-                                {gap}
-                              </li>
-                            ))
-                          ) : (
-                            <li className="text-sm text-amber-900/70">
-                              No major profile gap detected by the screening rules.
-                            </li>
-                          )}
-                        </ul>
-                      </div>
-                    </div>
-                  </article>
+                    <p className="mt-3 font-bold text-slate-900">{title}</p>
+                    <p className="mt-1 text-sm text-slate-600">{description}</p>
+                  </div>
                 ))}
               </div>
-
-              <div className="rounded-3xl bg-blue-700 p-6 text-white sm:p-8">
-                <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
-                  <div>
-                    <p className="text-sm font-semibold text-blue-100">Need application support?</p>
-                    <h3 className="mt-1 text-2xl font-semibold">
-                      Turn a strong match into an application-ready package.
-                    </h3>
-                    <p className="mt-2 max-w-2xl text-sm leading-relaxed text-blue-100">
-                      Use AfriGrantPipeline consultancy for CV review, document-gap checks,
-                      statement guidance, proposal support and submission readiness.
-                    </p>
-                  </div>
-                  <Link
-                    href="/consultancy"
-                    className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-white px-5 py-3 text-sm font-semibold text-blue-700 transition hover:bg-blue-50"
-                  >
-                    Get Application Help
-                    <ArrowRight className="size-4" />
-                  </Link>
-                </div>
-              </div>
-
-              <p className="text-xs leading-relaxed text-slate-500">{result.disclaimer}</p>
             </div>
           )}
         </section>

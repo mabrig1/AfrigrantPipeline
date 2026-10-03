@@ -3,7 +3,7 @@ import { connectDB } from '@/lib/mongodb'
 import Grant from '@/models/Grant'
 import User from '@/models/User'
 
-export const SCHOLARSHIP_CATALOGUE_TARGET = 590
+export const SCHOLARSHIP_CATALOGUE_TARGET = 2000
 
 const OFA_BASE_URL = 'https://www.opportunitiesforafricans.com'
 const OFA_CATEGORY_URL = OFA_BASE_URL + '/category/scholarships/'
@@ -72,7 +72,7 @@ export type ScholarshipCatalogueBootstrapSummary = {
 
 declare global {
   // eslint-disable-next-line no-var
-  var __scholarshipCatalogue590Promise:
+  var __scholarshipCataloguePromise:
     | Promise<ScholarshipCatalogueBootstrapSummary>
     | undefined
 }
@@ -557,12 +557,12 @@ async function bootstrapCatalogue(): Promise<ScholarshipCatalogueBootstrapSummar
   }
 }
 
-export async function ensureScholarshipCatalogue590() {
-  if (!global.__scholarshipCatalogue590Promise) {
-    global.__scholarshipCatalogue590Promise = bootstrapCatalogue().finally(() => {
-      global.__scholarshipCatalogue590Promise = undefined
+export async function ensureScholarshipCatalogueTarget() {
+  if (!global.__scholarshipCataloguePromise) {
+    global.__scholarshipCataloguePromise = bootstrapCatalogue().finally(() => {
+      global.__scholarshipCataloguePromise = undefined
     })
   }
 
-  return global.__scholarshipCatalogue590Promise
+  return global.__scholarshipCataloguePromise
 }

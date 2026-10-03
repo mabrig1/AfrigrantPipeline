@@ -1,0 +1,2372 @@
+{
+  "source": {
+    "title": "Global Scholarships Directory",
+    "compiledDate": "2026-10-03",
+    "part": 1,
+    "declaredTarget": 1000,
+    "entryCount": 337,
+    "provenance": "User-provided document uploaded to ChatGPT and supplied for AfrigrantPipeline catalogue update.",
+    "verificationNotice": "Coverage is descriptive only. Deadlines, eligibility, award values and whether a programme is running can change by cycle; verify on the official provider website before applying."
+  },
+  "entries": [
+    {
+      "number": 1,
+      "name": "Fulbright Foreign Student Program",
+      "hostOrBody": "USA",
+      "level": "Master's/PhD",
+      "typicalCoverage": "usually full funding"
+    },
+    {
+      "number": 2,
+      "name": "Chevening Scholarships",
+      "hostOrBody": "UK",
+      "level": "Master's",
+      "typicalCoverage": "full funding"
+    },
+    {
+      "number": 3,
+      "name": "Commonwealth Master's Scholarships",
+      "hostOrBody": "UK",
+      "level": "Master's",
+      "typicalCoverage": "full funding"
+    },
+    {
+      "number": 4,
+      "name": "Commonwealth PhD Scholarships",
+      "hostOrBody": "UK",
+      "level": "PhD",
+      "typicalCoverage": "full funding"
+    },
+    {
+      "number": 5,
+      "name": "Commonwealth Shared Scholarships",
+      "hostOrBody": "UK",
+      "level": "Master's",
+      "typicalCoverage": "partial funding with university"
+    },
+    {
+      "number": 6,
+      "name": "Commonwealth Distance Learning Scholarships",
+      "hostOrBody": "UK",
+      "level": "Master's",
+      "typicalCoverage": "tuition support"
+    },
+    {
+      "number": 7,
+      "name": "Erasmus Mundus Joint Master Degrees",
+      "hostOrBody": "EU",
+      "level": "Master's",
+      "typicalCoverage": "full funding"
+    },
+    {
+      "number": 8,
+      "name": "Rhodes Scholarship",
+      "hostOrBody": "Oxford, UK",
+      "level": "postgraduate",
+      "typicalCoverage": "full funding"
+    },
+    {
+      "number": 9,
+      "name": "Gates Cambridge Scholarship",
+      "hostOrBody": "Cambridge, UK",
+      "level": "postgraduate",
+      "typicalCoverage": "full funding"
+    },
+    {
+      "number": 10,
+      "name": "Mastercard Foundation Scholars Program",
+      "hostOrBody": "partner universities worldwide",
+      "level": "undergraduate/Master's",
+      "typicalCoverage": "full funding, focus on young Africans"
+    },
+    {
+      "number": 11,
+      "name": "Aga Khan Foundation International Scholarship Programme",
+      "hostOrBody": "Master's/PhD",
+      "level": "grant and loan mix",
+      "typicalCoverage": ""
+    },
+    {
+      "number": 12,
+      "name": "Joint Japan/World Bank Graduate Scholarship Program",
+      "hostOrBody": "development-related Master's",
+      "level": "funded",
+      "typicalCoverage": ""
+    },
+    {
+      "number": 13,
+      "name": "Rotary Peace Fellowships",
+      "hostOrBody": "partner universities",
+      "level": "Master's/certificate",
+      "typicalCoverage": "full funding"
+    },
+    {
+      "number": 14,
+      "name": "Schwarzman Scholars",
+      "hostOrBody": "Tsinghua University, China",
+      "level": "Master's",
+      "typicalCoverage": "full funding"
+    },
+    {
+      "number": 15,
+      "name": "Yenching Academy Scholarship",
+      "hostOrBody": "Peking University, China",
+      "level": "Master's",
+      "typicalCoverage": "full funding"
+    },
+    {
+      "number": 16,
+      "name": "Knight-Hennessy Scholars",
+      "hostOrBody": "Stanford University, USA",
+      "level": "graduate",
+      "typicalCoverage": "full funding"
+    },
+    {
+      "number": 17,
+      "name": "Clarendon Fund Scholarships",
+      "hostOrBody": "University of Oxford",
+      "level": "graduate",
+      "typicalCoverage": "full funding"
+    },
+    {
+      "number": 18,
+      "name": "Marshall Scholarship",
+      "hostOrBody": "UK",
+      "level": "postgraduate",
+      "typicalCoverage": "for US citizens"
+    },
+    {
+      "number": 19,
+      "name": "George J. Mitchell Scholarship",
+      "hostOrBody": "Ireland",
+      "level": "postgraduate",
+      "typicalCoverage": "for US citizens"
+    },
+    {
+      "number": 20,
+      "name": "Eiffel Excellence Scholarship",
+      "hostOrBody": "France",
+      "level": "Master's/PhD",
+      "typicalCoverage": "monthly allowance plus costs"
+    },
+    {
+      "number": 21,
+      "name": "Swiss Government Excellence Scholarships",
+      "hostOrBody": "Switzerland",
+      "level": "research/PhD/postdoc",
+      "typicalCoverage": "stipend"
+    },
+    {
+      "number": 22,
+      "name": "Australia Awards Scholarships",
+      "hostOrBody": "Australia",
+      "level": "Master's/PhD",
+      "typicalCoverage": "for eligible developing-country applicants"
+    },
+    {
+      "number": 23,
+      "name": "DAAD Scholarships",
+      "hostOrBody": "Germany",
+      "level": "Master's/PhD/research",
+      "typicalCoverage": "stipend"
+    },
+    {
+      "number": 24,
+      "name": "MEXT Japanese Government Scholarship",
+      "hostOrBody": "Japan",
+      "level": "undergraduate to PhD",
+      "typicalCoverage": "full funding"
+    },
+    {
+      "number": 25,
+      "name": "Global Korea Scholarship (GKS)",
+      "hostOrBody": "South Korea",
+      "level": "undergraduate/graduate",
+      "typicalCoverage": "full funding"
+    },
+    {
+      "number": 26,
+      "name": "Chinese Government Scholarship (CSC)",
+      "hostOrBody": "China",
+      "level": "all levels",
+      "typicalCoverage": "full or partial funding"
+    },
+    {
+      "number": 27,
+      "name": "Türkiye Burslari",
+      "hostOrBody": "Türkiye",
+      "level": "all levels",
+      "typicalCoverage": "full funding"
+    },
+    {
+      "number": 28,
+      "name": "Stipendium Hungaricum",
+      "hostOrBody": "Hungary",
+      "level": "all levels",
+      "typicalCoverage": "tuition and stipend"
+    },
+    {
+      "number": 29,
+      "name": "Holland Scholarship",
+      "hostOrBody": "Netherlands",
+      "level": "Bachelor's/Master's",
+      "typicalCoverage": "fixed grant"
+    },
+    {
+      "number": 30,
+      "name": "Erasmus+ Mobility Grants",
+      "hostOrBody": "Europe",
+      "level": "exchange periods",
+      "typicalCoverage": "monthly grant"
+    },
+    {
+      "number": 31,
+      "name": "Islamic Development Bank Merit Scholarship Programme",
+      "hostOrBody": "member-country students",
+      "level": "PhD/postdoc",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 32,
+      "name": "Asian Development Bank–Japan Scholarship Program",
+      "hostOrBody": "partner universities in Asia-Pacific",
+      "level": "Master's",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 33,
+      "name": "OPEC Fund Scholarship",
+      "hostOrBody": "Master's",
+      "level": "development focus",
+      "typicalCoverage": ""
+    },
+    {
+      "number": 34,
+      "name": "UNESCO Fellowships Programmes",
+      "hostOrBody": "various",
+      "level": "research/training",
+      "typicalCoverage": "varies by call"
+    },
+    {
+      "number": 35,
+      "name": "Hubert H. Humphrey Fellowship",
+      "hostOrBody": "USA",
+      "level": "mid-career professionals",
+      "typicalCoverage": "non-degree year"
+    },
+    {
+      "number": 36,
+      "name": "Mandela Rhodes Scholarships",
+      "hostOrBody": "South Africa",
+      "level": "postgraduate",
+      "typicalCoverage": "for African students"
+    },
+    {
+      "number": 37,
+      "name": "Davis United World College Scholars Program",
+      "hostOrBody": "partner US colleges",
+      "level": "undergraduate",
+      "typicalCoverage": "for UWC graduates"
+    },
+    {
+      "number": 38,
+      "name": "AAUW International Fellowships",
+      "hostOrBody": "USA",
+      "level": "women pursuing graduate study",
+      "typicalCoverage": "stipend"
+    },
+    {
+      "number": 39,
+      "name": "Echoing Green Fellowship",
+      "hostOrBody": "social entrepreneurs",
+      "level": "seed funding and support",
+      "typicalCoverage": ""
+    },
+    {
+      "number": 40,
+      "name": "Konrad Adenauer Foundation Scholarships",
+      "hostOrBody": "Germany",
+      "level": "graduate/PhD",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 41,
+      "name": "Reach Oxford Scholarship",
+      "hostOrBody": "University of Oxford",
+      "level": "graduate",
+      "typicalCoverage": "for low-income countries"
+    },
+    {
+      "number": 42,
+      "name": "Weidenfeld-Hoffmann Scholarships and Leadership Programme",
+      "hostOrBody": "University of Oxford",
+      "level": "graduate",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 43,
+      "name": "Oxford Pershing Square Graduate Scholarships",
+      "hostOrBody": "University of Oxford",
+      "level": "graduate",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 44,
+      "name": "Cambridge Trust Scholarships",
+      "hostOrBody": "University of Cambridge",
+      "level": "graduate",
+      "typicalCoverage": "varied funding"
+    },
+    {
+      "number": 45,
+      "name": "Cambridge Commonwealth, European and International Trust Awards",
+      "hostOrBody": "University of Cambridge",
+      "level": "graduate",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 46,
+      "name": "Churchill Scholarship",
+      "hostOrBody": "Churchill College, Cambridge",
+      "level": "STEM graduate",
+      "typicalCoverage": "for US citizens"
+    },
+    {
+      "number": 47,
+      "name": "Harding Scholarship",
+      "hostOrBody": "University of Cambridge",
+      "level": "PhD",
+      "typicalCoverage": "full funding"
+    },
+    {
+      "number": 48,
+      "name": "Imperial College President's PhD Scholarships",
+      "hostOrBody": "Imperial College London",
+      "level": "PhD",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 49,
+      "name": "LSE Graduate Support Scholarship",
+      "hostOrBody": "London School of Economics",
+      "level": "Master's",
+      "typicalCoverage": "needs-based"
+    },
+    {
+      "number": 50,
+      "name": "UCL Global Excellence Scholarship",
+      "hostOrBody": "UCL",
+      "level": "Master's",
+      "typicalCoverage": "partial funding"
+    },
+    {
+      "number": 51,
+      "name": "Edinburgh Global Scholarships",
+      "hostOrBody": "University of Edinburgh",
+      "level": "postgraduate",
+      "typicalCoverage": "partial funding"
+    },
+    {
+      "number": 52,
+      "name": "Manchester Equity and Merit Scholarship",
+      "hostOrBody": "University of Manchester",
+      "level": "undergraduate/Master's",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 53,
+      "name": "Warwick Chancellor's International Scholarship",
+      "hostOrBody": "University of Warwick",
+      "level": "PhD",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 54,
+      "name": "Sussex Chancellor's International Scholarship",
+      "hostOrBody": "University of Sussex",
+      "level": "undergraduate/Master's",
+      "typicalCoverage": "fee reduction"
+    },
+    {
+      "number": 55,
+      "name": "Bristol Think Big Scholarships",
+      "hostOrBody": "University of Bristol",
+      "level": "postgraduate",
+      "typicalCoverage": "partial funding"
+    },
+    {
+      "number": 56,
+      "name": "Leeds Anniversary Scholarships",
+      "hostOrBody": "University of Leeds",
+      "level": "Master's",
+      "typicalCoverage": "partial funding"
+    },
+    {
+      "number": 57,
+      "name": "SOAS Master's Scholarships",
+      "hostOrBody": "SOAS University of London",
+      "level": "Master's",
+      "typicalCoverage": "partial funding"
+    },
+    {
+      "number": 58,
+      "name": "GREAT Scholarships",
+      "hostOrBody": "UK universities with British Council",
+      "level": "Master's",
+      "typicalCoverage": "partial funding"
+    },
+    {
+      "number": 59,
+      "name": "Wellcome Trust PhD Programmes",
+      "hostOrBody": "UK",
+      "level": "biomedical research",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 60,
+      "name": "Wolfson Foundation Scholarships",
+      "hostOrBody": "UK",
+      "level": "postgraduate",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 61,
+      "name": "Jack Kent Cooke Foundation College Scholarship",
+      "hostOrBody": "USA",
+      "level": "undergraduate",
+      "typicalCoverage": "high-achieving low￾income students"
+    },
+    {
+      "number": 62,
+      "name": "Jack Kent Cooke Graduate Arts Award",
+      "hostOrBody": "USA",
+      "level": "graduate arts",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 63,
+      "name": "Coca-Cola Scholars Program",
+      "hostOrBody": "USA",
+      "level": "undergraduate",
+      "typicalCoverage": "fixed award"
+    },
+    {
+      "number": 64,
+      "name": "The Gates Scholarship",
+      "hostOrBody": "USA",
+      "level": "undergraduate",
+      "typicalCoverage": "full cost of attendance for eligible minority students"
+    },
+    {
+      "number": 65,
+      "name": "Horatio Alger National Scholarship",
+      "hostOrBody": "USA",
+      "level": "undergraduate",
+      "typicalCoverage": "fixed award"
+    },
+    {
+      "number": 66,
+      "name": "QuestBridge National College Match",
+      "hostOrBody": "USA",
+      "level": "undergraduate",
+      "typicalCoverage": "full scholarships at partner colleges"
+    },
+    {
+      "number": 67,
+      "name": "Dell Scholars Program",
+      "hostOrBody": "USA",
+      "level": "undergraduate",
+      "typicalCoverage": "funded with support services"
+    },
+    {
+      "number": 68,
+      "name": "Hispanic Scholarship Fund",
+      "hostOrBody": "USA",
+      "level": "undergraduate/graduate",
+      "typicalCoverage": "fixed award"
+    },
+    {
+      "number": 69,
+      "name": "UNCF Scholarships",
+      "hostOrBody": "USA",
+      "level": "undergraduate/graduate",
+      "typicalCoverage": "varied awards"
+    },
+    {
+      "number": 70,
+      "name": "Thurgood Marshall College Fund Scholarships",
+      "hostOrBody": "USA",
+      "level": "students at HBCUs and public HBCs",
+      "typicalCoverage": ""
+    },
+    {
+      "number": 71,
+      "name": "Ron Brown Scholar Program",
+      "hostOrBody": "USA",
+      "level": "undergraduate",
+      "typicalCoverage": "fixed award"
+    },
+    {
+      "number": 72,
+      "name": "Posse Foundation Scholarship",
+      "hostOrBody": "USA",
+      "level": "undergraduate",
+      "typicalCoverage": "full tuition at partner colleges"
+    },
+    {
+      "number": 73,
+      "name": "Harry S. Truman Scholarship",
+      "hostOrBody": "USA",
+      "level": "public-service graduate study",
+      "typicalCoverage": ""
+    },
+    {
+      "number": 74,
+      "name": "Barry Goldwater Scholarship",
+      "hostOrBody": "USA",
+      "level": "STEM undergraduate",
+      "typicalCoverage": ""
+    },
+    {
+      "number": 75,
+      "name": "Morris K. Udall Scholarship",
+      "hostOrBody": "USA",
+      "level": "environment, tribal policy, and health care undergraduate",
+      "typicalCoverage": ""
+    },
+    {
+      "number": 76,
+      "name": "Boren Awards",
+      "hostOrBody": "USA",
+      "level": "language study abroad",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 77,
+      "name": "Critical Language Scholarship",
+      "hostOrBody": "USA",
+      "level": "summer language programmes abroad",
+      "typicalCoverage": "fully funded"
+    },
+    {
+      "number": 78,
+      "name": "Benjamin A. Gilman International Scholarship",
+      "hostOrBody": "USA",
+      "level": "study abroad for Pell grant recipients",
+      "typicalCoverage": ""
+    },
+    {
+      "number": 79,
+      "name": "Paul & Daisy Soros Fellowships for New Americans",
+      "hostOrBody": "USA",
+      "level": "graduate",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 80,
+      "name": "Ford Foundation Fellowship Programs",
+      "hostOrBody": "USA",
+      "level": "doctoral and postdoctoral",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 81,
+      "name": "NSF Graduate Research Fellowship Program",
+      "hostOrBody": "USA",
+      "level": "STEM graduate",
+      "typicalCoverage": "stipend and tuition allowance"
+    },
+    {
+      "number": 82,
+      "name": "Hertz Foundation Fellowship",
+      "hostOrBody": "USA",
+      "level": "applied science PhD",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 83,
+      "name": "Pickering Fellowship",
+      "hostOrBody": "USA",
+      "level": "foreign affairs graduate study",
+      "typicalCoverage": ""
+    },
+    {
+      "number": 84,
+      "name": "Charles B. Rangel Graduate Fellowship",
+      "hostOrBody": "USA",
+      "level": "foreign service graduate study",
+      "typicalCoverage": ""
+    },
+    {
+      "number": 85,
+      "name": "Berea College Tuition Promise",
+      "hostOrBody": "Kentucky, USA",
+      "level": "undergraduate",
+      "typicalCoverage": "free tuition for admitted students"
+    },
+    {
+      "number": 86,
+      "name": "Tom Joyner Foundation Full Ride Scholarship",
+      "hostOrBody": "USA",
+      "level": "undergraduate at HBCUs",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 87,
+      "name": "Fulbright Specialist and Scholar Programs",
+      "hostOrBody": "USA",
+      "level": "faculty and professionals",
+      "typicalCoverage": ""
+    },
+    {
+      "number": 88,
+      "name": "Rotary Foundation Global Grants",
+      "hostOrBody": "worldwide",
+      "level": "graduate study abroad",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 89,
+      "name": "Elks National Foundation Most Valuable Student Scholarship",
+      "hostOrBody": "USA",
+      "level": "undergraduate",
+      "typicalCoverage": "merit awards"
+    },
+    {
+      "number": 90,
+      "name": "National Merit Scholarship Program",
+      "hostOrBody": "USA",
+      "level": "undergraduate",
+      "typicalCoverage": "merit awards"
+    },
+    {
+      "number": 91,
+      "name": "Vanier Canada Graduate Scholarships",
+      "hostOrBody": "Canada",
+      "level": "PhD",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 92,
+      "name": "Banting Postdoctoral Fellowships",
+      "hostOrBody": "Canada",
+      "level": "postdoctoral",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 93,
+      "name": "Trudeau Foundation Scholarships",
+      "hostOrBody": "Canada",
+      "level": "doctoral",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 94,
+      "name": "Lester B. Pearson International Scholarship",
+      "hostOrBody": "University of Toronto",
+      "level": "undergraduate",
+      "typicalCoverage": "full funding"
+    },
+    {
+      "number": 95,
+      "name": "Schulich Leader Scholarships",
+      "hostOrBody": "Canada",
+      "level": "STEM undergraduate",
+      "typicalCoverage": "fixed award"
+    },
+    {
+      "number": 96,
+      "name": "Queen Elizabeth Scholars Program",
+      "hostOrBody": "Canada",
+      "level": "exchange for Commonwealth students and Canadians",
+      "typicalCoverage": ""
+    },
+    {
+      "number": 97,
+      "name": "Ontario Graduate Scholarship",
+      "hostOrBody": "Ontario",
+      "level": "graduate",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 98,
+      "name": "Killam Fellowships",
+      "hostOrBody": "Canada",
+      "level": "research funding",
+      "typicalCoverage": ""
+    },
+    {
+      "number": 99,
+      "name": "Mitacs Globalink Research Internship",
+      "hostOrBody": "Canada",
+      "level": "undergraduate research internships",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 100,
+      "name": "UBC International Leader of Tomorrow Award",
+      "hostOrBody": "UBC",
+      "level": "undergraduate",
+      "typicalCoverage": "needs-based"
+    },
+    {
+      "number": 101,
+      "name": "York University Global Leader of Tomorrow Award",
+      "hostOrBody": "York University",
+      "level": "undergraduate",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 102,
+      "name": "University of Waterloo President's Scholarship of Distinction",
+      "hostOrBody": "Waterloo",
+      "level": "undergraduate",
+      "typicalCoverage": "automatic merit award"
+    },
+    {
+      "number": 103,
+      "name": "McGill Entrance Scholarships",
+      "hostOrBody": "McGill University",
+      "level": "undergraduate",
+      "typicalCoverage": "merit awards"
+    },
+    {
+      "number": 104,
+      "name": "Concordia International Undergraduate Awards",
+      "hostOrBody": "Concordia University",
+      "level": "merit awards",
+      "typicalCoverage": ""
+    },
+    {
+      "number": 105,
+      "name": "Terry Fox Humanitarian Award",
+      "hostOrBody": "Canada",
+      "level": "undergraduate",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 106,
+      "name": "Alberta Graduate Excellence Scholarship",
+      "hostOrBody": "Alberta",
+      "level": "graduate",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 107,
+      "name": "Australian Government Research Training Program (RTP)",
+      "hostOrBody": "Australia",
+      "level": "research Master's/PhD",
+      "typicalCoverage": "tuition and stipend via universities"
+    },
+    {
+      "number": 108,
+      "name": "Australia Awards Fellowships",
+      "hostOrBody": "Australia",
+      "level": "short professional courses",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 109,
+      "name": "University of Sydney International Scholarships",
+      "hostOrBody": "Sydney",
+      "level": "postgraduate research",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 110,
+      "name": "UNSW Scientia Scholarship",
+      "hostOrBody": "UNSW Sydney",
+      "level": "undergraduate/postgraduate",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 111,
+      "name": "Monash International Merit Scholarship",
+      "hostOrBody": "Monash University",
+      "level": "undergraduate/postgraduate",
+      "typicalCoverage": "fee reduction"
+    },
+    {
+      "number": 112,
+      "name": "Monash International Leadership Scholarship",
+      "hostOrBody": "Monash University",
+      "level": "undergraduate/postgraduate",
+      "typicalCoverage": "fee reduction"
+    },
+    {
+      "number": 113,
+      "name": "Melbourne Research Scholarship",
+      "hostOrBody": "University of Melbourne",
+      "level": "research degrees",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 114,
+      "name": "UQ Graduate School Scholarships",
+      "hostOrBody": "University of Queensland",
+      "level": "research degrees",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 115,
+      "name": "UTS International Research Scholarship",
+      "hostOrBody": "UTS",
+      "level": "research degrees",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 116,
+      "name": "Adelaide Global Academic Excellence Scholarship",
+      "hostOrBody": "University of Adelaide",
+      "level": "undergraduate/postgraduate",
+      "typicalCoverage": "fee reduction"
+    },
+    {
+      "number": 117,
+      "name": "Griffith Remarkable Scholarship",
+      "hostOrBody": "Griffith University",
+      "level": "undergraduate/postgraduate",
+      "typicalCoverage": "fee reduction"
+    },
+    {
+      "number": 118,
+      "name": "Macquarie Vice-Chancellor's International Scholarship",
+      "hostOrBody": "Macquarie University",
+      "level": "undergraduate/postgraduate",
+      "typicalCoverage": "fee reduction"
+    },
+    {
+      "number": 119,
+      "name": "ANU Higher Degree by Research Scholarships",
+      "hostOrBody": "Australian National University",
+      "level": "PhD",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 120,
+      "name": "Manaaki New Zealand Scholarships",
+      "hostOrBody": "New Zealand",
+      "level": "postgraduate",
+      "typicalCoverage": "for eligible developing-country applicants"
+    },
+    {
+      "number": 121,
+      "name": "Prime Minister's Scholarships for Asia and Latin America",
+      "hostOrBody": "New Zealand",
+      "level": "study abroad",
+      "typicalCoverage": "for New Zealanders"
+    },
+    {
+      "number": 122,
+      "name": "University of Auckland International Student Excellence Scholarship",
+      "hostOrBody": "Auckland",
+      "level": "undergraduate",
+      "typicalCoverage": "partial funding"
+    },
+    {
+      "number": 123,
+      "name": "Otago Doctoral Scholarship",
+      "hostOrBody": "University of Otago",
+      "level": "PhD",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 124,
+      "name": "Massey University Doctoral Scholarship",
+      "hostOrBody": "Massey University",
+      "level": "PhD",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 125,
+      "name": "Deutschlandstipendium",
+      "hostOrBody": "Germany",
+      "level": "undergraduate/Master's",
+      "typicalCoverage": "monthly merit grant"
+    },
+    {
+      "number": 126,
+      "name": "Friedrich Ebert Foundation Scholarships",
+      "hostOrBody": "Germany",
+      "level": "undergraduate to PhD",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 127,
+      "name": "Heinrich Böll Foundation Scholarships",
+      "hostOrBody": "Germany",
+      "level": "undergraduate to PhD",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 128,
+      "name": "Hanns Seidel Foundation Scholarships",
+      "hostOrBody": "Germany",
+      "level": "undergraduate to PhD",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 129,
+      "name": "Rosa Luxemburg Foundation Scholarships",
+      "hostOrBody": "Germany",
+      "level": "undergraduate to PhD",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 130,
+      "name": "Friedrich Naumann Foundation Scholarships",
+      "hostOrBody": "Germany",
+      "level": "undergraduate to PhD",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 131,
+      "name": "Studienstiftung des deutschen Volkes",
+      "hostOrBody": "Germany",
+      "level": "all levels",
+      "typicalCoverage": "merit-based funding"
+    },
+    {
+      "number": 132,
+      "name": "Alexander von Humboldt Research Fellowships",
+      "hostOrBody": "Germany",
+      "level": "postdoctoral/experienced researchers",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 133,
+      "name": "DAAD Helmut Schmidt Programme",
+      "hostOrBody": "Germany",
+      "level": "public policy and good governance Master's",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 134,
+      "name": "KAAD Scholarships",
+      "hostOrBody": "Germany",
+      "level": "postgraduate",
+      "typicalCoverage": "for students from developing countries"
+    },
+    {
+      "number": 135,
+      "name": "Emile Boutmy Scholarship",
+      "hostOrBody": "Sciences Po, France",
+      "level": "Master's/undergraduate",
+      "typicalCoverage": "partial funding"
+    },
+    {
+      "number": 136,
+      "name": "Orange Tulip Scholarship",
+      "hostOrBody": "Netherlands",
+      "level": "Bachelor's/Master's",
+      "typicalCoverage": "partial funding in selected countries"
+    },
+    {
+      "number": 137,
+      "name": "Amsterdam Excellence Scholarship",
+      "hostOrBody": "University of Amsterdam",
+      "level": "Master's",
+      "typicalCoverage": "partial funding"
+    },
+    {
+      "number": 138,
+      "name": "Leiden University Excellence Scholarship (LExS)",
+      "hostOrBody": "Leiden University",
+      "level": "Master's",
+      "typicalCoverage": "partial funding"
+    },
+    {
+      "number": 139,
+      "name": "Utrecht Excellence Scholarships",
+      "hostOrBody": "Utrecht University",
+      "level": "Master's",
+      "typicalCoverage": "partial funding"
+    },
+    {
+      "number": 140,
+      "name": "TU Delft Justus & Louise van Effen Excellence Scholarship",
+      "hostOrBody": "TU Delft",
+      "level": "Master's",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 141,
+      "name": "Radboud Scholarship Programme",
+      "hostOrBody": "Radboud University",
+      "level": "Master's",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 142,
+      "name": "Eric Bleumink Funds",
+      "hostOrBody": "University of Groningen",
+      "level": "Master's",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 143,
+      "name": "ETH Excellence Scholarship & Opportunity Programme",
+      "hostOrBody": "ETH Zurich, Switzerland",
+      "level": "Master's",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 144,
+      "name": "EPFL Excellence Fellowships",
+      "hostOrBody": "EPFL, Switzerland",
+      "level": "Master's",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 145,
+      "name": "Graduate Institute Geneva Excellence Scholarships",
+      "hostOrBody": "Switzerland",
+      "level": "Master's/PhD",
+      "typicalCoverage": "partial funding"
+    },
+    {
+      "number": 146,
+      "name": "Swedish Institute Scholarships for Global Professionals",
+      "hostOrBody": "Sweden",
+      "level": "Master's",
+      "typicalCoverage": "full funding"
+    },
+    {
+      "number": 147,
+      "name": "Lund University Global Scholarship",
+      "hostOrBody": "Lund University",
+      "level": "Master's",
+      "typicalCoverage": "tuition reduction"
+    },
+    {
+      "number": 148,
+      "name": "KTH Scholarship",
+      "hostOrBody": "KTH Royal Institute of Technology",
+      "level": "Master's",
+      "typicalCoverage": "tuition coverage"
+    },
+    {
+      "number": 149,
+      "name": "Norwegian Quota Scheme",
+      "hostOrBody": "Norway",
+      "level": "Master's",
+      "typicalCoverage": "for developing-country students"
+    },
+    {
+      "number": 150,
+      "name": "Danish Government Scholarships",
+      "hostOrBody": "Denmark",
+      "level": "Master's/PhD exchange",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 151,
+      "name": "Finland Scholarships",
+      "hostOrBody": "Finnish universities",
+      "level": "Master's",
+      "typicalCoverage": "tuition coverage"
+    },
+    {
+      "number": 152,
+      "name": "Ernst Mach Grant",
+      "hostOrBody": "Austria (OeAD)",
+      "level": "Master's/PhD",
+      "typicalCoverage": "monthly grant"
+    },
+    {
+      "number": 153,
+      "name": "ARES Scholarships",
+      "hostOrBody": "French-speaking Belgium",
+      "level": "Master's/training",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 154,
+      "name": "VLIR-UOS Scholarships",
+      "hostOrBody": "Flanders, Belgium",
+      "level": "Master's/training",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 155,
+      "name": "KU Leuven Master Mind Scholarships",
+      "hostOrBody": "KU Leuven",
+      "level": "Master's",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 156,
+      "name": "Invest Your Talent in Italy",
+      "hostOrBody": "Italy",
+      "level": "Master's",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 157,
+      "name": "Bocconi Merit and International Awards",
+      "hostOrBody": "Bocconi University",
+      "level": "undergraduate/Master's",
+      "typicalCoverage": "fee reduction"
+    },
+    {
+      "number": 158,
+      "name": "Italian Government (MAECI) Scholarships",
+      "hostOrBody": "Italy",
+      "level": "all levels",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 159,
+      "name": "Fundación Carolina Scholarships",
+      "hostOrBody": "Spain",
+      "level": "Master's/PhD",
+      "typicalCoverage": "for Latin America and others"
+    },
+    {
+      "number": 160,
+      "name": "\"la Caixa\" Fellowships",
+      "hostOrBody": "Spain",
+      "level": "postgraduate",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 161,
+      "name": "Government of Ireland International Education Scholarship",
+      "hostOrBody": "Ireland",
+      "level": "all levels",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 162,
+      "name": "Trinity College Dublin Global Excellence Scholarship",
+      "hostOrBody": "Trinity",
+      "level": "postgraduate",
+      "typicalCoverage": "partial funding"
+    },
+    {
+      "number": 163,
+      "name": "UCD Global Excellence Scholarship",
+      "hostOrBody": "University College Dublin",
+      "level": "undergraduate/postgraduate",
+      "typicalCoverage": "partial funding"
+    },
+    {
+      "number": 164,
+      "name": "Ignacy Łukasiewicz Scholarship",
+      "hostOrBody": "Poland",
+      "level": "Master's/PhD",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 165,
+      "name": "Czech Government Scholarships",
+      "hostOrBody": "Czech Republic",
+      "level": "Master's/PhD",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 166,
+      "name": "University of Tokyo Fellowship",
+      "hostOrBody": "Japan",
+      "level": "graduate",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 167,
+      "name": "Rotary Yoneyama Memorial Foundation Scholarship",
+      "hostOrBody": "Japan",
+      "level": "international students already in Japan",
+      "typicalCoverage": "monthly grant"
+    },
+    {
+      "number": 168,
+      "name": "Korea Foundation Fellowship",
+      "hostOrBody": "South Korea",
+      "level": "Korean studies research",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 169,
+      "name": "KAIST Scholarships for International Students",
+      "hostOrBody": "KAIST, South Korea",
+      "level": "graduate",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 170,
+      "name": "Shanghai Government Scholarship",
+      "hostOrBody": "China",
+      "level": "all levels",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 171,
+      "name": "ICCR Scholarships",
+      "hostOrBody": "India",
+      "level": "undergraduate to PhD",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 172,
+      "name": "ITEC Programme",
+      "hostOrBody": "India",
+      "level": "short professional courses",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 173,
+      "name": "Aditya Birla Scholarship",
+      "hostOrBody": "India",
+      "level": "undergraduate/graduate",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 174,
+      "name": "Inlaks Shivdasani Scholarships",
+      "hostOrBody": "study abroad",
+      "level": "Indian students",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 175,
+      "name": "Fulbright-Nehru Fellowships",
+      "hostOrBody": "USA/India",
+      "level": "graduate and research",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 176,
+      "name": "Singapore International Graduate Award (SINGA)",
+      "hostOrBody": "Singapore",
+      "level": "PhD",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 177,
+      "name": "ASEAN Undergraduate Scholarship",
+      "hostOrBody": "NUS and NTU, Singapore",
+      "level": "undergraduate",
+      "typicalCoverage": "for ASEAN students"
+    },
+    {
+      "number": 178,
+      "name": "NUS Research Scholarship",
+      "hostOrBody": "National University of Singapore",
+      "level": "Master's/PhD",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 179,
+      "name": "Malaysia International Scholarship (MIS)",
+      "hostOrBody": "Malaysia",
+      "level": "Master's/PhD",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 180,
+      "name": "Malaysian Technical Cooperation Programme (MTCP)",
+      "hostOrBody": "Malaysia",
+      "level": "Master's/training",
+      "typicalCoverage": "for developing countries"
+    },
+    {
+      "number": 181,
+      "name": "Royal Golden Jubilee PhD Programme",
+      "hostOrBody": "Thailand",
+      "level": "PhD",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 182,
+      "name": "Kemitraan Negara Berkembang (KNB) Scholarship",
+      "hostOrBody": "Indonesia",
+      "level": "Master's/PhD",
+      "typicalCoverage": "for developing countries"
+    },
+    {
+      "number": 183,
+      "name": "LPDP Scholarship",
+      "hostOrBody": "Indonesia",
+      "level": "Master's/PhD",
+      "typicalCoverage": "for Indonesians"
+    },
+    {
+      "number": 184,
+      "name": "Taiwan Scholarship (Ministry of Education)",
+      "hostOrBody": "Taiwan",
+      "level": "all levels",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 185,
+      "name": "ICDF Taiwan Scholarship",
+      "hostOrBody": "Taiwan",
+      "level": "degree programmes",
+      "typicalCoverage": "for partner countries"
+    },
+    {
+      "number": 186,
+      "name": "Hong Kong PhD Fellowship Scheme (HKPFS)",
+      "hostOrBody": "Hong Kong",
+      "level": "PhD",
+      "typicalCoverage": "stipend and travel funds"
+    },
+    {
+      "number": 187,
+      "name": "Belt and Road Scholarship",
+      "hostOrBody": "Hong Kong",
+      "level": "undergraduate/postgraduate",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 188,
+      "name": "Bolashak International Scholarship",
+      "hostOrBody": "Kazakhstan",
+      "level": "overseas study",
+      "typicalCoverage": "for Kazakh citizens"
+    },
+    {
+      "number": 189,
+      "name": "Nazarbayev University Scholarships",
+      "hostOrBody": "Kazakhstan",
+      "level": "all levels",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 190,
+      "name": "HEC Pakistan Scholarships",
+      "hostOrBody": "Pakistan",
+      "level": "Master's/PhD",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 191,
+      "name": "KAUST Fellowship",
+      "hostOrBody": "Saudi Arabia",
+      "level": "Master's/PhD",
+      "typicalCoverage": "full funding and stipend"
+    },
+    {
+      "number": 192,
+      "name": "Hamad Bin Khalifa University Scholarships",
+      "hostOrBody": "Qatar",
+      "level": "Master's/PhD",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 193,
+      "name": "MBZUAI Scholarships",
+      "hostOrBody": "UAE",
+      "level": "Master's/PhD in AI",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 194,
+      "name": "Khalifa University Scholarships",
+      "hostOrBody": "UAE",
+      "level": "graduate",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 195,
+      "name": "MASHAV Scholarships",
+      "hostOrBody": "Israel",
+      "level": "professional courses",
+      "typicalCoverage": "for developing countries"
+    },
+    {
+      "number": 196,
+      "name": "Al-Azhar Scholarships",
+      "hostOrBody": "Egypt",
+      "level": "Islamic and general studies",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 197,
+      "name": "Pan African University Scholarships",
+      "hostOrBody": "African Union institutes",
+      "level": "Master's/PhD",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 198,
+      "name": "PTDF Overseas Scholarship",
+      "hostOrBody": "Nigeria",
+      "level": "Master's/PhD abroad in oil and gas fields",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 199,
+      "name": "TETFund Scholarship",
+      "hostOrBody": "Nigeria",
+      "level": "academic staff postgraduate study",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 200,
+      "name": "PRESSID",
+      "hostOrBody": "Nigeria",
+      "level": "Presidential Special Scholarship Scheme for Innovation and Development",
+      "typicalCoverage": "first-class graduates"
+    },
+    {
+      "number": 201,
+      "name": "NLNG Scholarship",
+      "hostOrBody": "Nigeria",
+      "level": "undergraduate/postgraduate",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 202,
+      "name": "Federal Scholarship Board (Bilateral Education Agreements)",
+      "hostOrBody": "Nigeria",
+      "level": "study abroad and local awards",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 203,
+      "name": "MTN Foundation Scholarship",
+      "hostOrBody": "Nigeria",
+      "level": "undergraduate",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 204,
+      "name": "Wings to Fly (Equity Group Foundation)",
+      "hostOrBody": "Kenya",
+      "level": "secondary school",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 205,
+      "name": "NSFAS",
+      "hostOrBody": "South Africa",
+      "level": "undergraduate",
+      "typicalCoverage": "bursaries and loans"
+    },
+    {
+      "number": 206,
+      "name": "NRF Postgraduate Scholarships",
+      "hostOrBody": "South Africa",
+      "level": "Honours to PhD",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 207,
+      "name": "Ghana Scholarships Secretariat Awards",
+      "hostOrBody": "Ghana",
+      "level": "various levels",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 208,
+      "name": "Africa-America Institute Scholarships",
+      "hostOrBody": "USA/Africa",
+      "level": "undergraduate/graduate",
+      "typicalCoverage": "partial funding"
+    },
+    {
+      "number": 209,
+      "name": "Carnegie African Diaspora Fellowship Program",
+      "hostOrBody": "African universities",
+      "level": "diaspora academics",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 210,
+      "name": "Africa Leadership Academy Scholarship",
+      "hostOrBody": "South Africa",
+      "level": "pre-university",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 211,
+      "name": "AIMS Scholarship",
+      "hostOrBody": "African Institute for Mathematical Sciences",
+      "level": "Master's",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 212,
+      "name": "ICTP Diploma and Fellowship Programmes",
+      "hostOrBody": "Italy",
+      "level": "physics and mathematics",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 213,
+      "name": "Tony Elumelu Foundation Entrepreneurship Programme",
+      "hostOrBody": "Africa-wide",
+      "level": "entrepreneurs",
+      "typicalCoverage": "seed grant, not a tuition scholarship"
+    },
+    {
+      "number": 214,
+      "name": "Becas Chile",
+      "hostOrBody": "Chile",
+      "level": "Master's/PhD",
+      "typicalCoverage": "for Chileans"
+    },
+    {
+      "number": 215,
+      "name": "Beca Presidente de la República",
+      "hostOrBody": "Chile",
+      "level": "postgraduate abroad",
+      "typicalCoverage": "for Chileans"
+    },
+    {
+      "number": 216,
+      "name": "CAPES Scholarships",
+      "hostOrBody": "Brazil",
+      "level": "Master's/PhD",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 217,
+      "name": "CNPq Scholarships",
+      "hostOrBody": "Brazil",
+      "level": "research",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 218,
+      "name": "SECIHTI Scholarships (formerly CONAHCYT)",
+      "hostOrBody": "Mexico",
+      "level": "Master's/PhD",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 219,
+      "name": "AMEXCID Scholarships for Foreigners",
+      "hostOrBody": "Mexico",
+      "level": "postgraduate/research",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 220,
+      "name": "ICETEX",
+      "hostOrBody": "Colombia",
+      "level": "all levels",
+      "typicalCoverage": "loans and scholarships"
+    },
+    {
+      "number": 221,
+      "name": "PRONABEC Beca 18",
+      "hostOrBody": "Peru",
+      "level": "undergraduate",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 222,
+      "name": "OAS Academic Scholarships",
+      "hostOrBody": "Organization of American States",
+      "level": "graduate",
+      "typicalCoverage": "partial or full funding"
+    },
+    {
+      "number": 223,
+      "name": "PEC-G",
+      "hostOrBody": "Brazil",
+      "level": "undergraduate",
+      "typicalCoverage": "for students from partner developing countries"
+    },
+    {
+      "number": 224,
+      "name": "PEC-PG",
+      "hostOrBody": "Brazil",
+      "level": "postgraduate",
+      "typicalCoverage": "for students from partner developing countries"
+    },
+    {
+      "number": 225,
+      "name": "UPEACE Scholarships",
+      "hostOrBody": "Costa Rica",
+      "level": "Master's in peace and development",
+      "typicalCoverage": "partial funding"
+    },
+    {
+      "number": 226,
+      "name": "Google PhD Fellowship",
+      "hostOrBody": "Google",
+      "level": "PhD in computing fields",
+      "typicalCoverage": "stipend and tuition support"
+    },
+    {
+      "number": 227,
+      "name": "Meta Research PhD Fellowship",
+      "hostOrBody": "Meta",
+      "level": "PhD in computing and related fields",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 228,
+      "name": "Apple Scholars in AI/ML PhD Fellowship",
+      "hostOrBody": "Apple",
+      "level": "PhD",
+      "typicalCoverage": "stipend and tuition support"
+    },
+    {
+      "number": 229,
+      "name": "NVIDIA Graduate Fellowship Program",
+      "hostOrBody": "NVIDIA",
+      "level": "PhD",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 230,
+      "name": "IBM PhD Fellowship",
+      "hostOrBody": "IBM",
+      "level": "PhD in computing fields",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 231,
+      "name": "Qualcomm Innovation Fellowship",
+      "hostOrBody": "Qualcomm",
+      "level": "PhD teams",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 232,
+      "name": "Siebel Scholars",
+      "hostOrBody": "top graduate programmes in business, computer science, bioengineering, energy science",
+      "level": "funded",
+      "typicalCoverage": ""
+    },
+    {
+      "number": 233,
+      "name": "Schmidt Science Fellows",
+      "hostOrBody": "postdoctoral",
+      "level": "interdisciplinary science",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 234,
+      "name": "Marie Skłodowska-Curie Actions",
+      "hostOrBody": "EU",
+      "level": "doctoral and postdoctoral",
+      "typicalCoverage": "salary-based funding"
+    },
+    {
+      "number": 235,
+      "name": "EMBO Postdoctoral Fellowships",
+      "hostOrBody": "Europe",
+      "level": "life sciences postdocs",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 236,
+      "name": "Human Frontier Science Program Fellowships",
+      "hostOrBody": "international",
+      "level": "life sciences postdocs",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 237,
+      "name": "Generation Google Scholarship",
+      "hostOrBody": "Google",
+      "level": "undergraduate/graduate computer science",
+      "typicalCoverage": "fixed award"
+    },
+    {
+      "number": 238,
+      "name": "Grace Hopper Celebration Scholarships",
+      "hostOrBody": "AnitaB.org",
+      "level": "women in computing",
+      "typicalCoverage": "conference funding"
+    },
+    {
+      "number": 239,
+      "name": "Adobe Research Women-in-Technology Scholarship",
+      "hostOrBody": "Adobe",
+      "level": "women in computing",
+      "typicalCoverage": "fixed award"
+    },
+    {
+      "number": 240,
+      "name": "ACM-W Scholarships",
+      "hostOrBody": "ACM",
+      "level": "women in computing",
+      "typicalCoverage": "conference and travel support"
+    },
+    {
+      "number": 241,
+      "name": "Society of Women Engineers Scholarships",
+      "hostOrBody": "SWE",
+      "level": "women in engineering and technology",
+      "typicalCoverage": "fixed awards"
+    },
+    {
+      "number": 242,
+      "name": "WiCyS Scholarships",
+      "hostOrBody": "Women in CyberSecurity",
+      "level": "cybersecurity students",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 243,
+      "name": "CyberCorps: Scholarship for Service",
+      "hostOrBody": "USA",
+      "level": "cybersecurity",
+      "typicalCoverage": "funded, for US citizens"
+    },
+    {
+      "number": 244,
+      "name": "(ISC)² Graduate Cybersecurity Scholarship",
+      "hostOrBody": "graduate cybersecurity",
+      "level": "fixed award",
+      "typicalCoverage": ""
+    },
+    {
+      "number": 245,
+      "name": "Amazon Future Engineer Scholarship",
+      "hostOrBody": "USA",
+      "level": "undergraduate computer science",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 246,
+      "name": "Zuckerman STEM Leadership Program",
+      "hostOrBody": "USA/Israel",
+      "level": "postdoctoral scientists",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 247,
+      "name": "Wellcome Trust International Training Fellowships",
+      "hostOrBody": "UK/Africa/Asia",
+      "level": "health research",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 248,
+      "name": "EDCTP Fellowships",
+      "hostOrBody": "Europe–Africa partnership",
+      "level": "clinical research training",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 249,
+      "name": "NIH Fogarty Global Health Fellows",
+      "hostOrBody": "USA",
+      "level": "global health research",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 250,
+      "name": "Johns Hopkins Bloomberg School Sommer Scholars",
+      "hostOrBody": "Johns Hopkins",
+      "level": "public health PhD",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 251,
+      "name": "OWSD PhD Fellowships for Women Scientists",
+      "hostOrBody": "developing countries",
+      "level": "women in science",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 252,
+      "name": "L'Oréal-UNESCO For Women in Science",
+      "hostOrBody": "international",
+      "level": "early-career women researchers",
+      "typicalCoverage": "fixed awards"
+    },
+    {
+      "number": 253,
+      "name": "Inner Temple Scholarships",
+      "hostOrBody": "London",
+      "level": "Bar training",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 254,
+      "name": "Middle Temple Queen Mother Scholarship",
+      "hostOrBody": "London",
+      "level": "Bar training",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 255,
+      "name": "Lincoln's Inn Denning Scholarships",
+      "hostOrBody": "London",
+      "level": "Bar training",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 256,
+      "name": "Gray's Inn Scholarships",
+      "hostOrBody": "London",
+      "level": "Bar training",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 257,
+      "name": "Hague Academy of International Law Scholarships",
+      "hostOrBody": "Netherlands",
+      "level": "summer courses",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 258,
+      "name": "Open Society Justice Initiative Fellowships",
+      "hostOrBody": "international",
+      "level": "legal fellowship",
+      "typicalCoverage": ""
+    },
+    {
+      "number": 259,
+      "name": "Yale World Fellows Program",
+      "hostOrBody": "Yale University",
+      "level": "mid-career leaders",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 260,
+      "name": "Reuters Institute Journalist Fellowship",
+      "hostOrBody": "University of Oxford",
+      "level": "journalists",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 261,
+      "name": "Nieman Fellowships",
+      "hostOrBody": "Harvard University",
+      "level": "journalists",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 262,
+      "name": "Knight-Bagehot Fellowship",
+      "hostOrBody": "Columbia University",
+      "level": "business journalism",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 263,
+      "name": "Skoll Scholarship for Social Entrepreneurship",
+      "hostOrBody": "University of Oxford",
+      "level": "MBA",
+      "typicalCoverage": "full funding"
+    },
+    {
+      "number": 264,
+      "name": "INSEAD Scholarships",
+      "hostOrBody": "France/Singapore",
+      "level": "MBA",
+      "typicalCoverage": "partial funding"
+    },
+    {
+      "number": 265,
+      "name": "Cambridge Judge Business School Scholarships",
+      "hostOrBody": "University of Cambridge",
+      "level": "MBA/Master's",
+      "typicalCoverage": "partial funding"
+    },
+    {
+      "number": 266,
+      "name": "Forte Foundation Fellowships",
+      "hostOrBody": "USA",
+      "level": "women in MBA programmes",
+      "typicalCoverage": "fellowships"
+    },
+    {
+      "number": 267,
+      "name": "Consortium for Graduate Study in Management",
+      "hostOrBody": "USA",
+      "level": "MBA",
+      "typicalCoverage": "full-tuition fellowships"
+    },
+    {
+      "number": 268,
+      "name": "Harvard Business School Fellowships",
+      "hostOrBody": "Harvard University",
+      "level": "MBA",
+      "typicalCoverage": "needs-based"
+    },
+    {
+      "number": 269,
+      "name": "Wharton Fellowships",
+      "hostOrBody": "University of Pennsylvania",
+      "level": "MBA",
+      "typicalCoverage": "merit and needs-based"
+    },
+    {
+      "number": 270,
+      "name": "Langham Partnership Scholarships",
+      "hostOrBody": "UK and partner institutions",
+      "level": "PhD for evangelical leaders from the majority world",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 271,
+      "name": "ScholarLeaders International",
+      "hostOrBody": "doctoral studies",
+      "level": "Christian leaders from developing regions",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 272,
+      "name": "Oxford Centre for Mission Studies Scholarships",
+      "hostOrBody": "UK",
+      "level": "mission studies research",
+      "typicalCoverage": "partial funding"
+    },
+    {
+      "number": 273,
+      "name": "Fuller Theological Seminary Scholarships",
+      "hostOrBody": "USA",
+      "level": "theology and ministry",
+      "typicalCoverage": "partial funding"
+    },
+    {
+      "number": 274,
+      "name": "Gordon-Conwell Theological Seminary Scholarships",
+      "hostOrBody": "USA",
+      "level": "theology and ministry",
+      "typicalCoverage": "partial funding"
+    },
+    {
+      "number": 275,
+      "name": "Regent College Scholarships and Bursaries",
+      "hostOrBody": "Canada",
+      "level": "theological studies",
+      "typicalCoverage": "partial funding"
+    },
+    {
+      "number": 276,
+      "name": "Asbury Theological Seminary Scholarships",
+      "hostOrBody": "USA",
+      "level": "theology and ministry",
+      "typicalCoverage": "partial funding"
+    },
+    {
+      "number": 277,
+      "name": "Trinity Evangelical Divinity School Scholarships",
+      "hostOrBody": "USA",
+      "level": "theology and ministry",
+      "typicalCoverage": "partial funding"
+    },
+    {
+      "number": 278,
+      "name": "Tyndale House Fellowships",
+      "hostOrBody": "Cambridge, UK",
+      "level": "biblical research",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 279,
+      "name": "John Templeton Foundation Grants",
+      "hostOrBody": "USA",
+      "level": "research funding on science, religion and human flourishing, not tuition",
+      "typicalCoverage": ""
+    },
+    {
+      "number": 280,
+      "name": "Royal Academy of Music Scholarships",
+      "hostOrBody": "London",
+      "level": "music",
+      "typicalCoverage": "partial or full funding"
+    },
+    {
+      "number": 281,
+      "name": "Berklee Scholarships",
+      "hostOrBody": "Berklee College of Music, USA",
+      "level": "music",
+      "typicalCoverage": "merit awards"
+    },
+    {
+      "number": 282,
+      "name": "Curtis Institute of Music Full Scholarships",
+      "hostOrBody": "USA",
+      "level": "music",
+      "typicalCoverage": "all admitted students receive full tuition"
+    },
+    {
+      "number": 283,
+      "name": "Zonta International Amelia Earhart Fellowship",
+      "hostOrBody": "women in aerospace sciences and engineering",
+      "level": "fixed award",
+      "typicalCoverage": ""
+    },
+    {
+      "number": 284,
+      "name": "P.E.O. International Peace Scholarship",
+      "hostOrBody": "USA/Canada study",
+      "level": "women from abroad",
+      "typicalCoverage": "fixed award"
+    },
+    {
+      "number": 285,
+      "name": "Soroptimist Live Your Dream Awards",
+      "hostOrBody": "women supporting dependents",
+      "level": "education grants",
+      "typicalCoverage": ""
+    },
+    {
+      "number": 286,
+      "name": "Margaret McNamara Education Grants",
+      "hostOrBody": "women from developing countries",
+      "level": "education grants",
+      "typicalCoverage": ""
+    },
+    {
+      "number": 287,
+      "name": "Women in Aviation International Scholarships",
+      "hostOrBody": "aviation",
+      "level": "fixed awards",
+      "typicalCoverage": ""
+    },
+    {
+      "number": 288,
+      "name": "Google Lime Scholarship",
+      "hostOrBody": "Google",
+      "level": "students with disabilities in computer science",
+      "typicalCoverage": "fixed award"
+    },
+    {
+      "number": 289,
+      "name": "National Federation of the Blind Scholarships",
+      "hostOrBody": "USA",
+      "level": "blind students",
+      "typicalCoverage": "fixed awards"
+    },
+    {
+      "number": 290,
+      "name": "American Foundation for the Blind Scholarships",
+      "hostOrBody": "USA",
+      "level": "students who are blind or visually impaired",
+      "typicalCoverage": "fixed awards"
+    },
+    {
+      "number": 291,
+      "name": "DAFI Scholarship (UNHCR)",
+      "hostOrBody": "refugees worldwide",
+      "level": "undergraduate",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 292,
+      "name": "Windle Trust International Scholarships",
+      "hostOrBody": "UK",
+      "level": "refugees from East Africa and elsewhere",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 293,
+      "name": "UK University Sanctuary Scholarships",
+      "hostOrBody": "UK universities",
+      "level": "people seeking sanctuary",
+      "typicalCoverage": "tuition and support"
+    },
+    {
+      "number": 294,
+      "name": "Duke Karsh International Scholarship",
+      "hostOrBody": "Duke University",
+      "level": "undergraduate",
+      "typicalCoverage": "merit-based"
+    },
+    {
+      "number": 295,
+      "name": "Robertson Scholars Program",
+      "hostOrBody": "Duke University and UNC Chapel Hill",
+      "level": "undergraduate",
+      "typicalCoverage": "full funding"
+    },
+    {
+      "number": 296,
+      "name": "Emory Scholars Program",
+      "hostOrBody": "Emory University",
+      "level": "undergraduate",
+      "typicalCoverage": "merit-based"
+    },
+    {
+      "number": 297,
+      "name": "Vanderbilt Ingram Scholarship Program",
+      "hostOrBody": "Vanderbilt University",
+      "level": "undergraduate",
+      "typicalCoverage": "service-focused"
+    },
+    {
+      "number": 298,
+      "name": "Wake Forest Reynolds Scholarship",
+      "hostOrBody": "Wake Forest University",
+      "level": "undergraduate",
+      "typicalCoverage": "merit￾based"
+    },
+    {
+      "number": 299,
+      "name": "USC Trustee Scholarship",
+      "hostOrBody": "University of Southern California",
+      "level": "undergraduate",
+      "typicalCoverage": "full tuition"
+    },
+    {
+      "number": 300,
+      "name": "Boston University Trustee Scholarship",
+      "hostOrBody": "Boston University",
+      "level": "undergraduate",
+      "typicalCoverage": "full tuition"
+    },
+    {
+      "number": 301,
+      "name": "Davidson College Belk Scholarship",
+      "hostOrBody": "Davidson College",
+      "level": "undergraduate",
+      "typicalCoverage": "merit-based"
+    },
+    {
+      "number": 302,
+      "name": "Danforth Scholarship",
+      "hostOrBody": "Washington University in St. Louis",
+      "level": "undergraduate",
+      "typicalCoverage": "merit￾based"
+    },
+    {
+      "number": 303,
+      "name": "Jefferson Scholars Program",
+      "hostOrBody": "University of Virginia",
+      "level": "undergraduate",
+      "typicalCoverage": "merit-based"
+    },
+    {
+      "number": 304,
+      "name": "Morehead-Cain Scholarship",
+      "hostOrBody": "UNC Chapel Hill",
+      "level": "undergraduate",
+      "typicalCoverage": "for US, Canadian and UK students"
+    },
+    {
+      "number": 305,
+      "name": "Stamps Scholars Program",
+      "hostOrBody": "participating US universities",
+      "level": "undergraduate",
+      "typicalCoverage": "merit-based"
+    },
+    {
+      "number": 306,
+      "name": "Emerging Global Leader Scholarship",
+      "hostOrBody": "American University",
+      "level": "undergraduate",
+      "typicalCoverage": "for international students"
+    },
+    {
+      "number": 307,
+      "name": "New American University Scholarship",
+      "hostOrBody": "Arizona State University",
+      "level": "undergraduate",
+      "typicalCoverage": "for international students"
+    },
+    {
+      "number": 308,
+      "name": "NYU Abu Dhabi Financial Aid",
+      "hostOrBody": "UAE",
+      "level": "undergraduate",
+      "typicalCoverage": "need-based"
+    },
+    {
+      "number": 309,
+      "name": "Harvard College Financial Aid",
+      "hostOrBody": "USA",
+      "level": "undergraduate",
+      "typicalCoverage": "need-based grants"
+    },
+    {
+      "number": 310,
+      "name": "Yale College Financial Aid",
+      "hostOrBody": "USA",
+      "level": "undergraduate",
+      "typicalCoverage": "need-based grants"
+    },
+    {
+      "number": 311,
+      "name": "Princeton University Financial Aid",
+      "hostOrBody": "USA",
+      "level": "undergraduate",
+      "typicalCoverage": "need-based grants"
+    },
+    {
+      "number": 312,
+      "name": "MIT Financial Aid",
+      "hostOrBody": "USA",
+      "level": "undergraduate",
+      "typicalCoverage": "need-based grants"
+    },
+    {
+      "number": 313,
+      "name": "Amherst College Financial Aid",
+      "hostOrBody": "USA",
+      "level": "undergraduate",
+      "typicalCoverage": "need-based grants"
+    },
+    {
+      "number": 314,
+      "name": "Dartmouth Financial Aid",
+      "hostOrBody": "USA",
+      "level": "undergraduate",
+      "typicalCoverage": "need-based grants"
+    },
+    {
+      "number": 315,
+      "name": "JICA Development Studies Program",
+      "hostOrBody": "Japan",
+      "level": "Master's",
+      "typicalCoverage": "for development professionals"
+    },
+    {
+      "number": 316,
+      "name": "JICA Knowledge Co-Creation Program",
+      "hostOrBody": "Japan",
+      "level": "short training courses",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 317,
+      "name": "KOICA Scholarship Program",
+      "hostOrBody": "South Korea",
+      "level": "Master's",
+      "typicalCoverage": "for developing countries"
+    },
+    {
+      "number": 318,
+      "name": "Commonwealth Professional Fellowships",
+      "hostOrBody": "UK",
+      "level": "mid-career professionals",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 319,
+      "name": "Heydar Aliyev Scholarship",
+      "hostOrBody": "Azerbaijan",
+      "level": "all levels",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 320,
+      "name": "Russian Government Scholarship",
+      "hostOrBody": "Russia",
+      "level": "all levels",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 321,
+      "name": "Romanian Government Scholarships",
+      "hostOrBody": "Romania",
+      "level": "all levels",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 322,
+      "name": "Slovak National Scholarship Programme",
+      "hostOrBody": "Slovakia",
+      "level": "Master's/PhD",
+      "typicalCoverage": "stipend"
+    },
+    {
+      "number": 323,
+      "name": "Greek Government (IKY) Scholarships",
+      "hostOrBody": "Greece",
+      "level": "postgraduate",
+      "typicalCoverage": "stipend"
+    },
+    {
+      "number": 324,
+      "name": "Brunei Darussalam Government Scholarship",
+      "hostOrBody": "Brunei",
+      "level": "degree programmes",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 325,
+      "name": "DOST-SEI Scholarships",
+      "hostOrBody": "Philippines",
+      "level": "science and technology",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 326,
+      "name": "Mongolian Government Scholarship",
+      "hostOrBody": "Mongolia",
+      "level": "degree programmes",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 327,
+      "name": "AMCI Scholarships",
+      "hostOrBody": "Morocco",
+      "level": "degree programmes",
+      "typicalCoverage": "for African students"
+    },
+    {
+      "number": 328,
+      "name": "Botswana Government Sponsorship",
+      "hostOrBody": "Botswana",
+      "level": "undergraduate/postgraduate",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 329,
+      "name": "CONICET Doctoral Fellowships",
+      "hostOrBody": "Argentina",
+      "level": "PhD",
+      "typicalCoverage": "stipend"
+    },
+    {
+      "number": 330,
+      "name": "IFARHU Scholarships",
+      "hostOrBody": "Panama",
+      "level": "all levels",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 331,
+      "name": "Shell Centenary Scholarship",
+      "hostOrBody": "Nigeria",
+      "level": "undergraduate",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 332,
+      "name": "NDDC Postgraduate Scholarship",
+      "hostOrBody": "Niger Delta Development Commission",
+      "level": "postgraduate study abroad and at home",
+      "typicalCoverage": ""
+    },
+    {
+      "number": 333,
+      "name": "NNPC/TotalEnergies National Merit Scholarship Award",
+      "hostOrBody": "Nigeria",
+      "level": "undergraduate",
+      "typicalCoverage": "merit-based"
+    },
+    {
+      "number": 334,
+      "name": "NAOC Scholarship",
+      "hostOrBody": "Nigerian Agip Oil Company",
+      "level": "undergraduate",
+      "typicalCoverage": "funded"
+    },
+    {
+      "number": 335,
+      "name": "Lagos State Scholarship Board Awards",
+      "hostOrBody": "Lagos State",
+      "level": "undergraduate/postgraduate",
+      "typicalCoverage": "for state indigenes"
+    },
+    {
+      "number": 336,
+      "name": "Rivers State Scholarship Board Awards",
+      "hostOrBody": "Rivers State",
+      "level": "undergraduate/postgraduate",
+      "typicalCoverage": "for state indigenes"
+    },
+    {
+      "number": 337,
+      "name": "Federal Government Bursary Award",
+      "hostOrBody": "Nigeria",
+      "level": "tertiary students",
+      "typicalCoverage": "bursary"
+    }
+  ]
+}

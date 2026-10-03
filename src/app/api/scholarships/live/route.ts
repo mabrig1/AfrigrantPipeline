@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { connectDB } from '@/lib/mongodb'
+import { auth } from '@/lib/auth'
 import Grant from '@/models/Grant'
 import {
-  ensureScholarshipCatalogue590,
+  ensureScholarshipCatalogueTarget,
   SCHOLARSHIP_CATALOGUE_TARGET,
 } from '@/lib/scholarships/catalogue590'
 
@@ -26,14 +27,18 @@ export async function GET(req: NextRequest) {
   const verifiedOnly = params.get('verified') === 'true'
   const nigeriaOnly = params.get('nigeria') === 'true'
 
+  const session = await auth()
+  const canBrowseCatalogue = session?.user?.role === 'admin'
+
   let bootstrap:
-    | Awaited<ReturnType<typeof ensureScholarshipCatalogue590>>
+    | Awaited<ReturnType<typeof ensureScholarshipCatalogueTarget>>
     | undefined
 
-  // First catalogue request bootstraps the database once. The importer is
-  // source-backed, idempotent and stops when the catalogue reaches 590.
-  if (page === 1 && params.get('bootstrap') !== 'false') {
-    bootstrap = await ensureScholarshipCatalogue590()
+  // Catalogue expansion is an administrative operation. Public requests only
+  // receive aggregate catalogue statistics so application details cannot bypass
+  // the paid CV-match unlock flow.
+  if (canBrowseCatalogue && page === 1 && params.get('bootstrap') !== 'false') {
+    bootstrap = await ensureScholarshipCatalogueTarget()
   }
 
   await connectDB()
@@ -82,7 +87,7 @@ export async function GET(req: NextRequest) {
 
   const skip = (page - 1) * limit
 
-  const [total, catalogueTotal, openTotal, verifiedTotal, nigeriaEligibleTotal, items] =
+  const [total, catalogueTotal, openTotal, verifiedTotal, nigeriaEligibleTotal] =
     await Promise.all([
       Grant.countDocuments(query),
       Grant.countDocuments({ grantType: 'scholarship' }),
@@ -97,12 +102,28 @@ export async function GET(req: NextRequest) {
         status: 'open',
         nigeriaEligible: true,
       }),
-      Grant.find(query)
-        .sort({ status: -1, relevanceScore: -1, deadline: 1, createdAt: -1 })
-        .skip(skip)
-        .limit(limit)
-        .lean(),
     ])
+
+  if (!canBrowseCatalogue) {
+    return NextResponse.json({
+      target: SCHOLARSHIP_CATALOGUE_TARGET,
+      stats: {
+        catalogueTotal,
+        open: openTotal,
+        verified: verifiedTotal,
+        nigeriaEligible: nigeriaEligibleTotal,
+      },
+      access: 'match-required',
+      matcherUrl: '/scholarships/matcher',
+      pricing: { NGN: 5000, USD: 5 },
+    })
+  }
+
+  const items = await Grant.find(query)
+    .sort({ status: -1, relevanceScore: -1, deadline: 1, createdAt: -1 })
+    .skip(skip)
+    .limit(limit)
+    .lean()
 
   return NextResponse.json({
     count: items.length,
