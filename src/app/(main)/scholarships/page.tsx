@@ -246,7 +246,7 @@ export default function ScholarshipsPage() {
   }
 
   const stats = data?.stats
-  const targetReached = Boolean(stats && stats.catalogueTotal >= (data?.target ?? 590))
+  const targetReached = Boolean(stats && stats.catalogueTotal >= (data?.target ?? 1000))
 
   return (
     <div className="min-h-screen bg-gray-50">
