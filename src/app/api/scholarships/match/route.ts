@@ -1,7 +1,10 @@
+import { randomBytes } from 'node:crypto'
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 import { connectDB } from '@/lib/mongodb'
 import Grant from '@/models/Grant'
+import ScholarshipMatchSession from '@/models/ScholarshipMatchSession'
+import { extractScholarshipProfileFromCv } from '@/lib/scholarships/cvProfile'
 import {
   calculateReadiness,
   matchScholarships,
@@ -10,21 +13,16 @@ import {
   type ScholarshipLevel,
 } from '@/lib/scholarships/matcher'
 
-const profileSchema = z.object({
-  nationality: z.string().trim().min(2).max(100),
+export const runtime = 'nodejs'
+export const maxDuration = 60
+
+const requestSchema = z.object({
+  email: z.string().email().max(200),
   targetLevel: z.enum(['undergraduate', 'masters', 'phd', 'postdoc', 'fellowship']),
-  field: z.string().trim().min(2).max(200),
-  gpa: z.number().min(0).max(5).optional(),
-  workExperienceYears: z.number().int().min(0).max(50).default(0),
   needsFullFunding: z.boolean().default(true),
-  hasCv: z.boolean().default(false),
-  hasTranscript: z.boolean().default(false),
-  hasStatement: z.boolean().default(false),
-  hasReferences: z.boolean().default(false),
-  hasEnglishProof: z.boolean().default(false),
 })
 
-const matcherLevels = new Set<ScholarshipLevel>([
+const validLevels = new Set<ScholarshipLevel>([
   'undergraduate',
   'masters',
   'phd',
@@ -32,104 +30,154 @@ const matcherLevels = new Set<ScholarshipLevel>([
   'fellowship',
 ])
 
-function deadlineLabel(item: {
-  deadline?: Date
-  isRolling?: boolean
-  scholarshipDetails?: { applicationCycle?: string }
-}) {
-  if (item.isRolling) return 'Rolling applications'
+function opportunityFromGrant(
+  item: Awaited<ReturnType<typeof Grant.find>>[number],
+  targetLevel: ScholarshipLevel
+): ScholarshipOpportunity {
+  const rawLevels = (item.scholarshipDetails?.levels ?? []).filter(
+    (level): level is ScholarshipLevel => validLevels.has(level as ScholarshipLevel)
+  )
+  const levels = rawLevels.length ? rawLevels : [targetLevel]
+  const fields = item.scholarshipDetails?.fieldsOfStudy?.length
+    ? item.scholarshipDetails.fieldsOfStudy
+    : item.categories?.filter((value) => value !== 'scholarship' && !validLevels.has(value as ScholarshipLevel))
 
   const deadline = item.deadline ? new Date(item.deadline) : null
-  if (deadline && !Number.isNaN(deadline.getTime()) && deadline.getUTCFullYear() < 2098) {
-    return 'Deadline: ' + deadline.toISOString().slice(0, 10)
+  const deadlineLabel =
+    item.isRolling
+      ? 'Rolling applications'
+      : deadline && !Number.isNaN(deadline.getTime()) && deadline.getUTCFullYear() < 2098
+        ? 'Deadline: ' + deadline.toISOString().slice(0, 10)
+        : item.scholarshipDetails?.applicationCycle || 'Current cycle requires provider verification'
+
+  return {
+    id: item._id.toString(),
+    title: item.title,
+    provider: item.funder,
+    levels,
+    funding: item.scholarshipDetails?.fundingType === 'full' ? 'full' : 'partial',
+    countries:
+      item.scholarshipDetails?.studyCountries?.length
+        ? item.scholarshipDetails.studyCountries
+        : item.countries?.length
+          ? item.countries
+          : ['International'],
+    fields: fields?.length ? fields : ['all'],
+    officialUrl: item.applicationLink || item.sourceUrl || '',
+    verificationStatus:
+      item.verificationStatus === 'verified' ? 'official-source' : 'needs-verification',
+    deadlineLabel,
   }
-
-  return item.scholarshipDetails?.applicationCycle || 'Verify current application window'
-}
-
-async function liveScholarshipCatalog(): Promise<ScholarshipOpportunity[]> {
-  await connectDB()
-
-  const records = await Grant.find({
-    grantType: 'scholarship',
-    discoveredBy: 'agent',
-    status: 'open',
-    deadline: { $gt: new Date() },
-    verificationStatus: { $in: ['verified', 'needs_review'] },
-  })
-    .sort({ verificationStatus: 1, relevanceScore: -1, deadline: 1 })
-    .limit(60)
-    .lean()
-
-  return records
-    .map((item): ScholarshipOpportunity | null => {
-      const details = item.scholarshipDetails
-      const levels = (details?.levels ?? []).filter(
-        (level): level is ScholarshipLevel => matcherLevels.has(level as ScholarshipLevel)
-      )
-
-      if (levels.length === 0 || !item.applicationLink) return null
-
-      return {
-        id: item._id.toString(),
-        title: item.title,
-        provider: item.funder,
-        levels,
-        funding: details?.fundingType === 'full' ? 'full' : 'partial',
-        countries:
-          details?.studyCountries?.length
-            ? details.studyCountries
-            : item.countries?.length
-              ? item.countries
-              : ['International'],
-        fields:
-          details?.fieldsOfStudy?.length
-            ? details.fieldsOfStudy
-            : item.categories?.filter((value) => value !== 'scholarship') ?? ['all'],
-        officialUrl: item.applicationLink,
-        verificationStatus:
-          item.verificationStatus === 'verified' ? 'official-source' : 'needs-verification',
-        deadlineLabel: deadlineLabel(item),
-      }
-    })
-    .filter((item): item is ScholarshipOpportunity => Boolean(item))
 }
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json()
-    const parsed = profileSchema.safeParse(body)
+    const form = await request.formData()
+    const email = String(form.get('email') || '').trim().toLowerCase()
+    const targetLevel = String(form.get('targetLevel') || '')
+    const needsFullFunding = String(form.get('needsFullFunding') || 'true') !== 'false'
+    const file = form.get('cv')
 
+    const parsed = requestSchema.safeParse({ email, targetLevel, needsFullFunding })
     if (!parsed.success) {
-      return NextResponse.json(
-        {
-          error: 'Invalid scholarship profile.',
-          details: parsed.error.flatten().fieldErrors,
-        },
-        { status: 400 }
-      )
+      return NextResponse.json({ error: 'Enter a valid email and target study level.' }, { status: 400 })
+    }
+    if (!(file instanceof File) || file.size === 0) {
+      return NextResponse.json({ error: 'Upload your CV to start the scholarship match.' }, { status: 400 })
     }
 
-    const profile = parsed.data as ScholarshipApplicantProfile
-    const readiness = calculateReadiness(profile)
-    const liveCatalog = await liveScholarshipCatalog()
-    const matches = matchScholarships(
-      profile,
-      liveCatalog.length > 0 ? liveCatalog : undefined
+    const extracted = await extractScholarshipProfileFromCv(file)
+    const profile: ScholarshipApplicantProfile = {
+      nationality: extracted.nationality,
+      targetLevel: parsed.data.targetLevel,
+      field: extracted.field,
+      ...(typeof extracted.gpa === 'number' ? { gpa: extracted.gpa } : {}),
+      workExperienceYears: extracted.workExperienceYears,
+      needsFullFunding: parsed.data.needsFullFunding,
+      hasCv: true,
+      hasTranscript: false,
+      hasStatement: false,
+      hasReferences: false,
+      hasEnglishProof: false,
+    }
+
+    await connectDB()
+
+    const records = await Grant.find({
+      grantType: 'scholarship',
+      status: { $in: ['open', 'draft'] },
+      verificationStatus: { $ne: 'stale' },
+    })
+      .sort({ verificationStatus: 1, relevanceScore: -1, deadline: 1, createdAt: -1 })
+      .limit(2000)
+
+    const opportunities = records.map((item) =>
+      opportunityFromGrant(item, parsed.data.targetLevel)
     )
+    const allMatches = matchScholarships(profile, opportunities)
+    const relevantMatches = allMatches.filter((match) => match.score >= 50)
+    const strongCount = relevantMatches.filter((match) => match.score >= 75).length
+    const possibleCount = relevantMatches.length - strongCount
+    const readiness = calculateReadiness(profile)
+    const byId = new Map(records.map((item) => [item._id.toString(), item]))
+
+    const publicId = randomBytes(24).toString('hex')
+    await ScholarshipMatchSession.create({
+      publicId,
+      email: parsed.data.email,
+      targetLevel: parsed.data.targetLevel,
+      profile: extracted,
+      readinessScore: readiness.score,
+      screenedCount: records.length,
+      matchCount: relevantMatches.length,
+      strongCount,
+      possibleCount,
+      matches: relevantMatches.map((match) => ({
+        grant: byId.get(match.opportunity.id)!._id,
+        score: match.score,
+        label: match.label,
+        reasons: match.reasons,
+        gaps: match.gaps,
+      })),
+      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+    })
 
     return NextResponse.json({
-      generatedAt: new Date().toISOString(),
-      catalogSource: liveCatalog.length > 0 ? 'live-crawler' : 'starter-fallback',
-      opportunitiesScreened: liveCatalog.length > 0 ? liveCatalog.length : matches.length,
-      readiness,
-      matches,
+      sessionId: publicId,
+      screenedCount: records.length,
+      matchCount: relevantMatches.length,
+      strongCount,
+      possibleCount,
+      readiness: {
+        score: readiness.score,
+        nextAction: readiness.nextAction,
+      },
+      profileSummary: {
+        nationality: extracted.nationality,
+        field: extracted.field,
+        targetLevel: parsed.data.targetLevel,
+        workExperienceYears: extracted.workExperienceYears,
+        educationSummary: extracted.educationSummary,
+      },
+      price: {
+        NGN: 5000,
+        USD: 5,
+      },
+      message:
+        relevantMatches.length > 0
+          ? 'Your scholarship matches are ready. Unlock the matched records to view scholarship names, fit scores, provider details and application links.'
+          : 'No relevant match reached the current screening threshold. Try a different target level or an updated CV.',
       disclaimer:
-        'Match scores are screening guidance, not an eligibility guarantee. Always verify current deadlines and requirements on the official scholarship website.',
+        'Matching is screening guidance, not an eligibility guarantee. Programme details must be verified with the scholarship provider before applying.',
     })
-  } catch {
+  } catch (error) {
     return NextResponse.json(
-      { error: 'Unable to generate scholarship matches.' },
+      {
+        error:
+          error instanceof Error
+            ? error.message
+            : 'Unable to analyse this CV and generate scholarship matches.',
+      },
       { status: 500 }
     )
   }
