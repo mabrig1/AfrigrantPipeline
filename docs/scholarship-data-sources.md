@@ -60,3 +60,10 @@ The public flow is:
 - Dataset: `data/data.json`.
 - Use: recent programme metadata with official links and 2026 source-check dates.
 - University tuition listings are not treated as scholarships; only scholarship/fellowship programme records are eligible for import.
+
+
+### Collection Scholarship — filtered 2026 international subset
+- Repository: https://github.com/FajarHadi1/collection-scholarship
+- Dataset: `src/data/scholarships.ts`.
+- AfriGrantPipeline imports only future-dated records with an overseas/global signal, a provider/application URL, explicit international/foreign eligibility wording, and no Indonesia-only wording.
+- Imported rows are marked `needs_review`; upstream deadline/status values are retained only as source metadata until the provider page is checked.
