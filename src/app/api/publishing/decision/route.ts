@@ -5,7 +5,7 @@ import { auth } from '@/lib/auth'
 import { connectDB } from '@/lib/mongodb'
 import PublishingJob from '@/models/PublishingJob'
 
-const input=z.object({id:z.string(),action:z.enum(['approve','publish'])})
+const input=z.object({id:z.string(),action:z.enum(['approve','publish']),confirmation:z.literal('I APPROVE PUBLICATION')})
 export async function POST(req:NextRequest){
  const session=await auth()
  if(!session?.user?.id)return NextResponse.json({error:'Sign in required'},{status:401})
