@@ -1,3 +1,4 @@
+import { checkPublishingOrigin, readPublishingBody } from '@/lib/publishing-request'
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 import mongoose from 'mongoose'
@@ -7,10 +8,12 @@ import PublishingJob from '@/models/PublishingJob'
 
 const input=z.object({id:z.string(),action:z.enum(['approve','publish']),confirmation:z.literal('I APPROVE PUBLICATION')})
 export async function POST(req:NextRequest){
+ const denied=checkPublishingOrigin(req)
+ if(denied)return denied
  const session=await auth()
  if(!session?.user?.id)return NextResponse.json({error:'Sign in required'},{status:401})
  if(!session.user.verifiedOwner)return NextResponse.json({error:'Verified owner editorial authorization required'},{status:403})
- const parsed=input.safeParse(await req.json().catch(()=>null))
+ const parsed=input.safeParse(await readPublishingBody(req))
  if(!parsed.success || !mongoose.isValidObjectId(parsed.data.id))return NextResponse.json({error:'Invalid request'},{status:400})
  const {id,action}=parsed.data
  const previous=action==='approve'?'draft':'awaiting_approval'
