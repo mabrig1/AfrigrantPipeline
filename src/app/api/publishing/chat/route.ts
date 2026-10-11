@@ -1,3 +1,4 @@
+import { checkPublishingOrigin, readPublishingBody } from '@/lib/publishing-request'
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 import { auth } from '@/lib/auth'
@@ -9,15 +10,17 @@ const requestSchema=z.discriminatedUnion('action',[
  z.object({action:z.literal('help')}),
  z.object({action:z.literal('list_drafts')}),
  z.object({action:z.literal('create_draft'),confirm:z.literal(true),manuscript:z.object({
-   title:z.string().min(10).max(300),author:z.string().min(2).max(200),
-   abstract:z.string().min(100).max(10000),body:z.string().min(200).max(500000),
+   title:z.string().trim().min(10).max(300),author:z.string().trim().min(2).max(200),
+   abstract:z.string().trim().min(100).max(10000),body:z.string().trim().min(200).max(500000),
    license:z.enum(['CC BY','CC BY-SA','CC BY-NC','CC BY-ND','CC0','All Rights Reserved']).default('All Rights Reserved')
  })})
 ])
 export async function POST(req:NextRequest){
+ const denied=checkPublishingOrigin(req)
+ if(denied)return denied
  const session=await auth()
  if(!session?.user?.id)return NextResponse.json({error:'Please sign in first.'},{status:401})
- const parsed=requestSchema.safeParse(await req.json().catch(()=>null))
+ const parsed=requestSchema.safeParse(await readPublishingBody(req))
  if(!parsed.success)return NextResponse.json({error:'Invalid assistant action',details:parsed.error.flatten()},{status:400})
  const request=parsed.data
  if(request.action==='help')return NextResponse.json({reply:'I can create a manuscript draft and list your drafts. Only the verified platform owner can approve and publish from the editorial workspace. I cannot independently verify references or peer-review papers.',automated:false})

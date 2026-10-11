@@ -23,3 +23,16 @@
 - The current chatbot is not a ChatGPT connector/MCP server. Publishing from a ChatGPT conversation requires a separately scoped integration and explicit publication authorization.
 - GitHub CI success is not proof of production runtime health.
 - Never paste environment secrets into an issue or public pull request.
+
+## Publishing workflow hardening
+- `/publishing/dashboard` now redirects to the working workspace.
+- A verified owner can request `/api/publishing?scope=editorial`; ordinary users remain restricted to their own submissions.
+- `/api/publishing/[id]` allows full-text inspection only by the author or verified owner.
+- Approval and publication each require the editor to type the confirmation phrase in the workspace.
+- Publishing POST endpoints reject foreign origins and bound incoming request bodies; manuscript fields reject whitespace-only content.
+- Publishing workspace pages request no indexing. Robots and sitemap routes expose public discovery; the sitemap includes published records only and falls back to static URLs when MongoDB is unavailable.
+- Citation metadata and canonical URLs support discovery but do not prove Google/Scholar indexing or DOI registration.
+
+Additional runtime checks: verify the editorial queue contains another author's draft; verify that author cannot read a different author's draft; inspect full text before approval; check sitemap exclusion before publication and inclusion afterward; test confirmation cancellation and connection failures.
+
+Regression command: `node --test tests/publishing.test.cjs`.

@@ -1,14 +1,15 @@
+import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import mongoose from 'mongoose'
 import { connectDB } from '@/lib/mongodb'
 import PublishingJob from '@/models/PublishingJob'
 export const dynamic='force-dynamic'
-export async function generateMetadata({params}:{params:Promise<{id:string}>}){
+export async function generateMetadata({params}:{params:Promise<{id:string}>}):Promise<Metadata>{
  const {id}=await params
  if(!mongoose.isValidObjectId(id))return {title:'Publication not found'}
  await connectDB()
- const doc=await PublishingJob.findOne({_id:id,status:'published'}).select('title abstract author').lean() as {title:string,abstract:string,author:string}|null
- return doc?{title:doc.title,description:doc.abstract,authors:[{name:doc.author}],robots:{index:true,follow:true}}:{title:'Publication not found',robots:{index:false}}
+ const doc=await PublishingJob.findOne({_id:id,status:'published'}).select('title abstract author publishedAt').lean() as {title:string,abstract:string,author:string,publishedAt?:Date}|null
+ return doc?{title:doc.title,description:doc.abstract,authors:[{name:doc.author}],alternates:{canonical:'https://www.afrigrantpipeline.com/publications/record/'+id},other:{citation_title:doc.title,citation_author:doc.author,citation_public_url:'https://www.afrigrantpipeline.com/publications/record/'+id,...(doc.publishedAt?{citation_publication_date:new Date(doc.publishedAt).toISOString().slice(0,10)}:{})},robots:{index:true,follow:true}}:{title:'Publication not found',robots:{index:false}}
 }
 export default async function Page({params}:{params:Promise<{id:string}>}){
  const {id}=await params

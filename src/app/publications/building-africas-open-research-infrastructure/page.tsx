@@ -5,6 +5,8 @@ export const metadata = {
   title: "Building Africa's Open Research Infrastructure | AfriPublish",
   description: "Mabrig Korie's 2026 manuscript on AfrigrantPipeline and open research infrastructure in Africa.",
   robots: { index: true, follow: true },
+  alternates:{canonical:'https://www.afrigrantpipeline.com/publications/building-africas-open-research-infrastructure'},
+  other:{citation_title:"Building Africa’s Open Research Infrastructure: Design, Implementation, and Impact Evaluation of a Unified Grant Marketplace, Collaboration, and Scholarly Publishing Platform",citation_author:'Mabrig Korie',citation_publication_date:'2026',citation_public_url:'https://www.afrigrantpipeline.com/publications/building-africas-open-research-infrastructure'},
 }
 
 const title = "Building Africa’s Open Research Infrastructure: Design, Implementation, and Impact Evaluation of a Unified Grant Marketplace, Collaboration, and Scholarly Publishing Platform"

@@ -1,3 +1,4 @@
+import { checkPublishingOrigin, readPublishingBody } from '@/lib/publishing-request'
 import { NextRequest, NextResponse } from 'next/server'
 import OpenAI from 'openai'
 import { z } from 'zod'
@@ -9,10 +10,12 @@ const schema=z.object({
 })
 const system=`You are the AfriPublish scholarly publishing assistant. Guide authors through metadata, citation verification, ethics declarations, rights and licenses, and the platform's editorial workflow. Be transparent that repository posting is not peer-reviewed journal publication. Never claim a DOI, indexed publication, peer review, acceptance, or citation verification without independent evidence. Never fabricate citations, datasets, or findings. Never request API keys or private credentials. You cannot create, approve, or publish a manuscript via this chat. Direct the user to the explicit confirmation form to create a draft and the owner-only editorial workflow for publication. Keep replies concise.`
 export async function POST(req:NextRequest){
+ const denied=checkPublishingOrigin(req)
+ if(denied)return denied
  const session=await auth()
  if(!session?.user?.id)return NextResponse.json({error:'Sign in required'},{status:401})
  if(!process.env.OPENAI_API_KEY)return NextResponse.json({error:'AI assistant not configured'},{status:503})
- const parsed=schema.safeParse(await req.json().catch(()=>null))
+ const parsed=schema.safeParse(await readPublishingBody(req,70000))
  if(!parsed.success)return NextResponse.json({error:'Invalid conversation'},{status:400})
  try{
   const client=new OpenAI({apiKey:process.env.OPENAI_API_KEY,timeout:20000,maxRetries:1})
